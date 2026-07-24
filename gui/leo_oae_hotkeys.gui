@@ -1,0 +1,45 @@
+﻿### Leo VI's Odds and Ends - keyboard shortcuts.
+###
+### A shortcut on the map mode button itself only puts the key in that button's
+### tooltip. It cannot fire the map mode, because the Additional Map Modes
+### flyout the button lives in is hidden until the player opens it, and a hidden
+### widget takes no input. Vanilla has the same problem and solves it with
+### hotkeys_HUD (game/gui/hud.gui), a widget of nothing but shortcut-carrying
+### buttons that is always present. Every map mode key is declared twice there:
+### once on the flyout button for the tooltip, once in hotkeys_HUD to work.
+###
+### hotkeys_HUD cannot be added to without overriding hud.gui, so this is our
+### own copy of the idea, registered through gui/scripted_widgets/ so no vanilla
+### file is touched.
+###
+### The key itself needs no binding of our own. game/gui/shortcuts.shortcuts
+### pre-binds every key combination under a "### all the keys for modders ###"
+### heading, exactly so a mod need not replace that file (which CK3 does not
+### let a mod do). _ctrl_shift_g is ctrl+shift+G. Vanilla binds ctrl+shift+F and
+### nothing else in that family, and G already carries two map modes
+### (ctrl+G simple terrain, shift+G mandala), so this stays mnemonic and free.
+
+window = {
+	name = "leo_oae_hotkeys"
+
+	# Holds no visible content: it exists only so the buttons inside it are
+	# alive to take a keypress. Zero-sized and pass-through so it can never
+	# draw over or swallow a click from anything. It must stay visible, though,
+	# since a hidden widget receives no input at all.
+	size = { 0 0 }
+	alwaystransparent = yes
+	visible = yes
+
+	### Governors map mode.
+	button_normal = {
+		name = "leo_oae_govmap_shortcut"
+		onclick = "[SetMapMode( 'admin_vassal_types_map' )]"
+		shortcut = "_ctrl_shift_g"
+
+		# The same gate the button carries, so the key is dead for anyone the
+		# button is hidden from. Vanilla gates its own map mode hotkeys this
+		# way too (hud.gui's players entry uses enabled, not visible), because
+		# the widget has to stay alive to be listening at all.
+		enabled = "[And( CanChangeMapMode, Or( GetPlayer.GetTopLiege.GetGovernment.HasRule( 'noble_families' ), Or( GetPlayer.GetGovernment.IsType( 'japan_feudal_government' ), Or( GetPlayer.GetGovernment.IsType( 'japan_administrative_government' ), GetPlayer.GetGovernment.IsType( 'celestial_government' ) ) ) ) )]"
+	}
+}

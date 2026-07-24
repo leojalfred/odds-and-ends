@@ -16,6 +16,8 @@ Adds a **Governors** map mode to the map mode picker, under the `+` for addition
 
 It is the view the game already switches to whenever you open your Administrative Government panel: your direct vassals painted by the role each of them holds. Until now that view came with the panel sitting on top of it, and the moment you closed the panel to see the map, the game put you back on Realms. This makes it a map mode like any other, so you can read it, keep it, and zoom around in it.
 
+It has a keyboard shortcut like the other map modes: **ctrl+shift+G**. G already carries two map modes, and this is the free combination nearest to it. Nothing in the game uses it, so no existing shortcut is taken away.
+
 The button appears only if you could open that panel in the first place. In practice that means your realm runs on administrative government, whether you rule it or serve in it, along with the Chinese and Japanese governments that have an administration panel of their own. Everyone else never sees it.
 
 Nothing else changes. The panel still selects the view when it opens and still drops back to Realms when it closes, exactly as it always did.

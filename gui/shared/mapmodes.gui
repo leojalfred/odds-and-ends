@@ -860,6 +860,16 @@ types MapModes
 						texture = "gfx/interface/icons/flat_icons/administrative.dds"
 						size = { 20 20 }
 					}
+
+					# Puts the key in this button's tooltip, as every vanilla
+					# map mode button does. It cannot fire it: this flyout is
+					# hidden until opened, and a hidden widget takes no input.
+					# gui/leo_oae_hotkeys.gui is what makes the key work, the
+					# same split vanilla uses with hotkeys_HUD.
+					blockoverride "mm_button"
+					{
+						shortcut = "_ctrl_shift_g"
+					}
 				}
 
 				icon_button_mapmode = {

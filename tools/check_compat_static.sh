@@ -90,6 +90,23 @@ use  "GetMapMode"                            "GetMapMode\("
 use  "GetPlayer.GetTopLiege"                 "GetPlayer.GetTopLiege"
 
 echo
+echo "The keyboard shortcut"
+# The mod binds no key of its own: CK3 does not let a mod replace
+# shortcuts.shortcuts, so vanilla pre-binds every combination under a heading
+# that says as much, and the mod just names one. If that block goes, the
+# shortcut silently stops resolving.
+def  "the modders' key block still exists"   "gui/shortcuts.shortcuts" "all the keys for modders"
+def  "_ctrl_shift_g still bound"             "gui/shortcuts.shortcuts" "_ctrl_shift_g = \"ctrl\+shift\+g\""
+# Nothing in vanilla may claim ctrl+shift+G, or the two fight over the key. The
+# leading letter excludes the modders' own _ctrl_shift_g, which is the binding
+# we name; every real action's name starts with a letter.
+ndef "ctrl+shift+G is still ours alone"      "gui/shortcuts.shortcuts" \
+     "^[[:space:]]*[a-zA-Z][a-zA-Z0-9_]* = \"ctrl\+shift\+[gG]\""
+# The always-present widget carrying the key is modelled on this one.
+def  "hotkeys_HUD (the pattern we copy)"     "gui/hud.gui" "type hotkeys_HUD"
+def  "scripted widget loader"                "gui/scripted_widgets" "widget"
+
+echo
 echo "The overridden file"
 # The mod ships a copy of vanilla's mapmodes.gui, edited. A patch that touches
 # that file leaves the copy stale, and anyone running the mod silently keeps the
