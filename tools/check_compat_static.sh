@@ -82,7 +82,7 @@ echo
 echo "What the button is built from"
 def  "icon_button_mapmode type"              "gui/shared/buttons.gui" "type icon_button_mapmode"
 def  "flowcontainer_additional_mapmodes type" "gui/shared/mapmodes.gui" "type flowcontainer_additional_mapmodes"
-def  "map_mode_government_button (insertion point)" "gui/shared/mapmodes.gui" "map_mode_government_button"
+def  "map_mode_government_button (our button follows it)" "gui/shared/mapmodes.gui" "map_mode_government_button"
 file "button icon"    "gfx/interface/icons/flat_icons/administrative.dds"
 file "texticon art"   "gfx/interface/icons/government_types/administrative_government.dds"
 use  "CanChangeMapMode"                      "CanChangeMapMode"
@@ -91,31 +91,46 @@ use  "GetPlayer.GetTopLiege"                 "GetPlayer.GetTopLiege"
 
 echo
 echo "The overridden file"
-# The mod ships a copy of vanilla's mapmodes.gui with one button added. A patch
-# that edits that file leaves the copy stale and silently reverts the patch's
-# changes for anyone running the mod. Expect a purely additive diff: our header
-# and our block, nothing removed and nothing changed.
+# The mod ships a copy of vanilla's mapmodes.gui, edited. A patch that touches
+# that file leaves the copy stale, and anyone running the mod silently keeps the
+# old panel. The copy cannot be checked by diffing it against vanilla, because
+# the edit deliberately moves vanilla buttons between rows: a legitimate diff and
+# a patch's diff look alike. So pin the vanilla file this copy was made from
+# instead, and fail the moment the installed one stops matching.
+#
+# Re-copying, when this fails:
+#   1. cp "$GAME/gui/shared/mapmodes.gui" gui/shared/mapmodes.gui
+#   2. Re-apply the header comment, keeping the UTF-8 BOM first in the file.
+#   3. In flowcontainer_additional_mapmodes, re-apply the reflow: move
+#      map_mode_landless_rulers_button to the end of the first row, move
+#      map_mode_counties_button to the end of the second, and add the Governors
+#      button after map_mode_government_button in the third. That keeps reading
+#      order across the whole flyout identical to vanilla's while leaving every
+#      row four wide.
+#   4. Update VANILLA_SHA below to the new hash the failure prints.
+VANILLA_SHA="da8ba748c8d6e1ed05e0acfbc46f88963757291db8f2d37ed1fbd8b3802bcd40"
 VAN="$GAME/gui/shared/mapmodes.gui"
 OURS="$ROOT/gui/shared/mapmodes.gui"
 if [ ! -f "$VAN" ] || [ ! -f "$OURS" ]; then
-	printf '  FAIL  mapmodes.gui copy is diffable\n'; F=$((F+1))
-	FAILS="$FAILS\n  - mapmodes.gui copy is diffable"
+	printf '  FAIL  mapmodes.gui copy is checkable\n'; F=$((F+1))
+	FAILS="$FAILS\n  - mapmodes.gui copy is checkable"
 else
-	# Anything the diff removes or rewrites means vanilla moved on without us.
-	DRIFT="$(diff "$VAN" "$OURS" | grep -c '^<' || true)"
-	# Line 1 always shows as a rewrite, because the header is prepended to it.
-	if [ "$DRIFT" -le 1 ]; then
-		printf '  ok    mapmodes.gui copy is vanilla plus our block only\n'; P=$((P+1))
+	GOT="$(sha256sum "$VAN" | cut -d' ' -f1)"
+	if [ "$GOT" = "$VANILLA_SHA" ]; then
+		printf '  ok    copy was made from the installed vanilla file\n'; P=$((P+1))
 	else
-		printf '  FAIL  mapmodes.gui copy has drifted from vanilla (%s changed lines) - re-copy and re-insert\n' "$DRIFT"
-		F=$((F+1)); FAILS="$FAILS\n  - mapmodes.gui copy has drifted from vanilla"
+		printf '  FAIL  vanilla mapmodes.gui has changed - re-copy and re-apply (new hash %s)\n' "$GOT"
+		F=$((F+1)); FAILS="$FAILS\n  - vanilla mapmodes.gui has changed since the copy was made"
 	fi
-	if grep -q 'leo_oae_map_mode_governors_button' "$OURS"; then
-		printf '  ok    our button is present in the copy\n'; P=$((P+1))
-	else
-		printf '  FAIL  our button is missing from the copy\n'
-		F=$((F+1)); FAILS="$FAILS\n  - our button is missing from the copy"
-	fi
+	# Cheap proof the re-copy was actually finished, not just pasted over.
+	for want in leo_oae_map_mode_governors_button map_mode_landless_rulers_button map_mode_counties_button; do
+		if grep -q "$want" "$OURS"; then
+			printf '  ok    %s present in the copy\n' "$want"; P=$((P+1))
+		else
+			printf '  FAIL  %s missing from the copy\n' "$want"
+			F=$((F+1)); FAILS="$FAILS\n  - $want missing from the copy"
+		fi
+	done
 fi
 
 echo

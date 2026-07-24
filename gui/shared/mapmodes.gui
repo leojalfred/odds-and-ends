@@ -1,9 +1,19 @@
 ﻿### Leo VI's Odds and Ends - vanilla gui/shared/mapmodes.gui, plus one button.
 ###
-### This is a verbatim copy of the game's file with a single icon_button_mapmode
-### added, marked "leo_oae" where it sits. Nothing else differs, and nothing else
-### should: tools/check_compat_static.sh diffs this file against the installed
-### game's copy and expects to see only that block.
+### A copy of the game's file. Every change is marked "leo_oae" where it sits,
+### and there are three, all inside flowcontainer_additional_mapmodes:
+###
+###   - the Governors button, after map_mode_government_button
+###   - map_mode_landless_rulers_button pulled up to the end of the first row
+###   - map_mode_counties_button pulled up to the end of the second
+###
+### The last two are what keep the panel four buttons wide. Adding Governors
+### where it belongs by subject would otherwise run the governments row to five
+### and widen the whole flyout. Pulling one button up per row above absorbs it
+### instead, and because each moves to the end of the row before its own, the
+### reading order across the flyout is exactly vanilla's, with Governors
+### inserted after Governments. Note the first row looks a button short in
+### singleplayer only because Players hides itself outside multiplayer.
 ###
 ### A copy is unavoidable. The map mode picker is a GUI *type*, and a widget
 ### cannot be injected into a type from another file. Nor can a separate
@@ -11,7 +21,11 @@
 ### _mouse_hierarchy_leave, so a button outside its widget tree would dismiss the
 ### panel the moment the mouse reached it.
 ###
-### Re-diff after every game patch. This file goes stale silently.
+### This file goes stale silently, so tools/check_compat_static.sh pins the hash
+### of the vanilla file it was copied from and fails when the installed one stops
+### matching. It cannot diff instead: moving vanilla buttons is the point here,
+### so a legitimate edit and a patch's edit look alike. The re-copy procedure is
+### written out in that script.
 
 types MapModes
 {
@@ -623,23 +637,11 @@ types MapModes
 						shortcut = "map_mode_8"
 					}
 				}
-			}
 
-			widget ={
-				size = {0 4}
-			}
-			divider_light = {
-				min_width = 100
-				parentanchor = hcenter
-			}
-			widget ={
-				size = {0 4}
-			}
-
-			flowcontainer = {
-				ignoreinvisible = yes
-				parentanchor = hcenter
-
+				### leo_oae: pulled up from the row below, so that row can give a
+				### slot to the one below it and the governments row can hold
+				### Governors without running to five. Reading order across the
+				### whole flyout is unchanged.
 				icon_button_mapmode = {
 					name = "map_mode_landless_rulers_button"
 					visible = "[And( HasDlcFeature( 'landless_playable' ), CanChangeMapMode )]"
@@ -661,6 +663,22 @@ types MapModes
 						shortcut = "map_mode_18"
 					}
 				}
+			}
+
+			widget ={
+				size = {0 4}
+			}
+			divider_light = {
+				min_width = 100
+				parentanchor = hcenter
+			}
+			widget ={
+				size = {0 4}
+			}
+
+			flowcontainer = {
+				ignoreinvisible = yes
+				parentanchor = hcenter
 
 				icon_button_mapmode = {
 					name = "confederations"
@@ -717,23 +735,9 @@ types MapModes
 						shortcut = "map_mode_17"
 					}
 				}
-			}
 
-			widget ={
-				size = {0 4}
-			}
-			divider_light = {
-				min_width = 100
-				parentanchor = hcenter
-			}
-			widget ={
-				size = {0 4}
-			}
-
-			flowcontainer = {
-				ignoreinvisible = yes
-				parentanchor = hcenter
-
+				### leo_oae: pulled up from the row below, which needs the slot
+				### back for Governors. Reading order is unchanged.
 				icon_button_mapmode = {
 					name = "map_mode_counties_button"
 					parentanchor = vcenter
@@ -754,6 +758,22 @@ types MapModes
 						shortcut = "map_mode_6"
 					}
 				}
+			}
+
+			widget ={
+				size = {0 4}
+			}
+			divider_light = {
+				min_width = 100
+				parentanchor = hcenter
+			}
+			widget ={
+				size = {0 4}
+			}
+
+			flowcontainer = {
+				ignoreinvisible = yes
+				parentanchor = hcenter
 
 				icon_button_mapmode = {
 					name = "map_mode_hegemonies_button"
@@ -802,7 +822,9 @@ types MapModes
 					}
 				}
 
-				### leo_oae: Governors. The only addition to this file.
+				### leo_oae: Governors, next to Governments where it belongs by
+				### subject. The two vanilla buttons pulled up a row above are
+				### what pays for the slot, so this row still holds four.
 				###
 				### Selects the map mode the Administrative Government panel
 				### switches to on open and drops on close, so the view can be
