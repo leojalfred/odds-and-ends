@@ -1,0 +1,13 @@
+﻿l_simp_chinese:
+
+ ### Governors map mode.
+ ###
+ ### The engine builds a map mode's name and description keys out of the map
+ ### mode's own name, so these two cannot carry the leo_oae_ prefix. They are
+ ### aliases and nothing else: the prose lives under our own keys below, the way
+ ### vanilla points its map mode names at MAPMODE_* keys.
+ admin_vassal_types_map:0 "$leo_oae_govmap_name$"
+ admin_vassal_types_map_desc:0 "$leo_oae_govmap_desc$"
+
+ leo_oae_govmap_name:0 "@leo_oae_governor_icon! 总督"
+ leo_oae_govmap_desc:0 "#T 总督#!\n按[direct_vassals|E]在[realm|E]中担任的角色显示他们，与行政政府面板打开时的视图相同。"
