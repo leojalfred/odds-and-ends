@@ -25,19 +25,20 @@
  ### tooltip box at all, and the dropdown's own tooltip already says what graying
  ### means.
  leo_oae_mbge_decision:0 "Masowe wzmacnianie zarządzania"
- leo_oae_mbge_decision_desc:0 "Wzmocnij [governor_efficiency|E] u wielu gubernatorów naraz, zamiast robić to po kolei.\n\nOtwiera panel, w którym wybierasz sposób i których gubernatorów objąć. Nic nie zostanie wydane, dopóki tam tego nie potwierdzisz.\n\n#weak Możesz go też otworzyć w każdej chwili skrótem $SHORTCUT_KEY_MOD_ctrl$$SHORTCUT_KEY_MOD_shift$B.#!"
+ leo_oae_mbge_decision_desc:0 "Wzmocnij [governor_efficiency|E] u wielu [Concept('governors','gubernatorów')|E] naraz, zamiast robić to po kolei.\n\nOtwiera panel, w którym wybierasz sposób i których gubernatorów objąć. Nic nie zostanie wydane, dopóki tam tego nie potwierdzisz.\n\n#weak Możesz go też otworzyć w każdej chwili skrótem $SHORTCUT_KEY_MOD_ctrl$$SHORTCUT_KEY_MOD_shift$B.#!"
  leo_oae_mbge_decision_tooltip:0 "Otwórz panel masowego wzmacniania"
  leo_oae_mbge_decision_confirm:0 "Otwórz panel"
  leo_oae_mbge_decision_effect_tt:0 "Otwiera panel. Nic nie zostanie wydane, dopóki nie wzmocnisz stamtąd."
 
  leo_oae_mbge_ui_heading_method:0 "Sposób"
- leo_oae_mbge_ui_heading_method_tt:0 "Te same pięć, które gra oferuje dla jednego gubernatora, użyte wobec każdego, kogo obejmie działanie."
- leo_oae_mbge_ui_heading_targets_tt:0 "Kogo obejmie działanie. Wybór jest wyłączony, jeśli nikogo nie obejmuje lub jeśli nie stać cię na opłacenie go w całości."
+ leo_oae_mbge_ui_heading_method_tt:0 "Te same pięć, które gra oferuje dla jednego [Concept('governor','gubernatora')|E], użyte wobec każdego, kogo obejmie działanie."
+ leo_oae_mbge_ui_heading_targets_tt:0 "Których [Concept('governors','gubernatorów')|E] obejmie działanie. Wybór jest wyłączony, jeśli nikogo nie obejmuje lub jeśli nie stać cię na opłacenie go w całości."
  leo_oae_mbge_ui_heading_order:0 "Kolejność"
- leo_oae_mbge_ui_heading_order_tt:0 "Do kogo pieniądze trafią najpierw, gdy nie starczy ich dla wszystkich. Ma znaczenie tylko przy $gold_boost_desc$, jedynym sposobie, którego cena bywa inna dla każdego gubernatora."
+ leo_oae_mbge_ui_heading_order_tt:0 "Do kogo pieniądze trafią najpierw, gdy nie starczy ich dla wszystkich. Ma znaczenie tylko przy $gold_boost_desc$, jedynym sposobie, którego cena bywa inna dla każdego [Concept('governor','gubernatora')|E]."
  leo_oae_mbge_ui_heading_governors:0 "Gubernatorzy"
  leo_oae_mbge_ui_heading_summary:0 "Podsumowanie"
- leo_oae_mbge_ui_row_tt:0 "Uwzględnij tego gubernatora przy wzmacnianiu zarządzania."
+ leo_oae_mbge_ui_row_tt:0 "Uwzględnij tego [Concept('governor','gubernatora')|E] przy wzmacnianiu zarządzania."
+ leo_oae_mbge_ui_row_gold:0 "@gold_icon! [Character.MakeScope.ScriptValue('medium_gold_value')|0]"
 
  leo_oae_mbge_ui_opt_0:0 "#weak Wybierz sposób#!"
  leo_oae_mbge_ui_opt_1:0 "$influence_boost_desc$"
@@ -46,11 +47,11 @@
  leo_oae_mbge_ui_opt_4:0 "$stewardship_boost_desc$ #weak ([GetPlayer.MakeScope.ScriptValue('leo_oae_mbge_chance_stewardship')|0]%)#!"
  leo_oae_mbge_ui_opt_5:0 "$intrigue_boost_desc$ #weak ([GetPlayer.MakeScope.ScriptValue('leo_oae_mbge_chance_intrigue')|0]%)#!"
 
- leo_oae_mbge_ui_opt_1_tt:0 "@influence_icon! [EmptyScope.ScriptValue('leo_oae_mbge_divert_influence_value')|0] za gubernatora. Zawsze się udaje."
- leo_oae_mbge_ui_opt_2_tt:0 "@influence_icon! [EmptyScope.ScriptValue('minor_influence_value')|0] za gubernatora, plus @gold_icon! złoto proporcjonalne do jego dochodów, więc zamożny kosztuje więcej. Zawsze się udaje."
- leo_oae_mbge_ui_opt_3_tt:0 "@influence_icon! [EmptyScope.ScriptValue('minor_influence_value')|0] za gubernatora. Wystawia na próbę twoją [diplomacy|E] i może się nie udać. Płacisz tak czy inaczej."
- leo_oae_mbge_ui_opt_4_tt:0 "@influence_icon! [EmptyScope.ScriptValue('minor_influence_value')|0] za gubernatora. Wystawia na próbę twoje [stewardship|E] i może się nie udać. Płacisz tak czy inaczej."
- leo_oae_mbge_ui_opt_5_tt:0 "@influence_icon! [EmptyScope.ScriptValue('minor_influence_value')|0] za gubernatora. Wystawia na próbę twoją [intrigue|E] i może się nie udać. Płacisz tak czy inaczej."
+ leo_oae_mbge_ui_opt_1_tt:0 "@influence_icon! [EmptyScope.ScriptValue('leo_oae_mbge_divert_influence_value')|0] za [Concept('governor','gubernatora')|E]. Zawsze się udaje."
+ leo_oae_mbge_ui_opt_2_tt:0 "@influence_icon! [EmptyScope.ScriptValue('minor_influence_value')|0] za [Concept('governor','gubernatora')|E], plus @gold_icon! złoto proporcjonalne do jego dochodów, więc zamożny kosztuje więcej. Zawsze się udaje."
+ leo_oae_mbge_ui_opt_3_tt:0 "@influence_icon! [EmptyScope.ScriptValue('minor_influence_value')|0] za [Concept('governor','gubernatora')|E]. Wystawia na próbę twoją [diplomacy|E] i może się nie udać. Płacisz tak czy inaczej."
+ leo_oae_mbge_ui_opt_4_tt:0 "@influence_icon! [EmptyScope.ScriptValue('minor_influence_value')|0] za [Concept('governor','gubernatora')|E]. Wystawia na próbę twoje [stewardship|E] i może się nie udać. Płacisz tak czy inaczej."
+ leo_oae_mbge_ui_opt_5_tt:0 "@influence_icon! [EmptyScope.ScriptValue('minor_influence_value')|0] za [Concept('governor','gubernatora')|E]. Wystawia na próbę twoją [intrigue|E] i może się nie udać. Płacisz tak czy inaczej."
 
  leo_oae_mbge_ui_t_m40:0 "Poniżej -40%"
  leo_oae_mbge_ui_t_m30:0 "Poniżej -30%"
@@ -89,8 +90,8 @@
  leo_oae_mbge_ui_order_0:0 "#weak Wybierz kolejność#!"
  leo_oae_mbge_ui_order_1:0 "Najgorsze zarządzanie najpierw"
  leo_oae_mbge_ui_order_2:0 "Najtańsi najpierw"
- leo_oae_mbge_ui_order_1_tt:0 "Wydawaj najpierw tam, gdzie [governor_efficiency|E] jest najniższa, aby pomoc trafiła do najgorszych, nawet jeśli obejmie mniej osób."
- leo_oae_mbge_ui_order_2_tt:0 "Wydawaj najpierw na najtańszych, aby za te same pieniądze objąć jak najwięcej osób."
+ leo_oae_mbge_ui_order_1_tt:0 "Wydawaj najpierw na [Concept('governors','gubernatorów')|E] z najniższą [governor_efficiency|E], aby pomoc trafiła do najgorszych, nawet jeśli obejmie mniej osób."
+ leo_oae_mbge_ui_order_2_tt:0 "Wydawaj najpierw na najtańszych [Concept('governors','gubernatorów')|E], aby za te same pieniądze objąć jak najwięcej osób."
 
  leo_oae_mbge_ui_summary:0 "Gubernatorów do wzmocnienia: #T [GetPlayer.MakeScope.Var('leo_oae_mbge_count').GetValue|0]#!"
  leo_oae_mbge_ui_summary_cost:0 "Całkowity koszt: @influence_icon! [GetPlayer.MakeScope.Var('leo_oae_mbge_infl').GetValue|0]"

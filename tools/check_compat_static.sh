@@ -280,6 +280,12 @@ use  "GetPlayer.IsRuler"                 "GetPlayer\.IsRuler"
 use  "GetPlayer.IsAdult"                 "GetPlayer\.IsAdult"
 use  "HasRule( 'administrative' )"       "HasRule\( *'administrative' *\)"
 def  "on_game_start_after_lobby" "common/on_action" "^on_game_start_after_lobby = [{]"
+# The settings live on the player's character, so an heir starts without them.
+# There is no on_action for the player's character changing, and gaining a title
+# is the closest thing to one. If a patch ever adds a real hook, prefer it: this
+# one fires for every character in the world and leans on its trigger to be
+# cheap.
+def  "on_title_gain"             "common/on_action" "^on_title_gain = [{]"
 # The shortcut. Same arrangement as the map mode's: vanilla pre-binds the
 # combination, the mod only names it.
 def  "_ctrl_shift_b still bound"          "gui/shortcuts.shortcuts" "_ctrl_shift_b = \"ctrl\+shift\+b\""
@@ -306,6 +312,10 @@ def  "SHORTCUT_KEY_MOD_ctrl"   "localization/english" "^ *SHORTCUT_KEY_MOD_ctrl:
 def  "SHORTCUT_KEY_MOD_shift"  "localization/english" "^ *SHORTCUT_KEY_MOD_shift:"
 def  "governor_efficiency concept"  "common/game_concepts" "^governor_efficiency = [{]"
 def  "governor concept"             "common/game_concepts" "^governor = [{]"
+# Linked as [governors|E] in most languages and, where the noun has to inflect,
+# as Concept('governors','...'). Both forms resolve through this alias, so it is
+# named here rather than assumed.
+def  "governors concept alias"      "common/game_concepts" "alias = [{] governors "
 # Linked as [diplomacy|E] and friends, which are aliases rather than concepts in
 # their own right.
 def  "skill concept aliases"        "common/game_concepts" "alias = [{] diplomacy_i diplomacy [}]"

@@ -22,12 +22,21 @@
 # computed value on the left of a comparison is not reliable in every trigger
 # context, and staging it costs nothing here because the caller needs the
 # number anyway.
+#
+# The staged name is leo_oae_mbge_cand and not leo_oae_mbge_gov, which would
+# read better, because leo_oae_mbge_gov is a *permanent* scope: the row's
+# checkbox hands its character over under that name, so the scripted GUI
+# declares it in saved_scopes and it outlives the click. A temporary scope
+# cannot take a name a permanent one already holds, and the engine refuses the
+# save rather than shadowing it, so reusing the name would leave every read
+# here pointing at whichever row was ticked last instead of the governor being
+# iterated. The two names must stay distinct.
 leo_oae_mbge_target_trigger = {
-	save_temporary_scope_as = leo_oae_mbge_gov
+	save_temporary_scope_as = leo_oae_mbge_cand
 
 	scope:leo_oae_mbge_actor = {
 		is_character_interaction_valid = {
-			recipient = scope:leo_oae_mbge_gov
+			recipient = scope:leo_oae_mbge_cand
 			interaction = boost_efficiency_interaction
 		}
 	}
@@ -63,9 +72,20 @@ leo_oae_mbge_target_trigger = {
 # scripted GUI per row per frame or splitting the pool into two lists, which
 # made rows jump between them on every click. It also means the test lives in
 # the same scope as the thing it tests, with no cross-scope read at all.
+#
+# The variable is read behind has_variable rather than on its own. The recount
+# seeds it on every governor it walks, but this trigger is also asked of
+# governors the recount has never reached: the apply loop iterates live, so a
+# governor who became eligible since the last recount arrives here unseeded.
+# Reading an unset variable is not merely untidy, it errors three times over
+# and leaves the comparison's answer up to the engine. Absent means not set
+# aside, which is the same thing a seeded zero means.
 leo_oae_mbge_included_trigger = {
 	leo_oae_mbge_target_trigger = yes
-	NOT = { var:leo_oae_mbge_excl = 1 }
+	trigger_if = {
+		limit = { has_variable = leo_oae_mbge_excl }
+		NOT = { var:leo_oae_mbge_excl = 1 }
+	}
 }
 
 # Current scope: the player. Requires scope:leo_oae_mbge_eff, the efficiency of

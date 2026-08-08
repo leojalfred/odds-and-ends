@@ -26,3 +26,22 @@ leo_oae_mbge_on_game_start = {
 		}
 	}
 }
+
+### After a succession.
+#
+# The settings live on the player's character, and the panel is created at game
+# start and reads them for the whole session. So an heir inherits a window that
+# is already pointed at variables only their predecessor ever had.
+#
+# There is no on_action for the player's character changing: the closest hook is
+# gaining a title, which every character in the world does. The trigger is what
+# keeps that cheap, and the effect is idempotent, so the several titles an heir
+# inherits at once cost a handful of has_variable checks between them.
+on_title_gain = {
+	on_actions = { leo_oae_mbge_on_title_gain }
+}
+
+leo_oae_mbge_on_title_gain = {
+	trigger = { is_ai = no }
+	effect = { leo_oae_mbge_init_defaults_effect = yes }
+}

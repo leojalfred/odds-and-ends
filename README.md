@@ -71,8 +71,9 @@ The shortest run that exercises every gate and the happy path once. Start an adm
 8. Run **As Many As I Can Afford** with enough on hand for everyone and confirm it reaches all of them, not one. Then run it with enough for only two or three and confirm influence lands at or above zero, never below.
 9. Click **Bolster Governance** at the bottom of the panel once, and confirm the whole selection is bolstered in that single click without leaving the page. The count and cost above should drop to reflect what is left.
 10. Untick a governor and confirm the count and the total both drop, that the row stays exactly where it was, and that re-ticking restores both. Then untick one and bolster, and confirm they were left alone.
-11. As a vassal governor rather than the ruler at the top, confirm your peers appear in the pool.
-12. Save with the panel open, reload, and confirm it is shut and your settings survived.
+11. Pick a threshold that catches only one or two governors and untick all of them. The count must fall to zero and the dropdown must go on reading the threshold you chose. If it jumps to Every Eligible Governor, an empty level is being mistaken for one you cannot pay for, and the next click would spend on governors you never selected.
+12. As a vassal governor rather than the ruler at the top, confirm your peers appear in the pool.
+13. Save with the panel open, reload, and confirm it is shut and your settings survived.
 
 **The test that actually matters** is that a mass bolster is indistinguishable from a hand-sent one. Record your influence, your gold, a governor's efficiency, their modifier, their efficiency stack and their cooldown. Bolster that governor by hand with Divert Resources and record every delta. Reload, then mass-bolster that same governor alone with the same method. Every delta must match exactly. Repeat for Grease Palms, whose gold price is worked out per governor and is the likeliest place for a mismatch to hide.
 
