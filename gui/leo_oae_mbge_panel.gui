@@ -123,25 +123,26 @@ types leo_oae_mbge_dropdown_types {
 						max_width = 300
 					}
 
-					expand = {}
-
 					# Only Grease Palms charges gold, and only it charges a
 					# different amount per governor, so it is the one method
-					# where a per-row price says anything. It sits at the end of
-					# the title line, which is otherwise empty, rather than on the
-					# line below, which already carries four things.
+					# where a per-row price says anything. It follows the title
+					# directly, before the expand, so it reads as part of that
+					# line rather than as a column pinned to the far edge. It is
+					# on this line and not the one below because that one already
+					# carries four things.
 					#
 					# The icon is a widget rather than the @gold_icon! texticon
 					# the summary line uses, because that one renders at 25 square
-					# and dwarfs both of the row's other icons. A widget takes a
-					# size, and the box's spacing sets the gap to the number,
-					# neither of which a texticon inside a loc string will give up.
+					# and cannot be told otherwise. A widget takes a size, and the
+					# box's spacing sets the gap to the number, neither of which a
+					# texticon inside a loc string will give up.
 					hbox = {
 						visible = "[EqualTo_CFixedPoint( GetPlayer.MakeScope.Var('leo_oae_mbge_opt').GetValue, '(CFixedPoint)2' )]"
+						margin_left = 8
 						spacing = 1
 
 						icon_gold = {
-							size = { 16 16 }
+							size = { 20 20 }
 						}
 
 						text_single = {
@@ -150,6 +151,8 @@ types leo_oae_mbge_dropdown_types {
 							align = nobaseline
 						}
 					}
+
+					expand = {}
 				}
 
 				### How well they govern, then who they are.
@@ -217,7 +220,10 @@ types leo_oae_mbge_dropdown_types {
 
 					icon = {
 						visible = "[Not( Character.IsDeadAndValid )]"
-						size = { 18 18 }
+						# 20 square, as every icon in this row is. They sit on
+						# three different lines, so a size that drifts reads as
+						# one of them being wrong rather than as variety.
+						size = { 20 20 }
 						framesize = { 60 60 }
 						frame = "[Character.GetHealthIconFrame]"
 						texture = "gfx/interface/icons/character_status/icon_health.dds"
