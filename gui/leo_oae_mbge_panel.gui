@@ -65,11 +65,19 @@ types leo_oae_mbge_dropdown_types {
 
 	### One governor in the list.
 	###
-	### Laid out the way vanilla lays out a character row (shared/lists.gui): a
-	### portrait, then a block of text beside it, with an expand pushing
-	### everything left. Text widgets are left at their natural width and the
-	### expand does the aligning, rather than making each text expanding, which
-	### is what left the names floating in the middle of the row.
+	### Mirrors vanilla's own governor row, widget_current_governor
+	### (window_admin_vassal_detail.gui:719): a backed panel holding a portrait,
+	### a block of text beside it, and a button in a column of its own at the
+	### top right. The checkbox stands where vanilla puts the interactions
+	### button. Re-diff after a game patch.
+	###
+	### Two deliberate departures. The portrait is portrait_head_small rather
+	### than portrait_head, so a list of a dozen governors does not become a
+	### page of scrolling, and the name and age are set smaller to match it:
+	### vanilla's hbox_character_view_name_age_health hardcodes fontsize 20 and
+	### exposes no block for it, so the line is rebuilt here at 16 rather than
+	### used directly. Its two loc keys are reused as they are, so the name and
+	### age still read and translate exactly as the character sheet writes them.
 	###
 	### Used twice, once per list, and the tick is a literal handed in by
 	### whichever list the row came from. Nothing here is evaluated while the
@@ -80,62 +88,107 @@ types leo_oae_mbge_dropdown_types {
 	### Clicking still runs script, which is fine because a click is not a
 	### frame. The row hands its own character over as scope:leo_oae_mbge_gov,
 	### which is what lets one template serve every row.
-	type leo_oae_mbge_governor_row = hbox {
+	type leo_oae_mbge_governor_row = widget {
 		datacontext = "[Scope.Char]"
 		layoutpolicy_horizontal = expanding
-		size = { 0 90 }
-		spacing = 8
-		margin_left = 2
-		margin_right = 8
+		size = { 0 100 }
 
-		button_checkbox = {
-			parentanchor = vcenter
-			size = { 24 24 }
-			tooltip = "leo_oae_mbge_ui_row_tt"
-			onclick = "[GetScriptedGui('leo_oae_mbge_toggle_exclude').Execute( GuiScope.SetRoot( GetPlayer.MakeScope ).AddScope( 'leo_oae_mbge_gov', Character.MakeScope ).End )]"
-			block "checked" {}
+		background = {
+			using = Background_Area
 		}
 
-		portrait_head_small = {}
-
-		vbox = {
-			parentanchor = vcenter
+		hbox = {
 			layoutpolicy_horizontal = expanding
-			spacing = 2
+			layoutpolicy_vertical = expanding
+			margin = { 5 0 }
+			spacing = 5
 
-			hbox = {
+			portrait_head_small = {}
+
+			vbox = {
 				layoutpolicy_horizontal = expanding
+				layoutpolicy_vertical = expanding
+				margin_top = 10
 
-				text_single = {
-					text = "[Character.GetShortUINameNoTooltip]"
-					align = nobaseline
-					max_width = 250
+				### Name and age, as the character sheet writes them.
+				hbox = {
+					layoutpolicy_horizontal = expanding
+
+					text_single = {
+						text = "CHARACTER_VIEW_NAME_SHORT"
+						default_format = "#medium"
+						fontsize = 16
+						fontsize_min = 12
+						align = nobaseline
+						max_width = 230
+						tooltip = "CHARACTER_VIEW_NAME_TT"
+					}
+
+					text_single = {
+						text = "CHARACTER_VIEW_AGE"
+						default_format = "#low"
+						fontsize = 16
+						align = nobaseline
+						max_width = 28
+						tooltip = "CHARACTER_VIEW_AGE_TT"
+					}
+
+					icon = {
+						visible = "[Not( Character.IsDeadAndValid )]"
+						margin_left = 4
+						size = { 19 19 }
+						framesize = { 60 60 }
+						frame = "[Character.GetHealthIconFrame]"
+						texture = "gfx/interface/icons/character_status/icon_health.dds"
+						tooltip = "CHARACTER_VIEW_ALIVE_TT"
+					}
+
+					expand = {}
+				}
+
+				### What the run cares about.
+				hbox = {
+					layoutpolicy_horizontal = expanding
+					margin_top = 4
+					spacing = 12
+
+					# Their governance now, which is what the thresholds are
+					# measured against. Written inline rather than through a loc
+					# key because the only words in it are a percent sign and an
+					# icon.
+					text_single = {
+						text = "[Character.MakeScope.ScriptValue('governor_efficiency_presented')|0]%"
+						align = nobaseline
+						default_format = "#weak"
+					}
+
+					# Only Grease Palms charges gold, and only it charges a
+					# different amount per governor, so it is the one method
+					# where a per-row price says anything.
+					text_single = {
+						visible = "[EqualTo_CFixedPoint( GetPlayer.MakeScope.Var('leo_oae_mbge_opt').GetValue, '(CFixedPoint)2' )]"
+						text = "@gold_icon! [Character.MakeScope.ScriptValue('medium_gold_value')|0]"
+						align = nobaseline
+						default_format = "#weak"
+					}
+
+					expand = {}
 				}
 
 				expand = {}
 			}
 
-			hbox = {
-				layoutpolicy_horizontal = expanding
-				spacing = 12
+			### Where vanilla puts the interactions button.
+			vbox = {
+				layoutpolicy_vertical = expanding
+				margin_top = 12
+				margin_right = 5
 
-				# Their governance now, which is what the thresholds are
-				# measured against. Written inline rather than through a loc key
-				# because the only words in it are a percent sign and an icon.
-				text_single = {
-					text = "[Character.MakeScope.ScriptValue('governor_efficiency_presented')|0]%"
-					align = nobaseline
-					default_format = "#weak"
-				}
-
-				# Only Grease Palms charges gold, and only it charges a
-				# different amount per governor, so it is the one method where a
-				# per-row price says anything.
-				text_single = {
-					visible = "[EqualTo_CFixedPoint( GetPlayer.MakeScope.Var('leo_oae_mbge_opt').GetValue, '(CFixedPoint)2' )]"
-					text = "@gold_icon! [Character.MakeScope.ScriptValue('medium_gold_value')|0]"
-					align = nobaseline
-					default_format = "#weak"
+				button_checkbox = {
+					size = { 26 26 }
+					tooltip = "leo_oae_mbge_ui_row_tt"
+					onclick = "[GetScriptedGui('leo_oae_mbge_toggle_exclude').Execute( GuiScope.SetRoot( GetPlayer.MakeScope ).AddScope( 'leo_oae_mbge_gov', Character.MakeScope ).End )]"
+					block "checked" {}
 				}
 
 				expand = {}
@@ -463,7 +516,7 @@ window = {
 							layoutpolicy_horizontal = expanding
 							margin = { 6 4 }
 							margin_top = 8
-							spacing = 2
+							spacing = 4
 
 							# Script clears these at the start of every rebuild,
 							# so when there is nobody to show they are empty and
@@ -488,7 +541,7 @@ window = {
 						vbox = {
 							layoutpolicy_horizontal = expanding
 							margin = { 6 4 }
-							spacing = 2
+							spacing = 4
 
 							datamodel = "[GetPlayer.MakeScope.GetList('leo_oae_mbge_skipped')]"
 

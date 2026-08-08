@@ -247,6 +247,16 @@ use  "scrollbox_background_fade block" "block \"scrollbox_background_fade\""
 # checkbox hands that character to script through AddScope, which the scripted
 # GUI receives because it declares saved_scopes.
 def  "button_checkbox type"  "gui/shared/buttons.gui" "type button_checkbox = "
+# The row copies the shape of vanilla's own governor row, and reuses the
+# character sheet's own name and age lines so they read and translate the same.
+def  "widget_current_governor (the row we mirror)" \
+     "gui/window_admin_vassal_detail.gui" "type widget_current_governor = "
+use  "portrait_head_small"   "type portrait_head_small = "
+use  "Background_Area"       "template Background_Area\b"
+use  "GetHealthIconFrame"    "GetHealthIconFrame"
+file "health icon"           "gfx/interface/icons/character_status/icon_health.dds"
+def  "CHARACTER_VIEW_NAME_SHORT" "localization/english" "^ *CHARACTER_VIEW_NAME_SHORT:"
+def  "CHARACTER_VIEW_AGE"        "localization/english" "^ *CHARACTER_VIEW_AGE:"
 use  "Scope.Char"            "Scope\.Char"
 use  "AddScope with a character" "AddScope\( *'[a-z_]+', *Character\.MakeScope *\)"
 def  "saved_scopes on scripted guis" "common/scripted_guis" "saved_scopes = [{]"

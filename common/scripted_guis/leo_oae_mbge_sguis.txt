@@ -101,14 +101,17 @@ leo_oae_mbge_set_opt_5 = {
 ### How far down the list to go.
 #
 # Every bucket was already counted and priced by the last recount, so picking
-# one only copies its figures onto the summary line. Codes are append-only:
-# they persist in saves.
+# one only copies its figures onto the summary line. It does have to rebuild the
+# list of governors underneath, though, which is per selection rather than per
+# bucket: leaving that out was what left the list showing one threshold's
+# governors while the summary described another. Codes are append-only: they
+# persist in saves.
 
 leo_oae_mbge_set_t_m40 = {
 	scope = character
 	effect = {
 		set_variable = { name = leo_oae_mbge_thresh value = 1 }
-		leo_oae_mbge_select_bucket_effect = yes
+		leo_oae_mbge_reselect_effect = yes
 	}
 }
 
@@ -116,7 +119,7 @@ leo_oae_mbge_set_t_m30 = {
 	scope = character
 	effect = {
 		set_variable = { name = leo_oae_mbge_thresh value = 2 }
-		leo_oae_mbge_select_bucket_effect = yes
+		leo_oae_mbge_reselect_effect = yes
 	}
 }
 
@@ -124,7 +127,7 @@ leo_oae_mbge_set_t_m20 = {
 	scope = character
 	effect = {
 		set_variable = { name = leo_oae_mbge_thresh value = 3 }
-		leo_oae_mbge_select_bucket_effect = yes
+		leo_oae_mbge_reselect_effect = yes
 	}
 }
 
@@ -132,7 +135,7 @@ leo_oae_mbge_set_t_m10 = {
 	scope = character
 	effect = {
 		set_variable = { name = leo_oae_mbge_thresh value = 4 }
-		leo_oae_mbge_select_bucket_effect = yes
+		leo_oae_mbge_reselect_effect = yes
 	}
 }
 
@@ -140,7 +143,7 @@ leo_oae_mbge_set_t_0 = {
 	scope = character
 	effect = {
 		set_variable = { name = leo_oae_mbge_thresh value = 5 }
-		leo_oae_mbge_select_bucket_effect = yes
+		leo_oae_mbge_reselect_effect = yes
 	}
 }
 
@@ -148,7 +151,7 @@ leo_oae_mbge_set_t_10 = {
 	scope = character
 	effect = {
 		set_variable = { name = leo_oae_mbge_thresh value = 6 }
-		leo_oae_mbge_select_bucket_effect = yes
+		leo_oae_mbge_reselect_effect = yes
 	}
 }
 
@@ -156,7 +159,7 @@ leo_oae_mbge_set_t_20 = {
 	scope = character
 	effect = {
 		set_variable = { name = leo_oae_mbge_thresh value = 7 }
-		leo_oae_mbge_select_bucket_effect = yes
+		leo_oae_mbge_reselect_effect = yes
 	}
 }
 
@@ -164,7 +167,7 @@ leo_oae_mbge_set_t_30 = {
 	scope = character
 	effect = {
 		set_variable = { name = leo_oae_mbge_thresh value = 8 }
-		leo_oae_mbge_select_bucket_effect = yes
+		leo_oae_mbge_reselect_effect = yes
 	}
 }
 
@@ -172,7 +175,7 @@ leo_oae_mbge_set_t_all = {
 	scope = character
 	effect = {
 		set_variable = { name = leo_oae_mbge_thresh value = 9 }
-		leo_oae_mbge_select_bucket_effect = yes
+		leo_oae_mbge_reselect_effect = yes
 	}
 }
 
@@ -180,7 +183,7 @@ leo_oae_mbge_set_t_bud = {
 	scope = character
 	effect = {
 		set_variable = { name = leo_oae_mbge_thresh value = 10 }
-		leo_oae_mbge_select_bucket_effect = yes
+		leo_oae_mbge_reselect_effect = yes
 	}
 }
 
@@ -237,12 +240,12 @@ leo_oae_mbge_clear_exclusions = {
 # page and confirming on another with the settings out of sight. This button
 # sits under the summary it acts on, and one click runs the whole thing.
 #
-# is_valid is what actually protects the treasury, because it is re-asked every
-# frame while the numbers on screen are only as fresh as the last recount. It
-# asks three things: that the feature still applies, that the last count found
-# someone, and that there is influence enough for at least one bolster right
-# now. Whether each individual governor can be paid for is checked again as the
-# run reaches them.
+# is_valid is the authoritative check on the click. The panel grays the button
+# from two variables rather than asking here, so that nothing in the window runs
+# script per frame, and this is what catches the gap: it asks that the feature
+# still applies, that the last count found someone, and that there is influence
+# enough for at least one bolster right now. Whether each individual governor
+# can be paid for is checked again as the run reaches them.
 leo_oae_mbge_apply = {
 	scope = character
 	is_valid = {

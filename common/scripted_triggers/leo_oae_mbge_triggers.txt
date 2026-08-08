@@ -70,18 +70,32 @@ leo_oae_mbge_included_trigger = {
 	}
 }
 
-# Membership of the selected threshold is not a trigger at all any more.
+# Current scope: the player. Requires scope:leo_oae_mbge_eff, the efficiency of
+# the governor being considered.
 #
-# It used to be one, and it silently never filtered: reading the player's
-# threshold from the governor's scope, through a trigger_if nested inside an
-# iterator's limit, passed everything. The count came out right because the
-# counting pass compares efficiency directly, so only the list and the run were
-# wrong, and the run is the half that spends influence.
+# Whether that governor falls under the threshold currently selected. The
+# governor's efficiency is the governor's; the only thing the player holds is
+# which threshold was picked, which is why this is asked here.
 #
-# What replaced it is a single comparison between two staged values,
-# scope:leo_oae_mbge_eff against scope:leo_oae_mbge_cut, with the cutoff worked
-# out once on the player before each pass by leo_oae_mbge_set_cut_effect. No
-# cross-scope reads, no nesting, and one place to be wrong instead of nine.
+# Every comparison is a staged value against a literal, which is the shape the
+# counting pass uses and the only shape proven to work. Two earlier versions
+# silently matched everything: one read the threshold across scopes from inside
+# an iterator's limit, the other compared two staged values against each other
+# (scope:eff < scope:cut). Neither erred, they just passed, and the count came
+# out right anyway because the counting pass never used them. Keep the literals.
+leo_oae_mbge_row_shown_trigger = {
+	trigger_if =      { limit = { var:leo_oae_mbge_thresh = 1 } scope:leo_oae_mbge_eff < -40 }
+	trigger_else_if = { limit = { var:leo_oae_mbge_thresh = 2 } scope:leo_oae_mbge_eff < -30 }
+	trigger_else_if = { limit = { var:leo_oae_mbge_thresh = 3 } scope:leo_oae_mbge_eff < -20 }
+	trigger_else_if = { limit = { var:leo_oae_mbge_thresh = 4 } scope:leo_oae_mbge_eff < -10 }
+	trigger_else_if = { limit = { var:leo_oae_mbge_thresh = 5 } scope:leo_oae_mbge_eff < 0 }
+	trigger_else_if = { limit = { var:leo_oae_mbge_thresh = 6 } scope:leo_oae_mbge_eff < 10 }
+	trigger_else_if = { limit = { var:leo_oae_mbge_thresh = 7 } scope:leo_oae_mbge_eff < 20 }
+	trigger_else_if = { limit = { var:leo_oae_mbge_thresh = 8 } scope:leo_oae_mbge_eff < 30 }
+	# 9 is every eligible governor, 10 is the budget walk. Neither filters by
+	# efficiency.
+	trigger_else = { always = yes }
+}
 
 # Current scope: the player. Requires scope:leo_oae_mbge_actor and, when the
 # selected option is Grease Palms, scope:leo_oae_mbge_gold_cost.

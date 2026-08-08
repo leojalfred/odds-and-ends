@@ -206,22 +206,17 @@ leo_oae_mbge_recount_effect = {
 	leo_oae_mbge_build_targets_effect = yes
 }
 
-# Current scope: the player. The efficiency a governor has to be under to count
-# as inside the selected threshold.
+
+# Current scope: the player. What changing the threshold needs, and no more.
 #
-# Codes 9 and 10 are every eligible governor and the budget walk, neither of
-# which filters by efficiency, so they get a cutoff nothing can reach: vanilla
-# already refuses anyone above 40.
-leo_oae_mbge_set_cut_effect = {
-	if =      { limit = { var:leo_oae_mbge_thresh = 1 } set_variable = { name = leo_oae_mbge_cut value = -40 } }
-	else_if = { limit = { var:leo_oae_mbge_thresh = 2 } set_variable = { name = leo_oae_mbge_cut value = -30 } }
-	else_if = { limit = { var:leo_oae_mbge_thresh = 3 } set_variable = { name = leo_oae_mbge_cut value = -20 } }
-	else_if = { limit = { var:leo_oae_mbge_thresh = 4 } set_variable = { name = leo_oae_mbge_cut value = -10 } }
-	else_if = { limit = { var:leo_oae_mbge_thresh = 5 } set_variable = { name = leo_oae_mbge_cut value = 0 } }
-	else_if = { limit = { var:leo_oae_mbge_thresh = 6 } set_variable = { name = leo_oae_mbge_cut value = 10 } }
-	else_if = { limit = { var:leo_oae_mbge_thresh = 7 } set_variable = { name = leo_oae_mbge_cut value = 20 } }
-	else_if = { limit = { var:leo_oae_mbge_thresh = 8 } set_variable = { name = leo_oae_mbge_cut value = 30 } }
-	else =    {                                        set_variable = { name = leo_oae_mbge_cut value = 1000 } }
+# Every bucket was already counted and priced by the last recount, so picking
+# one only copies its figures onto the summary. The list on screen is not a
+# bucket, though: it is built per selection, and it has to be rebuilt here or it
+# goes on showing whoever the previously selected threshold caught while the
+# figures above it describe the new one.
+leo_oae_mbge_reselect_effect = {
+	leo_oae_mbge_select_bucket_effect = yes
+	leo_oae_mbge_build_targets_effect = yes
 }
 
 ### Who the run will actually visit.
@@ -250,12 +245,6 @@ leo_oae_mbge_build_targets_effect = {
 	clear_variable_list = leo_oae_mbge_skipped
 	set_variable = { name = leo_oae_mbge_excluded_count value = 0 }
 
-	leo_oae_mbge_set_cut_effect = yes
-	save_temporary_scope_value_as = {
-		name = leo_oae_mbge_cut
-		value = var:leo_oae_mbge_cut
-	}
-
 	top_liege = {
 		ordered_vassal = {
 			order_by = leo_oae_mbge_worst_first_value
@@ -263,17 +252,18 @@ leo_oae_mbge_build_targets_effect = {
 			check_range_bounds = no
 			limit = { leo_oae_mbge_target_trigger = yes }
 
-			# The threshold is applied here rather than in the limit above,
-			# because comparing two staged values needs them staged first.
+			# Staged the same way the counting pass stages it, and asked on the
+			# player because the threshold is what the player holds.
 			save_temporary_scope_value_as = {
 				name = leo_oae_mbge_eff
 				value = governor_efficiency_presented
 			}
-			if = {
-				limit = { scope:leo_oae_mbge_eff < scope:leo_oae_mbge_cut }
+			save_temporary_scope_as = leo_oae_mbge_gov
 
-				save_temporary_scope_as = leo_oae_mbge_gov
-				scope:leo_oae_mbge_actor = {
+			scope:leo_oae_mbge_actor = {
+				if = {
+					limit = { leo_oae_mbge_row_shown_trigger = yes }
+
 					if = {
 						limit = {
 							is_target_in_variable_list = {
@@ -626,12 +616,6 @@ leo_oae_mbge_apply_effect = {
 	else = {
 		# Worst first here too, so a budget that runs short mid-run spends what
 		# is left on the governors who needed it most.
-		leo_oae_mbge_set_cut_effect = yes
-		save_temporary_scope_value_as = {
-			name = leo_oae_mbge_cut
-			value = var:leo_oae_mbge_cut
-		}
-
 		top_liege = {
 			ordered_vassal = {
 				order_by = leo_oae_mbge_worst_first_value
@@ -646,12 +630,12 @@ leo_oae_mbge_apply_effect = {
 	leo_oae_mbge_recount_effect = yes
 }
 
-# Current scope: a governor. Requires scope:leo_oae_mbge_actor and
-# scope:leo_oae_mbge_cut.
+# Current scope: a governor. Requires scope:leo_oae_mbge_actor.
 #
 # The threshold is applied here rather than in the iterator's limit, because
-# comparing the governor's efficiency against the cutoff needs both staged as
-# values first, and staging is an effect.
+# staging the governor's efficiency is an effect and a limit takes only
+# triggers. Same shape as the list build, so the run and the list can never
+# disagree about who is in.
 leo_oae_mbge_try_bolster_in_bucket_effect = {
 	save_temporary_scope_value_as = {
 		name = leo_oae_mbge_eff
@@ -659,7 +643,9 @@ leo_oae_mbge_try_bolster_in_bucket_effect = {
 	}
 
 	if = {
-		limit = { scope:leo_oae_mbge_eff < scope:leo_oae_mbge_cut }
+		limit = {
+			scope:leo_oae_mbge_actor = { leo_oae_mbge_row_shown_trigger = yes }
+		}
 		leo_oae_mbge_try_bolster_effect = yes
 	}
 }
