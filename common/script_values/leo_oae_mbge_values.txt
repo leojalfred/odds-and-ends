@@ -1,0 +1,187 @@
+﻿### Leo VI's Odds and Ends - Mass Bolster Governance, costs and orderings.
+###
+### Every price here is read out of the same vanilla constants the interaction's
+### own cost block uses (06_ep3_interactions.txt:5733-5757), so a patch that
+### rebalances Bolster Governance rebalances this with it. Nothing is hardcoded
+### to a number vanilla could move.
+
+# Current scope: the player. What one bolster costs in influence under the
+# option currently selected.
+#
+# Vanilla charges minor_influence_value for every option and adds
+# medium_influence_value on top for Divert Resources, so three of the five cost
+# 30 and that one costs 90.
+#
+# Note that vanilla's own Divert Resources send_option only checks the player
+# holds medium_influence_gain, which is 60, while its cost block charges 90.
+# Nothing here copies that: every check in this feature is against the real
+# total. Demanding more than vanilla's menu does can only ever refuse a bolster
+# vanilla would have allowed, which is the safe direction to be wrong in.
+leo_oae_mbge_unit_influence_value = {
+	value = minor_influence_value
+	if = {
+		limit = { var:leo_oae_mbge_opt = 1 }
+		add = medium_influence_value
+	}
+}
+
+# Current scope: the player. The same figure as a loss, since change_influence
+# takes the signed amount.
+leo_oae_mbge_unit_influence_loss_value = {
+	value = 0
+	subtract = leo_oae_mbge_unit_influence_value
+}
+
+# Current scope: the player. Requires scope:leo_oae_mbge_b_count.
+# What a whole threshold bucket costs in influence. The per-governor influence
+# price never varies, so a bucket is just its count times the unit and needs no
+# accumulator of its own.
+leo_oae_mbge_bucket_influence_value = {
+	value = scope:leo_oae_mbge_b_count
+	multiply = leo_oae_mbge_unit_influence_value
+}
+
+# Current scope: the player. What the budget pass would have spent in influence
+# once one more governor is added to it.
+leo_oae_mbge_next_influence_value = {
+	value = var:leo_oae_mbge_bud_infl
+	add = leo_oae_mbge_unit_influence_value
+}
+
+# Current scope: the player. Requires scope:leo_oae_mbge_gold_cost.
+# The same for gold, which unlike influence differs per governor.
+leo_oae_mbge_next_gold_value = {
+	value = var:leo_oae_mbge_gold_t_bud
+	add = scope:leo_oae_mbge_gold_cost
+}
+
+# How many governors an ordered_vassal walk is allowed to reach.
+#
+# An ordered_* iterator visits exactly one item unless it is given a range, so
+# every walk in this feature has to say "all of them" out loud. Vanilla writes
+# the same thing as a big literal next to check_range_bounds = no
+# (00_fp1_wars.txt: "max = 100 # Basically, all of them."). This is set well
+# past any plausible number of governors under one top liege; without the
+# companion check_range_bounds = no it would complain whenever there are fewer.
+leo_oae_mbge_everyone_value = 500
+
+# What Divert Resources costs in influence, for the method tooltip to quote.
+# Localization can read a script value but cannot add two together, and this is
+# the one option whose price is not a vanilla constant on its own.
+leo_oae_mbge_divert_influence_value = {
+	value = minor_influence_value
+	add = medium_influence_value
+}
+
+# Requires scope:leo_oae_mbge_gold_cost. What one named governor costs to
+# bribe, wrapped as a script value so it can be handed to effects that take one.
+# The figure has to be staged by the caller because it is the governor's income
+# that sets it, and it is spent from the player's scope.
+leo_oae_mbge_gold_cost_value = {
+	value = scope:leo_oae_mbge_gold_cost
+}
+
+### The odds on the three skill methods.
+#
+# Vanilla already shows these, in the Possible Outcomes panel of its own Bolster
+# Governance window, so quoting them here reveals nothing the game withholds. It
+# only saves opening that window to read a number that is the same for every
+# governor: the duel is the actor's skill against a flat rating, and the
+# recipient is not part of it.
+#
+# The arithmetic mirrors boost_governor_efficiency_duel_effect
+# (07_dlc_ep3_scripted_effects.txt:10709). Each outcome starts at weight 10 and
+# is moved by 1.5 per point of skill above or below the target rating, with the
+# modifier floored at -49 and the resulting weight floored at 2. Re-diff these
+# against that effect after a game patch: a rebalance there silently makes every
+# number here a lie.
+#
+# Written out once per skill because a trigger or a value cannot be chosen at
+# runtime, and the panel needs all three at once to label three rows.
+
+# Current scope: the player. How far above the flat rating the skill sits, which
+# is what vanilla's duel puts in scope:duel_value.
+leo_oae_mbge_duel_edge_diplomacy = {
+	value = diplomacy
+	subtract = mediocre_skill_rating
+}
+leo_oae_mbge_duel_edge_stewardship = {
+	value = stewardship
+	subtract = mediocre_skill_rating
+}
+leo_oae_mbge_duel_edge_intrigue = {
+	value = intrigue
+	subtract = mediocre_skill_rating
+}
+
+leo_oae_mbge_win_weight_diplomacy = {
+	value = 10
+	add = { value = leo_oae_mbge_duel_edge_diplomacy  multiply = 1.5  min = -49 }
+	min = 2
+}
+leo_oae_mbge_lose_weight_diplomacy = {
+	value = 10
+	add = { value = leo_oae_mbge_duel_edge_diplomacy  multiply = -1.5  min = -49 }
+	min = 2
+}
+leo_oae_mbge_chance_diplomacy = {
+	value = leo_oae_mbge_win_weight_diplomacy
+	multiply = 100
+	divide = {
+		value = leo_oae_mbge_win_weight_diplomacy
+		add = leo_oae_mbge_lose_weight_diplomacy
+	}
+}
+
+leo_oae_mbge_win_weight_stewardship = {
+	value = 10
+	add = { value = leo_oae_mbge_duel_edge_stewardship  multiply = 1.5  min = -49 }
+	min = 2
+}
+leo_oae_mbge_lose_weight_stewardship = {
+	value = 10
+	add = { value = leo_oae_mbge_duel_edge_stewardship  multiply = -1.5  min = -49 }
+	min = 2
+}
+leo_oae_mbge_chance_stewardship = {
+	value = leo_oae_mbge_win_weight_stewardship
+	multiply = 100
+	divide = {
+		value = leo_oae_mbge_win_weight_stewardship
+		add = leo_oae_mbge_lose_weight_stewardship
+	}
+}
+
+leo_oae_mbge_win_weight_intrigue = {
+	value = 10
+	add = { value = leo_oae_mbge_duel_edge_intrigue  multiply = 1.5  min = -49 }
+	min = 2
+}
+leo_oae_mbge_lose_weight_intrigue = {
+	value = 10
+	add = { value = leo_oae_mbge_duel_edge_intrigue  multiply = -1.5  min = -49 }
+	min = 2
+}
+leo_oae_mbge_chance_intrigue = {
+	value = leo_oae_mbge_win_weight_intrigue
+	multiply = 100
+	divide = {
+		value = leo_oae_mbge_win_weight_intrigue
+		add = leo_oae_mbge_lose_weight_intrigue
+	}
+}
+
+# Current scope: a governor. Orderings for the budget pass.
+#
+# Both are negated because ordered_vassal sorts by order_by descending, and
+# both of these want the smallest first: the governor most in need of help, or
+# the one who costs the least to bribe.
+leo_oae_mbge_worst_first_value = {
+	value = governor_efficiency_presented
+	multiply = -1
+}
+
+leo_oae_mbge_cheapest_first_value = {
+	value = medium_gold_value
+	multiply = -1
+}

@@ -1,0 +1,725 @@
+﻿### Leo VI's Odds and Ends - Mass Bolster Governance.
+###
+### Applies vanilla's Bolster Governance across the governor pool in one go.
+### Nothing here reaches past what the player could do by hand: the pool is
+### whatever vanilla's own trigger allows (leo_oae_mbge_triggers.txt), the price
+### is vanilla's own cost block, and the outcome is vanilla's own effect.
+###
+### The interaction is deliberately not fired. run_interaction takes no
+### send_option, so firing it would leave every scope:*_boost flag unset, the
+### switch in its on_accept would fall through to the fallback, and the player
+### would get a guaranteed success at the cheapest price with no duel rolled.
+### Paying the cost here and calling the same effects vanilla's on_accept calls
+### is what keeps the odds and the bill honest.
+###
+### Threshold buckets are addressed by a suffix rather than a number, because a
+### script variable name cannot be built at runtime. Codes 1-10 map to
+### t_m40 t_m30 t_m20 t_m10 t_0 t_10 t_20 t_30 t_all t_bud, in that order, and
+### are append-only: they live in saved variables, so renumbering would rewrite
+### the settings of everyone already playing. Code 9, t_all, is gone along with
+### its bucket, and its number is left unused rather than handed to something
+### else.
+
+### The dropdown contents.
+#
+# The panel's dropdowns are datamodels over these lists, and each entry's flag
+# name is its whole identity: t_m40 gives the label key leo_oae_mbge_ui_t_m40
+# and the scripted GUI leo_oae_mbge_set_t_m40. Adding an option means adding a
+# flag here, a loc key, and a scripted GUI with the matching name.
+leo_oae_mbge_build_options_effect = {
+	clear_variable_list = leo_oae_mbge_opts
+	add_to_variable_list = { name = leo_oae_mbge_opts target = flag:opt_1 }
+	add_to_variable_list = { name = leo_oae_mbge_opts target = flag:opt_2 }
+	add_to_variable_list = { name = leo_oae_mbge_opts target = flag:opt_3 }
+	add_to_variable_list = { name = leo_oae_mbge_opts target = flag:opt_4 }
+	add_to_variable_list = { name = leo_oae_mbge_opts target = flag:opt_5 }
+
+	# The one that needs no thinking about comes first: everyone the game allows,
+	# as far down as the treasury reaches. The graduated levels follow for when a
+	# run wants aiming. Display order is not code order, and deliberately so:
+	# the codes are append-only because they persist in saves.
+	#
+	# There used to be two entries here rather than one. "Every eligible
+	# governor" demanded the whole pool be payable and was disabled otherwise,
+	# and "as many as I can afford" walked the same pool taking whoever still
+	# fit. The second is the first whenever the money stretches, so the first
+	# only ever added a disabled row saying no. Its code, 9, is left unused
+	# rather than handed to something else, which costs nothing now and keeps
+	# the numbering honest once these values start living in saves.
+	clear_variable_list = leo_oae_mbge_threshes
+	add_to_variable_list = { name = leo_oae_mbge_threshes target = flag:t_bud }
+	add_to_variable_list = { name = leo_oae_mbge_threshes target = flag:t_m40 }
+	add_to_variable_list = { name = leo_oae_mbge_threshes target = flag:t_m30 }
+	add_to_variable_list = { name = leo_oae_mbge_threshes target = flag:t_m20 }
+	add_to_variable_list = { name = leo_oae_mbge_threshes target = flag:t_m10 }
+	add_to_variable_list = { name = leo_oae_mbge_threshes target = flag:t_0 }
+	add_to_variable_list = { name = leo_oae_mbge_threshes target = flag:t_10 }
+	add_to_variable_list = { name = leo_oae_mbge_threshes target = flag:t_20 }
+	add_to_variable_list = { name = leo_oae_mbge_threshes target = flag:t_30 }
+
+	clear_variable_list = leo_oae_mbge_orders
+	add_to_variable_list = { name = leo_oae_mbge_orders target = flag:order_1 }
+	add_to_variable_list = { name = leo_oae_mbge_orders target = flag:order_2 }
+
+	# Stamps what these lists were built from, so a save carrying an older set
+	# is rebuilt rather than trusted. Bump it whenever the entries or their
+	# order change, or a save keeps showing the old list.
+	set_variable = { name = leo_oae_mbge_opts_version value = 1 }
+
+	# The branch never runs. See the trigger for why it has to be named.
+	if = { limit = { leo_oae_mbge_ack_trigger = yes } }
+}
+
+# Current scope: the player. Every variable the panel reads must exist before
+# it is read, because an undefined variable has no defined reading in GUI.
+#
+# The default is the case the feature is for: the governors actually dragging
+# the realm down, paid for with influence alone.
+leo_oae_mbge_init_defaults_effect = {
+	if = {
+		limit = {
+			OR = {
+				NOT = { has_variable = leo_oae_mbge_opts_version }
+				NOT = { var:leo_oae_mbge_opts_version = 1 }
+			}
+		}
+		leo_oae_mbge_build_options_effect = yes
+	}
+
+	if = {
+		limit = { NOT = { has_variable = leo_oae_mbge_open } }
+		set_variable = { name = leo_oae_mbge_open value = 0 }
+	}
+	if = {
+		limit = { NOT = { has_variable = leo_oae_mbge_opt } }
+		set_variable = { name = leo_oae_mbge_opt value = 1 }
+	}
+	# Every eligible governor the treasury reaches, which is the case the
+	# feature is for and is payable by construction.
+	if = {
+		limit = { NOT = { has_variable = leo_oae_mbge_thresh } }
+		set_variable = { name = leo_oae_mbge_thresh value = 10 }
+	}
+	if = {
+		limit = { NOT = { has_variable = leo_oae_mbge_order } }
+		set_variable = { name = leo_oae_mbge_order value = 1 }
+	}
+	if = {
+		limit = { NOT = { has_variable = leo_oae_mbge_count } }
+		set_variable = { name = leo_oae_mbge_count value = 0 }
+		set_variable = { name = leo_oae_mbge_infl value = 0 }
+		set_variable = { name = leo_oae_mbge_gold value = 0 }
+		set_variable = { name = leo_oae_mbge_afford_sel value = 0 }
+	}
+}
+
+### Counting and pricing.
+
+# Current scope: the player.
+leo_oae_mbge_zero_bucket_effect = {
+	set_variable = { name = leo_oae_mbge_count_$B$ value = 0 }
+	set_variable = { name = leo_oae_mbge_gold_$B$ value = 0 }
+	set_variable = { name = leo_oae_mbge_afford_$B$ value = 0 }
+}
+
+# Current scope: the player. Requires scope:leo_oae_mbge_gold_cost.
+leo_oae_mbge_accum_bucket_effect = {
+	change_variable = { name = leo_oae_mbge_count_$B$ add = 1 }
+	change_variable = { name = leo_oae_mbge_gold_$B$ add = scope:leo_oae_mbge_gold_cost }
+}
+
+# Current scope: the player. Fills every bucket in one pass over the pool.
+#
+# The iterator is top_liege's vassals, not the player's own, because vanilla's
+# is_shown asks for recipient.top_liege = actor.top_liege
+# (06_ep3_interactions.txt:5669). A player who is themselves a governor may
+# bolster their peers, and looping over root's vassals would quietly take that
+# away.
+#
+# This is also the only walk that asks vanilla whether a governor may be
+# bolstered at all, and that question is the expensive one: the trigger hands
+# the engine a whole interaction's is_shown and is_valid to evaluate, per
+# vassal. So the answer is kept in leo_oae_mbge_pool and the two passes below
+# read that list rather than asking again. Three walks of the realm became one,
+# which matters because a recount runs on every checkbox click, not only on
+# open.
+#
+# The pool holds everyone vanilla allows, set aside or not, because the list on
+# screen has to show both. The counts describe only those still included, which
+# is what the inner if is for.
+#
+# Seeding leo_oae_mbge_excl here, on the way in, is what lets everything
+# downstream read it as a plain variable: a governor cannot reach the pool, the
+# buckets or the panel without passing through this line first.
+#
+# The buckets are cumulative and the checks are plain ifs rather than a chain:
+# a governor below -40 is also below -30, and belongs in every bucket above
+# their own.
+leo_oae_mbge_recount_effect = {
+	save_scope_as = leo_oae_mbge_actor
+
+	leo_oae_mbge_zero_bucket_effect = { B = t_m40 }
+	leo_oae_mbge_zero_bucket_effect = { B = t_m30 }
+	leo_oae_mbge_zero_bucket_effect = { B = t_m20 }
+	leo_oae_mbge_zero_bucket_effect = { B = t_m10 }
+	leo_oae_mbge_zero_bucket_effect = { B = t_0 }
+	leo_oae_mbge_zero_bucket_effect = { B = t_10 }
+	leo_oae_mbge_zero_bucket_effect = { B = t_20 }
+	leo_oae_mbge_zero_bucket_effect = { B = t_30 }
+	leo_oae_mbge_zero_bucket_effect = { B = t_bud }
+
+	clear_variable_list = leo_oae_mbge_pool
+
+	top_liege = {
+		every_vassal = {
+			limit = { leo_oae_mbge_target_trigger = yes }
+
+			save_temporary_scope_as = leo_oae_mbge_cand
+
+			if = {
+				limit = { NOT = { has_variable = leo_oae_mbge_excl } }
+				set_variable = { name = leo_oae_mbge_excl value = 0 }
+			}
+
+			scope:leo_oae_mbge_actor = {
+				add_to_variable_list = {
+					name = leo_oae_mbge_pool
+					target = scope:leo_oae_mbge_cand
+				}
+			}
+
+			if = {
+				limit = { NOT = { var:leo_oae_mbge_excl = 1 } }
+
+				save_temporary_scope_value_as = {
+					name = leo_oae_mbge_gold_cost
+					value = medium_gold_value
+				}
+				save_temporary_scope_value_as = {
+					name = leo_oae_mbge_eff
+					value = governor_efficiency_presented
+				}
+
+				if = {
+					limit = { scope:leo_oae_mbge_eff < -40 }
+					scope:leo_oae_mbge_actor = { leo_oae_mbge_accum_bucket_effect = { B = t_m40 } }
+				}
+				if = {
+					limit = { scope:leo_oae_mbge_eff < -30 }
+					scope:leo_oae_mbge_actor = { leo_oae_mbge_accum_bucket_effect = { B = t_m30 } }
+				}
+				if = {
+					limit = { scope:leo_oae_mbge_eff < -20 }
+					scope:leo_oae_mbge_actor = { leo_oae_mbge_accum_bucket_effect = { B = t_m20 } }
+				}
+				if = {
+					limit = { scope:leo_oae_mbge_eff < -10 }
+					scope:leo_oae_mbge_actor = { leo_oae_mbge_accum_bucket_effect = { B = t_m10 } }
+				}
+				if = {
+					limit = { scope:leo_oae_mbge_eff < 0 }
+					scope:leo_oae_mbge_actor = { leo_oae_mbge_accum_bucket_effect = { B = t_0 } }
+				}
+				if = {
+					limit = { scope:leo_oae_mbge_eff < 10 }
+					scope:leo_oae_mbge_actor = { leo_oae_mbge_accum_bucket_effect = { B = t_10 } }
+				}
+				if = {
+					limit = { scope:leo_oae_mbge_eff < 20 }
+					scope:leo_oae_mbge_actor = { leo_oae_mbge_accum_bucket_effect = { B = t_20 } }
+				}
+				if = {
+					limit = { scope:leo_oae_mbge_eff < 30 }
+					scope:leo_oae_mbge_actor = { leo_oae_mbge_accum_bucket_effect = { B = t_30 } }
+				}
+			}
+		}
+	}
+
+	leo_oae_mbge_budget_pass_effect = yes
+	leo_oae_mbge_afford_pass_effect = yes
+	leo_oae_mbge_select_bucket_effect = yes
+	leo_oae_mbge_fallback_effect = yes
+	leo_oae_mbge_build_targets_effect = yes
+}
+
+
+# Current scope: the player. What changing the threshold needs, and no more.
+#
+# Every bucket was already counted and priced by the last recount, so picking
+# one only copies its figures onto the summary. The list on screen is not a
+# bucket, though: it is built per selection, and it has to be rebuilt here or it
+# goes on showing whoever the previously selected threshold caught while the
+# figures above it describe the new one.
+leo_oae_mbge_reselect_effect = {
+	leo_oae_mbge_select_bucket_effect = yes
+	leo_oae_mbge_build_targets_effect = yes
+}
+
+### Who the run will actually visit.
+
+# Current scope: the player. Rebuilds the list the panel shows, last, once the
+# selection has settled.
+#
+# It reads leo_oae_mbge_pool, which the recount filled, rather than walking the
+# realm and asking vanilla all over again. The pool is everyone vanilla allows
+# whether or not the player has set them aside, which is exactly what this list
+# wants: a governor who has been set aside still has to appear, or there would
+# be no way to put them back. The row's tick is what says which they are.
+#
+# That tick is a plain variable read on the governor, not a list membership
+# test, because GUI has no datafunction for membership. Splitting the pool into
+# a ticked list and a set-aside list would also work and cost no script, but
+# rows then jump between the two on every click, which is worse to use.
+#
+# Worst governed first, so the list reads in the order the budget would spend
+# in. Under the budget row there is no threshold to filter by, so it shows
+# everyone eligible and the summary says how many of them the money reaches.
+leo_oae_mbge_build_targets_effect = {
+	save_scope_as = leo_oae_mbge_actor
+	clear_variable_list = leo_oae_mbge_targets
+
+	# A realm with nobody to bolster never creates the pool, and clearing a list
+	# that was never there does not create it either, so the walk has to be asked
+	# for only once there is something to walk.
+	if = {
+		limit = { has_variable_list = leo_oae_mbge_pool }
+
+		ordered_in_list = {
+			variable = leo_oae_mbge_pool
+			order_by = leo_oae_mbge_worst_first_value
+			max = leo_oae_mbge_everyone_value
+			check_range_bounds = no
+
+			# Staged the same way the counting pass stages it, and asked on the
+			# player because the threshold is what the player holds.
+			save_temporary_scope_value_as = {
+				name = leo_oae_mbge_eff
+				value = governor_efficiency_presented
+			}
+			save_temporary_scope_as = leo_oae_mbge_cand
+
+			scope:leo_oae_mbge_actor = {
+				if = {
+					limit = { leo_oae_mbge_row_shown_trigger = yes }
+					add_to_variable_list = {
+						name = leo_oae_mbge_targets
+						target = scope:leo_oae_mbge_cand
+					}
+				}
+			}
+		}
+	}
+}
+
+### Setting one aside.
+
+# Current scope: the player. Requires scope:leo_oae_mbge_gov.
+#
+# Being set aside is kept on the governor, not on the player, so the panel can
+# read it per row without asking script. It therefore stays with that governor
+# across a succession, which reads as the more useful of the two: it is a note
+# that this one is not worth spending on, and that does not stop being true
+# because the player died.
+leo_oae_mbge_toggle_exclude_effect = {
+	scope:leo_oae_mbge_gov = {
+		if = {
+			limit = { var:leo_oae_mbge_excl = 1 }
+			set_variable = { name = leo_oae_mbge_excl value = 0 }
+		}
+		else = {
+			set_variable = { name = leo_oae_mbge_excl value = 1 }
+		}
+	}
+
+	# The count and the bill both move when one is set aside, so they are worked
+	# out again rather than left to the next dropdown. The list itself does not
+	# move: the row stays where it is and only its tick changes.
+	leo_oae_mbge_recount_effect = yes
+}
+
+# Current scope: the player. Keeps the selection on something payable.
+#
+# Which levels are affordable depends on what is in the treasury right now, so
+# the default cannot simply be written once at startup: a save opened with less
+# influence than last time would come up on a level the Bolster button refuses.
+# This runs after every recount and only ever moves a selection that has become
+# unpayable, so a level the player chose deliberately is left alone as long as
+# it still works.
+#
+# There is one landing place: the whole pool as far down as the money reaches,
+# which is payable by construction because it only ever commits what the
+# treasury covers. If even that is empty there is nobody to bolster, and the
+# button stays dark wherever the selection sits.
+#
+# An empty level is left alone. Affordability is written as zero both for a
+# level the treasury cannot cover and for one that caught nobody, since neither
+# can be run, but only the first is a reason to move the player somewhere else.
+# Without the count test, setting aside the last governor under the selected
+# level would silently widen the selection to every eligible governor, and the
+# next click of Bolster would spend on a pool the player never chose.
+leo_oae_mbge_fallback_effect = {
+	if = {
+		limit = {
+			var:leo_oae_mbge_afford_sel = 0
+			var:leo_oae_mbge_count > 0
+		}
+
+		set_variable = { name = leo_oae_mbge_thresh value = 10 }
+
+		leo_oae_mbge_select_bucket_effect = yes
+	}
+}
+
+# Current scope: a governor. Requires scope:leo_oae_mbge_actor.
+# One step of the budget walk: take this governor if what has been committed so
+# far plus their price still fits, and otherwise pass them over. Passing over
+# rather than stopping matters under Grease Palms, where a governor too rich to
+# afford should not block the cheaper ones behind them.
+leo_oae_mbge_budget_try_effect = {
+	save_temporary_scope_value_as = {
+		name = leo_oae_mbge_gold_cost
+		value = medium_gold_value
+	}
+
+	scope:leo_oae_mbge_actor = {
+		if = {
+			limit = {
+				influence >= leo_oae_mbge_next_influence_value
+				trigger_if = {
+					limit = { var:leo_oae_mbge_opt = 2 }
+					gold >= leo_oae_mbge_next_gold_value
+				}
+			}
+			change_variable = { name = leo_oae_mbge_count_t_bud add = 1 }
+			change_variable = { name = leo_oae_mbge_gold_t_bud add = scope:leo_oae_mbge_gold_cost }
+			change_variable = { name = leo_oae_mbge_bud_infl add = leo_oae_mbge_unit_influence_value }
+		}
+	}
+}
+
+# Current scope: the player. Prices the "as many as I can afford" row by walking
+# the pool in spending order and committing until the money runs out.
+#
+# The ordering only ever changes the answer under Grease Palms, since every
+# other option charges the same for every governor. That is why the panel shows
+# the Order dropdown for that option alone.
+#
+# Both walks read leo_oae_mbge_pool, which the recount that calls this filled a
+# moment earlier, so vanilla's eligibility question is asked once per governor
+# per recount rather than once per pass. The pool holds everyone vanilla allows,
+# so the exclusion the pool does not carry is applied here in the limit.
+leo_oae_mbge_budget_pass_effect = {
+	save_scope_as = leo_oae_mbge_actor
+	set_variable = { name = leo_oae_mbge_bud_infl value = 0 }
+
+	# Nothing to walk if the realm turned up nobody. See the list build for why
+	# the pool's existence has to be asked rather than assumed.
+	if = {
+		limit = { has_variable_list = leo_oae_mbge_pool }
+
+		if = {
+			limit = {
+				var:leo_oae_mbge_opt = 2
+				var:leo_oae_mbge_order = 2
+			}
+			ordered_in_list = {
+				variable = leo_oae_mbge_pool
+				order_by = leo_oae_mbge_cheapest_first_value
+				max = leo_oae_mbge_everyone_value
+				check_range_bounds = no
+				limit = { NOT = { var:leo_oae_mbge_excl = 1 } }
+				leo_oae_mbge_budget_try_effect = yes
+			}
+		}
+		else = {
+			ordered_in_list = {
+				variable = leo_oae_mbge_pool
+				order_by = leo_oae_mbge_worst_first_value
+				max = leo_oae_mbge_everyone_value
+				check_range_bounds = no
+				limit = { NOT = { var:leo_oae_mbge_excl = 1 } }
+				leo_oae_mbge_budget_try_effect = yes
+			}
+		}
+	}
+}
+
+# Current scope: the player. Whether this bucket can be paid for in full. The
+# panel disables and grays a threshold row by reading the matching variable.
+leo_oae_mbge_afford_bucket_effect = {
+	save_temporary_scope_value_as = {
+		name = leo_oae_mbge_b_count
+		value = var:leo_oae_mbge_count_$B$
+	}
+
+	if = {
+		limit = {
+			var:leo_oae_mbge_count_$B$ > 0
+			influence >= leo_oae_mbge_bucket_influence_value
+			trigger_if = {
+				limit = { var:leo_oae_mbge_opt = 2 }
+				gold >= var:leo_oae_mbge_gold_$B$
+			}
+		}
+		set_variable = { name = leo_oae_mbge_afford_$B$ value = 1 }
+	}
+	else = {
+		set_variable = { name = leo_oae_mbge_afford_$B$ value = 0 }
+	}
+}
+
+# Current scope: the player. The budget row is affordable by construction, so
+# it only asks whether it found anyone at all.
+leo_oae_mbge_afford_pass_effect = {
+	leo_oae_mbge_afford_bucket_effect = { B = t_m40 }
+	leo_oae_mbge_afford_bucket_effect = { B = t_m30 }
+	leo_oae_mbge_afford_bucket_effect = { B = t_m20 }
+	leo_oae_mbge_afford_bucket_effect = { B = t_m10 }
+	leo_oae_mbge_afford_bucket_effect = { B = t_0 }
+	leo_oae_mbge_afford_bucket_effect = { B = t_10 }
+	leo_oae_mbge_afford_bucket_effect = { B = t_20 }
+	leo_oae_mbge_afford_bucket_effect = { B = t_30 }
+
+	if = {
+		limit = { var:leo_oae_mbge_count_t_bud > 0 }
+		set_variable = { name = leo_oae_mbge_afford_t_bud value = 1 }
+	}
+	else = {
+		set_variable = { name = leo_oae_mbge_afford_t_bud value = 0 }
+	}
+}
+
+# Current scope: the player. Copies the selected bucket onto the three
+# variables the summary line reads.
+leo_oae_mbge_pick_bucket_effect = {
+	set_variable = { name = leo_oae_mbge_count value = var:leo_oae_mbge_count_$B$ }
+
+	# Every bucket carries a gold total whether or not gold is what is being
+	# spent, because the pass that fills them does not know yet which method
+	# will be selected. Only Grease Palms actually charges it, so the summary
+	# must read zero for the other four rather than quoting a bill that will
+	# never arrive.
+	if = {
+		limit = { var:leo_oae_mbge_opt = 2 }
+		set_variable = { name = leo_oae_mbge_gold value = var:leo_oae_mbge_gold_$B$ }
+	}
+	else = {
+		set_variable = { name = leo_oae_mbge_gold value = 0 }
+	}
+
+	save_temporary_scope_value_as = {
+		name = leo_oae_mbge_b_count
+		value = var:leo_oae_mbge_count_$B$
+	}
+	set_variable = { name = leo_oae_mbge_infl value = leo_oae_mbge_bucket_influence_value }
+
+	# Kept alongside so the Bolster button can ask whether what is currently
+	# selected is payable without walking all ten buckets again.
+	set_variable = { name = leo_oae_mbge_afford_sel value = var:leo_oae_mbge_afford_$B$ }
+}
+
+# Current scope: the player. Written out per code because a variable name
+# cannot be built from a value at runtime.
+leo_oae_mbge_select_bucket_effect = {
+	if =      { limit = { var:leo_oae_mbge_thresh = 1 }  leo_oae_mbge_pick_bucket_effect = { B = t_m40 } }
+	else_if = { limit = { var:leo_oae_mbge_thresh = 2 }  leo_oae_mbge_pick_bucket_effect = { B = t_m30 } }
+	else_if = { limit = { var:leo_oae_mbge_thresh = 3 }  leo_oae_mbge_pick_bucket_effect = { B = t_m20 } }
+	else_if = { limit = { var:leo_oae_mbge_thresh = 4 }  leo_oae_mbge_pick_bucket_effect = { B = t_m10 } }
+	else_if = { limit = { var:leo_oae_mbge_thresh = 5 }  leo_oae_mbge_pick_bucket_effect = { B = t_0 } }
+	else_if = { limit = { var:leo_oae_mbge_thresh = 6 }  leo_oae_mbge_pick_bucket_effect = { B = t_10 } }
+	else_if = { limit = { var:leo_oae_mbge_thresh = 7 }  leo_oae_mbge_pick_bucket_effect = { B = t_20 } }
+	else_if = { limit = { var:leo_oae_mbge_thresh = 8 }  leo_oae_mbge_pick_bucket_effect = { B = t_30 } }
+	# 10 is the whole pool, as far down it as the money reaches, and is where
+	# everything that is not a graduated level lands: the retired code 9 and the
+	# 0 an unset variable reads along with it.
+	else =    {                                          leo_oae_mbge_pick_bucket_effect = { B = t_bud } }
+}
+
+### Applying.
+
+# Current scope: a governor. Requires scope:leo_oae_mbge_actor.
+#
+# One bolster, matching boost_efficiency_interaction step for step: its cost
+# block, then its on_send, then its on_accept. The two effects at the end are
+# vanilla's own and read nothing but scope:actor and scope:recipient, which is
+# why they can be called without the interaction around them.
+leo_oae_mbge_bolster_one_effect = {
+	save_scope_as = recipient
+	save_temporary_scope_value_as = {
+		name = leo_oae_mbge_gold_cost
+		value = medium_gold_value
+	}
+
+	# cost (06_ep3_interactions.txt:5733-5757)
+	scope:leo_oae_mbge_actor = {
+		change_influence = { value = leo_oae_mbge_unit_influence_loss_value }
+		if = {
+			limit = { var:leo_oae_mbge_opt = 2 }
+			remove_short_term_gold = leo_oae_mbge_gold_cost_value
+		}
+	}
+
+	# on_send (:5783-5791)
+	add_to_variable_list = {
+		name = efficiency_boosters
+		target = scope:leo_oae_mbge_actor
+		years = 2
+	}
+
+	# on_accept (:5795-5809). The three skill options roll vanilla's duel, which
+	# can fail and still charges; the other two always land.
+	if = {
+		limit = { scope:leo_oae_mbge_actor = { var:leo_oae_mbge_opt = 3 } }
+		boost_governor_efficiency_duel_effect = { SKILL = diplomacy }
+	}
+	else_if = {
+		limit = { scope:leo_oae_mbge_actor = { var:leo_oae_mbge_opt = 4 } }
+		boost_governor_efficiency_duel_effect = { SKILL = stewardship }
+	}
+	else_if = {
+		limit = { scope:leo_oae_mbge_actor = { var:leo_oae_mbge_opt = 5 } }
+		boost_governor_efficiency_duel_effect = { SKILL = intrigue }
+	}
+	else = {
+		boost_governor_efficiency_success_effect = yes
+	}
+}
+
+# Current scope: a governor. Requires scope:leo_oae_mbge_actor.
+# Bolsters this governor if there is still enough in the treasury for them.
+# Every path spends through this, so the count on screen going stale can only
+# ever mean fewer bolsters than advertised, never an overdraft.
+leo_oae_mbge_try_bolster_effect = {
+	save_temporary_scope_value_as = {
+		name = leo_oae_mbge_gold_cost
+		value = medium_gold_value
+	}
+
+	if = {
+		limit = {
+			scope:leo_oae_mbge_actor = { leo_oae_mbge_can_pay_one_trigger = yes }
+		}
+		leo_oae_mbge_bolster_one_effect = yes
+	}
+}
+
+# Current scope: the player. What the Bolster button runs.
+#
+# The budget row walks the pool in spending order and takes whoever still fits;
+# every other row takes everyone under the chosen threshold. Both go through the
+# same per-governor affordability guard, so they differ only in who they visit
+# and in what order.
+#
+# This is the one walk that deliberately does not read leo_oae_mbge_pool. The
+# pool is a snapshot from the last recount, and nothing but the iterator's limit
+# stands between this and a bolster: reading a stale pool could send one at a
+# governor vanilla has since stopped allowing. Counting off a snapshot is only a
+# number on screen, but spending off one would reach past vanilla, so this pays
+# for the live check.
+leo_oae_mbge_apply_effect = {
+	save_scope_as = leo_oae_mbge_actor
+	save_scope_as = actor
+
+	if = {
+		limit = { var:leo_oae_mbge_thresh = 10 }
+		if = {
+			limit = { var:leo_oae_mbge_opt = 2  var:leo_oae_mbge_order = 2 }
+			top_liege = {
+				ordered_vassal = {
+					order_by = leo_oae_mbge_cheapest_first_value
+					max = leo_oae_mbge_everyone_value
+					check_range_bounds = no
+					limit = { leo_oae_mbge_included_trigger = yes }
+					leo_oae_mbge_try_bolster_effect = yes
+				}
+			}
+		}
+		else = {
+			top_liege = {
+				ordered_vassal = {
+					order_by = leo_oae_mbge_worst_first_value
+					max = leo_oae_mbge_everyone_value
+					check_range_bounds = no
+					limit = { leo_oae_mbge_included_trigger = yes }
+					leo_oae_mbge_try_bolster_effect = yes
+				}
+			}
+		}
+	}
+	else = {
+		# Worst first here too, so a budget that runs short mid-run spends what
+		# is left on the governors who needed it most.
+		top_liege = {
+			ordered_vassal = {
+				order_by = leo_oae_mbge_worst_first_value
+				max = leo_oae_mbge_everyone_value
+				check_range_bounds = no
+				limit = { leo_oae_mbge_included_trigger = yes }
+				leo_oae_mbge_try_bolster_in_bucket_effect = yes
+			}
+		}
+	}
+
+	leo_oae_mbge_recount_effect = yes
+}
+
+# Current scope: a governor. Requires scope:leo_oae_mbge_actor.
+#
+# The threshold is applied here rather than in the iterator's limit, because
+# staging the governor's efficiency is an effect and a limit takes only
+# triggers. Same shape as the list build, so the run and the list can never
+# disagree about who is in.
+leo_oae_mbge_try_bolster_in_bucket_effect = {
+	save_temporary_scope_value_as = {
+		name = leo_oae_mbge_eff
+		value = governor_efficiency_presented
+	}
+
+	if = {
+		limit = {
+			scope:leo_oae_mbge_actor = { leo_oae_mbge_row_shown_trigger = yes }
+		}
+		leo_oae_mbge_try_bolster_effect = yes
+	}
+}
+
+### The window.
+
+# Current scope: the player.
+#
+# Open is a number rather than a bare flag because the panel's visibility reads
+# it straight from GUI, where a variable that might not exist has no defined
+# reading. It is set to zero, never removed.
+#
+# **The gate is what keeps this off the decision's tooltip.** The engine builds
+# a decision's tooltip by running its effect as a dry run, and in that pass no
+# variable on the character can be read at all: not one written a line earlier,
+# not one the player has held since the game started. Ungated, the whole
+# counting pass ran on every frame the decision was on screen and every read in
+# it failed, which was tens of thousands of log lines an hour and a full walk of
+# the realm behind each one. hidden_effect does not prevent this. It hides the
+# effect from the tooltip, it does not stop the engine evaluating it.
+#
+# Seeding first is what makes the gate safe rather than merely clever: on a real
+# execution the variable is there either way, so the gate is only ever false in
+# the dry run, where the seed cannot commit. Anything added here that reads a
+# variable must go inside the gate.
+leo_oae_mbge_open_effect = {
+	if = {
+		limit = { NOT = { has_variable = leo_oae_mbge_open } }
+		set_variable = { name = leo_oae_mbge_open value = 0 }
+	}
+
+	if = {
+		limit = { has_variable = leo_oae_mbge_open }
+
+		leo_oae_mbge_init_defaults_effect = yes
+		leo_oae_mbge_recount_effect = yes
+		set_variable = { name = leo_oae_mbge_open value = 1 }
+	}
+}
+
+leo_oae_mbge_close_effect = {
+	set_variable = { name = leo_oae_mbge_open value = 0 }
+}

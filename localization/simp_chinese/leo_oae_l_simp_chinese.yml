@@ -11,3 +11,89 @@
 
  leo_oae_govmap_name:0 "@leo_oae_governor_icon! 总督"
  leo_oae_govmap_desc:0 "#T 总督#!\n按[direct_vassals|E]在[realm|E]中担任的角色显示他们，与行政政府面板打开时的视图相同。"
+
+ ### Mass Bolster Governance.
+ ###
+ ### The five method names are vanilla's own send_option labels, pointed at
+ ### rather than rewritten, so the wording stays in step with the game and the
+ ### translation comes free. The same goes for the button that does the deed.
+ ###
+ ### Every key the panel builds at runtime has to exist for every value it can
+ ### be built from, including the 0 an unset variable reads, or the raw key
+ ### shows up on screen. That is what the _0 and _tc_ entries are for. The
+ ### threshold rows have deliberately empty tooltips: an empty value renders no
+ ### tooltip box at all, and the dropdown's own tooltip already says what graying
+ ### means.
+ leo_oae_mbge_decision:0 "批量提振治理"
+ leo_oae_mbge_decision_desc:0 "一次提振众多[governor|E]的[governor_efficiency|E]，而不必逐个处理。\n\n打开一个面板，在其中选择方式以及要涉及哪些总督。在那里确认之前不会有任何花费。\n\n#weak 也可以随时用 $SHORTCUT_KEY_MOD_ctrl$$SHORTCUT_KEY_MOD_shift$B 打开。#!"
+ leo_oae_mbge_decision_tooltip:0 "打开批量提振面板"
+ leo_oae_mbge_decision_confirm:0 "打开面板"
+ leo_oae_mbge_decision_effect_tt:0 "打开面板。在那里执行提振之前不会有任何花费。"
+
+ leo_oae_mbge_ui_heading_method:0 "方式"
+ leo_oae_mbge_ui_heading_method_tt:0 "与单独提振一位[governor|E]时相同的五种方式，用于本次涉及的每一位总督。"
+ leo_oae_mbge_ui_heading_targets_tt:0 "本次会涉及哪些[governors|E]。若没有符合的总督，或无力全额支付，该选项会被禁用。"
+ leo_oae_mbge_ui_heading_order_tt:0 "当资源不够所有人时，先花在谁身上。只有$gold_boost_desc$才有影响，因为它是唯一一种价格因[governor|E]而异的方式。"
+ leo_oae_mbge_ui_heading_governors:0 "总督"
+ leo_oae_mbge_ui_heading_summary:0 "概要"
+ leo_oae_mbge_ui_row_tt:0 "提振治理时包含这位[governor|E]。"
+ leo_oae_mbge_ui_row_gold:0 "[Character.MakeScope.ScriptValue('medium_gold_value')|0]"
+
+ leo_oae_mbge_ui_opt_0:0 "#weak 选择一种方式#!"
+ leo_oae_mbge_ui_opt_1:0 "$influence_boost_desc$"
+ leo_oae_mbge_ui_opt_2:0 "$gold_boost_desc$"
+ leo_oae_mbge_ui_opt_3:0 "$diplomacy_boost_desc$ #weak ([GetPlayer.MakeScope.ScriptValue('leo_oae_mbge_chance_diplomacy')|0]%)#!"
+ leo_oae_mbge_ui_opt_4:0 "$stewardship_boost_desc$ #weak ([GetPlayer.MakeScope.ScriptValue('leo_oae_mbge_chance_stewardship')|0]%)#!"
+ leo_oae_mbge_ui_opt_5:0 "$intrigue_boost_desc$ #weak ([GetPlayer.MakeScope.ScriptValue('leo_oae_mbge_chance_intrigue')|0]%)#!"
+
+ leo_oae_mbge_ui_opt_1_tt:0 "每位[governor|E]消耗 @influence_icon! [EmptyScope.ScriptValue('leo_oae_mbge_divert_influence_value')|0]。必定成功。"
+ leo_oae_mbge_ui_opt_2_tt:0 "每位[governor|E]消耗 @influence_icon! [EmptyScope.ScriptValue('minor_influence_value')|0]，另加与其收入相称的 @gold_icon! 金币，因此富裕者花费更高。必定成功。"
+ leo_oae_mbge_ui_opt_3_tt:0 "每位[governor|E]消耗 @influence_icon! [EmptyScope.ScriptValue('minor_influence_value')|0]。考验你的[diplomacy|E]，可能失败。无论成败都要付出代价。"
+ leo_oae_mbge_ui_opt_4_tt:0 "每位[governor|E]消耗 @influence_icon! [EmptyScope.ScriptValue('minor_influence_value')|0]。考验你的[stewardship|E]，可能失败。无论成败都要付出代价。"
+ leo_oae_mbge_ui_opt_5_tt:0 "每位[governor|E]消耗 @influence_icon! [EmptyScope.ScriptValue('minor_influence_value')|0]。考验你的[intrigue|E]，可能失败。无论成败都要付出代价。"
+
+ leo_oae_mbge_ui_t_m40:0 "低于 -40%"
+ leo_oae_mbge_ui_t_m30:0 "低于 -30%"
+ leo_oae_mbge_ui_t_m20:0 "低于 -20%"
+ leo_oae_mbge_ui_t_m10:0 "低于 -10%"
+ leo_oae_mbge_ui_t_0:0 "低于 0%"
+ leo_oae_mbge_ui_t_10:0 "低于 10%"
+ leo_oae_mbge_ui_t_20:0 "低于 20%"
+ leo_oae_mbge_ui_t_30:0 "低于 30%"
+ leo_oae_mbge_ui_t_bud:0 "所有符合条件的总督"
+
+ leo_oae_mbge_ui_t_m40_tt:0 ""
+ leo_oae_mbge_ui_t_m30_tt:0 ""
+ leo_oae_mbge_ui_t_m20_tt:0 ""
+ leo_oae_mbge_ui_t_m10_tt:0 ""
+ leo_oae_mbge_ui_t_0_tt:0 ""
+ leo_oae_mbge_ui_t_10_tt:0 ""
+ leo_oae_mbge_ui_t_20_tt:0 ""
+ leo_oae_mbge_ui_t_30_tt:0 ""
+ leo_oae_mbge_ui_t_bud_tt:0 "游戏允许的每一位[governor|E]，直到国库耗尽为止。"
+
+ leo_oae_mbge_ui_tc_0:0 "#weak 选择一个档位#!"
+ leo_oae_mbge_ui_tc_1:0 "$leo_oae_mbge_ui_t_m40$"
+ leo_oae_mbge_ui_tc_2:0 "$leo_oae_mbge_ui_t_m30$"
+ leo_oae_mbge_ui_tc_3:0 "$leo_oae_mbge_ui_t_m20$"
+ leo_oae_mbge_ui_tc_4:0 "$leo_oae_mbge_ui_t_m10$"
+ leo_oae_mbge_ui_tc_5:0 "$leo_oae_mbge_ui_t_0$"
+ leo_oae_mbge_ui_tc_6:0 "$leo_oae_mbge_ui_t_10$"
+ leo_oae_mbge_ui_tc_7:0 "$leo_oae_mbge_ui_t_20$"
+ leo_oae_mbge_ui_tc_8:0 "$leo_oae_mbge_ui_t_30$"
+ leo_oae_mbge_ui_tc_9:0 "$leo_oae_mbge_ui_t_bud$"
+ leo_oae_mbge_ui_tc_10:0 "$leo_oae_mbge_ui_t_bud$"
+
+ leo_oae_mbge_ui_order_0:0 "#weak 选择一种顺序#!"
+ leo_oae_mbge_ui_order_1:0 "治理最差者优先"
+ leo_oae_mbge_ui_order_2:0 "花费最少者优先"
+ leo_oae_mbge_ui_order_1_tt:0 "先花在[governor_efficiency|E]最低的[governor|E]身上，即便照顾到的人更少，最差的也能得到帮助。"
+ leo_oae_mbge_ui_order_2_tt:0 "先花在最便宜的[governor|E]身上，用同样的资源照顾到尽可能多的人。"
+
+ leo_oae_mbge_ui_summary:0 "待提振的总督：#T [GetPlayer.MakeScope.Var('leo_oae_mbge_count').GetValue|0]#!"
+ leo_oae_mbge_ui_summary_cost:0 "总花费：@influence_icon! [GetPlayer.MakeScope.Var('leo_oae_mbge_infl').GetValue|0]"
+ leo_oae_mbge_ui_summary_cost_gold:0 "总花费：@influence_icon! [GetPlayer.MakeScope.Var('leo_oae_mbge_infl').GetValue|0]  @gold_icon! [GetPlayer.MakeScope.Var('leo_oae_mbge_gold').GetValue|0]"
+
+ leo_oae_mbge_ui_title:0 "$leo_oae_mbge_decision$"
+ leo_oae_mbge_ui_apply:0 "$boost_efficiency_interaction$"
+ leo_oae_mbge_ui_note:0 "处于冷却中，或治理已经足够好的[governors|E]，会依游戏规则被排除。"

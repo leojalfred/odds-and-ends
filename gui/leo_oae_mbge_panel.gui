@@ -1,0 +1,724 @@
+﻿### Leo VI's Odds and Ends - Mass Bolster Governance panel.
+###
+### Our own window, registered as a standalone widget through
+### gui/scripted_widgets/, so no vanilla file is overridden. Opened by the
+### decision or by the keyboard shortcut, both of which run script that sets
+### leo_oae_mbge_open.
+###
+### It is not built inside the decision's own window, which was tried and does
+### not work. A decision's custom widget is only shown at all if the decision
+### declares decision_to_second_step_button, and declaring that makes the
+### window draw its next-step button instead of its confirm button
+### (window_decisions_detail.gui:249-270, the two are mutually exclusive).
+### Stepping to the confirm button fires ToggleCustomWidgetState, which switches
+### the panel off and vanilla's raw effect tooltip on. So the game's own confirm
+### button can never sit on the same page as the panel, and the primary action
+### would always have been something other than Bolster Governance. Here it is
+### the only button there is.
+###
+### The window reads its state straight out of script variables rather than
+### through a scripted GUI's is_shown, so only clicking a control runs script
+### and the panel costs nothing per frame. Note that .GetValue yields a
+### CFixedPoint, so literals take the form '(CFixedPoint)1'.
+###
+### Every dropdown is a datamodel over a list script builds, with one item
+### template. An item's flag name is its whole identity: the flag t_m40 gives
+### the label key leo_oae_mbge_ui_t_m40 and the click target
+### leo_oae_mbge_set_t_m40, both built with Concatenate. When a dropdown is shut
+### its datamodel points at leo_oae_mbge_none, a list nothing ever creates, so
+### the rows do not merely hide, they cease to exist.
+
+### The dropdown parts.
+###
+### Copies of vanilla's button_drop and button_dropdown (shared/buttons.gui),
+### minus one line each. Both vanilla types set button_trigger = none, because
+### they are only ever used inside a C++ dropDown that handles the click itself;
+### inheriting that would leave our own onclick never firing. Copies rather than
+### overrides, so no vanilla file is touched. Re-diff after a game patch.
+types leo_oae_mbge_dropdown_types {
+	type leo_oae_mbge_button_drop = button_normal {
+		size = { 100% 33 }
+		gfxtype = framedbuttongfx
+		effectname = "NoHighlight"
+		upframe = 1
+		overframe = 2
+		downframe = 3
+		disableframe = 4
+		texture = "gfx/interface/buttons/button_drop_down.dds"
+		framesize = { 225 33 }
+		spriteType = Corneredtiled
+		spriteborder = { 75 11 }
+		clicksound = "event:/SFX/UI/Generic/sfx_ui_generic_checkbox"
+
+		buttonText = {
+			text_single = {
+				size = { 100% 100% }
+				autoresize = no
+				margin = { 15 0 }
+				margin_right = 25
+				align = left|nobaseline
+				default_format = "#clickable"
+				alwaystransparent = yes
+			}
+		}
+	}
+
+	### One governor in the list.
+	###
+	### Mirrors vanilla's own governor row, widget_current_governor
+	### (window_admin_vassal_detail.gui:719): a backed panel holding a portrait,
+	### a block of text beside it, and a button in a column of its own at the
+	### top right. The checkbox stands where vanilla puts the interactions
+	### button. Re-diff after a game patch.
+	###
+	### Two deliberate departures. The portrait is portrait_head_small rather
+	### than portrait_head, so a list of a dozen governors does not become a
+	### page of scrolling, and the name and age are set smaller to match it:
+	### vanilla's hbox_character_view_name_age_health hardcodes fontsize 20 and
+	### exposes no block for it, so the line is rebuilt here at 16 rather than
+	### used directly. Its two loc keys are reused as they are, so the name and
+	### age still read and translate exactly as the character sheet writes them.
+	###
+	### The tick reads leo_oae_mbge_excl off the governor, which is a plain
+	### variable read rather than a scripted GUI, so nothing here runs script
+	### while the panel sits open. Clicking does, which is fine because a click
+	### is not a frame: the row hands its own character over as
+	### scope:leo_oae_mbge_gov, and that is what lets one template serve every
+	### row.
+	###
+	### Nothing inside carries parentanchor. On a text widget in an hbox it takes
+	### the widget out of flow, so the row allocates it no width and the text
+	### collapses to an ellipsis. An hbox already centers its children against
+	### each other, which is why vanilla's own row sets none either.
+	type leo_oae_mbge_governor_row = widget {
+		datacontext = "[Scope.Char]"
+		layoutpolicy_horizontal = expanding
+		size = { 0 108 }
+
+		background = {
+			using = Background_Area
+		}
+
+		hbox = {
+			layoutpolicy_horizontal = expanding
+			layoutpolicy_vertical = expanding
+			margin = { 5 0 }
+			spacing = 5
+
+			portrait_head_small = {}
+
+			vbox = {
+				layoutpolicy_horizontal = expanding
+				layoutpolicy_vertical = expanding
+				margin_top = 6
+
+				### What they govern, where vanilla's row names the office.
+				hbox = {
+					layoutpolicy_horizontal = expanding
+
+					text_single = {
+						text = "[Character.GetPrimaryTitle.GetNameNoTooltip]"
+						default_format = "#low"
+						align = nobaseline
+						max_width = 300
+					}
+
+					# Only Grease Palms charges gold, and only it charges a
+					# different amount per governor, so it is the one method
+					# where a per-row price says anything. It follows the title
+					# directly, before the expand, so it reads as part of that
+					# line rather than as a column pinned to the far edge. It is
+					# on this line and not the one below because that one already
+					# carries four things.
+					#
+					# The icon is a widget rather than the @gold_icon! texticon
+					# the summary line uses, because that one renders at 25 square
+					# and cannot be told otherwise. A widget takes a size, and the
+					# box's spacing sets the gap to the number, neither of which a
+					# texticon inside a loc string will give up.
+					hbox = {
+						visible = "[EqualTo_CFixedPoint( GetPlayer.MakeScope.Var('leo_oae_mbge_opt').GetValue, '(CFixedPoint)2' )]"
+						margin_left = 8
+						spacing = 1
+
+						icon_gold = {
+							size = { 20 20 }
+						}
+
+						text_single = {
+							text = "leo_oae_mbge_ui_row_gold"
+							default_format = "#weak"
+							align = nobaseline
+						}
+					}
+
+					expand = {}
+				}
+
+				### How well they govern, then who they are.
+				hbox = {
+					layoutpolicy_horizontal = expanding
+					spacing = 2
+
+					# Governance, exactly as the game writes it elsewhere: the
+					# same loc key colors the number by band and the same
+					# tooltip breaks down every term that produced it. Reusing
+					# the pair rather than printing the number ourselves is what
+					# gets the coloring, the breakdown and the translation.
+					#
+					# The icon art carries its own transparent padding, so at
+					# its left edge it reads as indented against the lines above
+					# and below. The negative margin pulls the ink back to where
+					# their text starts. It sits on the box rather than on the
+					# icon because an icon accepts no margin at all: it logs
+					# "Property 'margin_left' not handled" and then lays out as
+					# though nothing had been asked for. Vanilla insets this same
+					# icon the same way, from the box around it
+					# (window_admin_vassal_detail.gui:459-474).
+					hbox = {
+						margin_left = -4
+						margin_right = 4
+						spacing = 1
+
+						tooltip = "ADMIN_WINDOW_THEME_GOVERNOR_EFFICIENCY_TT"
+						using = tooltip_ne
+
+						icon_governor_efficiency = {
+							size = { 20 20 }
+						}
+
+						text_single = {
+							text = "ADMIN_WINDOW_THEME_GOVERNOR_EFFICIENCY_VALUE"
+							fontsize = 16
+							align = nobaseline
+						}
+					}
+
+					text_single = {
+						text = "CHARACTER_VIEW_NAME_SHORT"
+						default_format = "#medium"
+						fontsize = 16
+						fontsize_min = 12
+						align = nobaseline
+						max_width = 180
+						tooltip = "CHARACTER_VIEW_NAME_TT"
+					}
+
+					text_single = {
+						text = "CHARACTER_VIEW_AGE"
+						default_format = "#low"
+						fontsize = 16
+						align = nobaseline
+						max_width = 28
+						tooltip = "CHARACTER_VIEW_AGE_TT"
+
+						# The gap before the health icon, on top of the row's own
+						# spacing of 2. A text widget takes a margin and an icon
+						# does not, so the space goes after the age rather than
+						# before the icon.
+						margin_right = 1
+					}
+
+					icon = {
+						visible = "[Not( Character.IsDeadAndValid )]"
+						# 20 square, as every icon in this row is. They sit on
+						# three different lines, so a size that drifts reads as
+						# one of them being wrong rather than as variety.
+						size = { 20 20 }
+						framesize = { 60 60 }
+						frame = "[Character.GetHealthIconFrame]"
+						texture = "gfx/interface/icons/character_status/icon_health.dds"
+						tooltip = "CHARACTER_VIEW_ALIVE_TT"
+					}
+
+					expand = {}
+				}
+
+				### What they are to you.
+				hbox = {
+					layoutpolicy_horizontal = expanding
+
+					text_single = {
+						text = "[Character.GetRelationToString( GetPlayer )]"
+						align = nobaseline
+						max_width = 330
+						tooltip = "EXTENDED_RELATIONS_TOOLTIP"
+						using = tooltip_se
+					}
+
+					expand = {}
+				}
+
+				### Whose house they belong to.
+				hbox = {
+					layoutpolicy_horizontal = expanding
+					margin_top = 3
+
+					# coa_house_tiny is 48 square, which is heavy beside a line
+					# of text, and shrinking it by overriding the instance size
+					# does not work: the arms, the frame and the mask inside are
+					# each sized in the type, so the widget clips instead of
+					# scaling and the shield spills over the name. Vanilla ships
+					# the smaller size as its own type with all of that scaled
+					# down together, so use that rather than fight this one.
+					coa_house_microscopic = {
+						datacontext = "[Character.GetHouse]"
+					}
+
+					# The arms are the taller of the two, so the name is
+					# centered against them rather than sitting on their top
+					# edge, which is where an hbox would otherwise leave it.
+					text_single = {
+						datacontext = "[Character.GetHouse]"
+						margin_left = 5
+						text = "ADMINISTRATIVE_GOVERNMENT_HOUSE_WITH_NAME"
+						align = nobaseline
+						max_width = 290
+					}
+
+					expand = {}
+				}
+
+				expand = {}
+			}
+
+			### Where vanilla puts the interactions button.
+			vbox = {
+				layoutpolicy_vertical = expanding
+				margin_top = 12
+				margin_right = 5
+
+				button_checkbox = {
+					size = { 26 26 }
+					tooltip = "leo_oae_mbge_ui_row_tt"
+					onclick = "[GetScriptedGui('leo_oae_mbge_toggle_exclude').Execute( GuiScope.SetRoot( GetPlayer.MakeScope ).AddScope( 'leo_oae_mbge_gov', Character.MakeScope ).End )]"
+					block "checked" {}
+				}
+
+				expand = {}
+			}
+		}
+	}
+
+	type leo_oae_mbge_button_dropdown = button_normal {
+		size = { 225 30 }
+		gfxtype = framedbuttongfx
+		effectname = "NoHighlight"
+		shaderfile = "gfx/FX/pdxgui_pushbutton.shader"
+		upframe = 1
+		overframe = 2
+		downframe = 3
+		disableframe = 1
+		texture = "gfx/interface/buttons/button_interaction_menu.dds"
+		framesize = { 317 30 }
+		clicksound = "event:/SFX/UI/Generic/sfx_ui_generic_checkbox"
+
+		buttonText = {
+			text_single = {
+				size = { 100% 100% }
+				autoresize = no
+				margin_left = 10
+				align = left|nobaseline
+				alwaystransparent = yes
+			}
+		}
+	}
+}
+
+window = {
+	name = "leo_oae_mbge_panel"
+
+	# Ours to size, unlike the decision window. Tall enough that the ten
+	# thresholds have somewhere to open and the governor list has room to grow,
+	# and everything scrolls rather than overflowing: a widget that overflows
+	# its window still draws but stops taking clicks, while a scrollbox clips.
+	size = { 540 760 }
+
+	parentanchor = center
+	using = Window_Background_Subwindow
+	layer = windows_layer
+	movable = yes
+
+	visible = "[EqualTo_CFixedPoint( GetPlayer.MakeScope.Var('leo_oae_mbge_open').GetValue, '(CFixedPoint)1' )]"
+
+	state = { name = _show  using = Animation_FadeIn_Quick }
+
+	# Closing the panel closes whatever dropdown was left open, so it does not
+	# reappear hanging open next time.
+	state = {
+		name = _hide
+		using = Animation_FadeOut_Quick
+		on_start = "[GetVariableSystem.Set( 'leo_oae_mbge_dd', 'none' )]"
+	}
+
+	vbox = {
+		layoutpolicy_horizontal = expanding
+		layoutpolicy_vertical = expanding
+
+		header_pattern = {
+			layoutpolicy_horizontal = expanding
+
+			blockoverride "header_text" {
+				text = "leo_oae_mbge_ui_title"
+			}
+
+			blockoverride "button_close" {
+				onclick = "[GetScriptedGui('leo_oae_mbge_close').Execute( GuiScope.SetRoot( GetPlayer.MakeScope ).End )]"
+			}
+		}
+
+		scrollbox = {
+			layoutpolicy_horizontal = expanding
+			layoutpolicy_vertical = expanding
+
+			blockoverride "scrollbox_content" {
+				vbox = {
+					layoutpolicy_horizontal = expanding
+					margin = { 0 0 }
+					spacing = 8
+
+					### Which of vanilla's five options to send.
+					vbox = {
+						layoutpolicy_horizontal = expanding
+
+						text_label_left = {
+							layoutpolicy_horizontal = expanding
+							margin_left = 12
+							text = "leo_oae_mbge_ui_heading_method"
+						}
+
+						vbox = {
+							layoutpolicy_horizontal = expanding
+							# The bottom margin is the gap to the picker below, and
+							# is 2 to match the spacing between the governor rows
+							# further down. The top is the gap under the heading
+							# and is left alone.
+							margin = { 0 2 }
+							margin_top = 8
+							spacing = 0
+
+							leo_oae_mbge_button_drop = {
+								layoutpolicy_horizontal = expanding
+								# Reprices before opening, so a window left
+								# sitting while influence accrued offers rows
+								# priced off what is in the treasury now.
+								onclick = "[GetScriptedGui('leo_oae_mbge_refresh').Execute( GuiScope.SetRoot( GetPlayer.MakeScope ).End )]"
+								onclick = "[GetVariableSystem.Set( 'leo_oae_mbge_dd', Select_CString( GetVariableSystem.HasValue( 'leo_oae_mbge_dd', 'opt' ), 'none', 'opt' ) )]"
+								tooltip = "leo_oae_mbge_ui_heading_method_tt"
+								text = "[Localize(Concatenate('leo_oae_mbge_ui_opt_', IntToString(FixedPointToInt(GetPlayer.MakeScope.Var('leo_oae_mbge_opt').GetValue))))]"
+							}
+
+							vbox = {
+								layoutpolicy_horizontal = expanding
+								margin = { 3 0 }
+
+								vbox = {
+									visible = "[GetVariableSystem.HasValue( 'leo_oae_mbge_dd', 'opt' )]"
+									layoutpolicy_horizontal = expanding
+									using = Background_DropDown
+									spacing = 0
+
+									datamodel = "[GetPlayer.MakeScope.GetList( Select_CString( GetVariableSystem.HasValue( 'leo_oae_mbge_dd', 'opt' ), 'leo_oae_mbge_opts', 'leo_oae_mbge_none' ) )]"
+
+									item = {
+										leo_oae_mbge_button_dropdown = {
+											layoutpolicy_horizontal = expanding
+											size = { -1 30 }
+											onclick = "[GetScriptedGui( Concatenate( 'leo_oae_mbge_set_', Scope.GetFlagName ) ).Execute( GuiScope.SetRoot( GetPlayer.MakeScope ).End )]"
+											onclick = "[GetVariableSystem.Set( 'leo_oae_mbge_dd', 'none' )]"
+											tooltip = "[Localize( Concatenate( Concatenate( 'leo_oae_mbge_ui_', Scope.GetFlagName ), '_tt' ) )]"
+											text = "[Localize( Concatenate( 'leo_oae_mbge_ui_', Scope.GetFlagName ) )]"
+										}
+									}
+								}
+							}
+
+							widget = {
+								visible = "[GetVariableSystem.HasValue( 'leo_oae_mbge_dd', 'opt' )]"
+								size = { 1 12 }
+							}
+						}
+					}
+
+					### Who the budget reaches first.
+					###
+					### Only Grease Palms charges a different price per governor,
+					### so it is the only option under which the two orderings
+					### can give different answers. Hidden for the rest rather
+					### than disabled, because a control that never matters is
+					### better absent than gray.
+					###
+					### No heading of its own, and the same negative top margin the
+					### level picker below carries, so the three read as one stack
+					### under the method rather than as separate sections. It
+					### qualifies the method, so it sits with it: appearing and
+					### disappearing between the method and the level is what a
+					### control that belongs to the method above it should do.
+					vbox = {
+						visible = "[EqualTo_CFixedPoint( GetPlayer.MakeScope.Var('leo_oae_mbge_opt').GetValue, '(CFixedPoint)2' )]"
+						layoutpolicy_horizontal = expanding
+						margin_top = -8
+
+						vbox = {
+							layoutpolicy_horizontal = expanding
+							margin = { 0 0 }
+							# Matches the method picker above, so the gap to the
+							# level picker below is the same 2.
+							margin_bottom = 2
+							spacing = 0
+
+							leo_oae_mbge_button_drop = {
+								layoutpolicy_horizontal = expanding
+								# Reprices first, as the other two dropdowns do,
+								# so all three offer rows priced off what is in
+								# the treasury now.
+								onclick = "[GetScriptedGui('leo_oae_mbge_refresh').Execute( GuiScope.SetRoot( GetPlayer.MakeScope ).End )]"
+								onclick = "[GetVariableSystem.Set( 'leo_oae_mbge_dd', Select_CString( GetVariableSystem.HasValue( 'leo_oae_mbge_dd', 'order' ), 'none', 'order' ) )]"
+								tooltip = "leo_oae_mbge_ui_heading_order_tt"
+								text = "[Localize(Concatenate('leo_oae_mbge_ui_order_', IntToString(FixedPointToInt(GetPlayer.MakeScope.Var('leo_oae_mbge_order').GetValue))))]"
+							}
+
+							vbox = {
+								layoutpolicy_horizontal = expanding
+								margin = { 3 0 }
+
+								vbox = {
+									visible = "[GetVariableSystem.HasValue( 'leo_oae_mbge_dd', 'order' )]"
+									layoutpolicy_horizontal = expanding
+									using = Background_DropDown
+									spacing = 0
+
+									datamodel = "[GetPlayer.MakeScope.GetList( Select_CString( GetVariableSystem.HasValue( 'leo_oae_mbge_dd', 'order' ), 'leo_oae_mbge_orders', 'leo_oae_mbge_none' ) )]"
+
+									item = {
+										leo_oae_mbge_button_dropdown = {
+											layoutpolicy_horizontal = expanding
+											size = { -1 30 }
+											onclick = "[GetScriptedGui( Concatenate( 'leo_oae_mbge_set_', Scope.GetFlagName ) ).Execute( GuiScope.SetRoot( GetPlayer.MakeScope ).End )]"
+											onclick = "[GetVariableSystem.Set( 'leo_oae_mbge_dd', 'none' )]"
+											tooltip = "[Localize( Concatenate( Concatenate( 'leo_oae_mbge_ui_', Scope.GetFlagName ), '_tt' ) )]"
+											text = "[Localize( Concatenate( 'leo_oae_mbge_ui_', Scope.GetFlagName ) )]"
+										}
+									}
+								}
+							}
+
+							widget = {
+								visible = "[GetVariableSystem.HasValue( 'leo_oae_mbge_dd', 'order' )]"
+								size = { 1 12 }
+							}
+						}
+					}
+
+					### How far down the pool to go.
+					###
+					### No heading of its own: it sits in the method's stack and
+					### its own label says what it is. The negative top margin
+					### cancels the spacing the surrounding vbox puts between
+					### sections, so the pickers read as one group rather than
+					### as two or three headings' worth apart.
+					vbox = {
+						layoutpolicy_horizontal = expanding
+						margin_top = -8
+
+						vbox = {
+							layoutpolicy_horizontal = expanding
+							margin = { 0 0 }
+							margin_bottom = 4
+							spacing = 0
+
+							leo_oae_mbge_button_drop = {
+								layoutpolicy_horizontal = expanding
+								onclick = "[GetScriptedGui('leo_oae_mbge_refresh').Execute( GuiScope.SetRoot( GetPlayer.MakeScope ).End )]"
+								onclick = "[GetVariableSystem.Set( 'leo_oae_mbge_dd', Select_CString( GetVariableSystem.HasValue( 'leo_oae_mbge_dd', 'thresh' ), 'none', 'thresh' ) )]"
+								tooltip = "leo_oae_mbge_ui_heading_targets_tt"
+								text = "[Localize(Concatenate('leo_oae_mbge_ui_tc_', IntToString(FixedPointToInt(GetPlayer.MakeScope.Var('leo_oae_mbge_thresh').GetValue))))]"
+							}
+
+							vbox = {
+								layoutpolicy_horizontal = expanding
+								margin = { 3 0 }
+
+								vbox = {
+									visible = "[GetVariableSystem.HasValue( 'leo_oae_mbge_dd', 'thresh' )]"
+									layoutpolicy_horizontal = expanding
+									using = Background_DropDown
+									spacing = 0
+
+									datamodel = "[GetPlayer.MakeScope.GetList( Select_CString( GetVariableSystem.HasValue( 'leo_oae_mbge_dd', 'thresh' ), 'leo_oae_mbge_threshes', 'leo_oae_mbge_none' ) )]"
+
+									item = {
+										leo_oae_mbge_button_dropdown = {
+											layoutpolicy_horizontal = expanding
+											size = { -1 30 }
+
+											# Grayed and unclickable when the
+											# treasury will not cover the whole
+											# row. GUI cannot compare a row's
+											# flag string against anything, so
+											# script keeps one affordability
+											# variable per row and the row reads
+											# its own by name.
+											enabled = "[GreaterThanOrEqualTo_CFixedPoint( GetPlayer.MakeScope.Var( Concatenate( 'leo_oae_mbge_afford_', Scope.GetFlagName ) ).GetValue, '(CFixedPoint)1' )]"
+
+											onclick = "[GetScriptedGui( Concatenate( 'leo_oae_mbge_set_', Scope.GetFlagName ) ).Execute( GuiScope.SetRoot( GetPlayer.MakeScope ).End )]"
+											onclick = "[GetVariableSystem.Set( 'leo_oae_mbge_dd', 'none' )]"
+											tooltip = "[Localize( Concatenate( Concatenate( 'leo_oae_mbge_ui_', Scope.GetFlagName ), '_tt' ) )]"
+											text = "[Localize( Concatenate( 'leo_oae_mbge_ui_', Scope.GetFlagName ) )]"
+										}
+									}
+								}
+							}
+
+							widget = {
+								visible = "[GetVariableSystem.HasValue( 'leo_oae_mbge_dd', 'thresh' )]"
+								size = { 1 12 }
+							}
+						}
+					}
+
+					### What it will do and what it will cost.
+					vbox = {
+						layoutpolicy_horizontal = expanding
+
+						text_label_left = {
+							layoutpolicy_horizontal = expanding
+							margin_left = 12
+							text = "leo_oae_mbge_ui_heading_summary"
+						}
+
+						### Each line is a text sized to its own content, pushed
+						### left by an expand beside it. Making the text itself
+						### expanding while it also autoresizes leaves the two
+						### fighting: the widget takes its content's width but is
+						### placed inside the full one, so each line lands at a
+						### different offset depending on how long it happens to
+						### be. Same reason the governor rows are built this way.
+						vbox = {
+							layoutpolicy_horizontal = expanding
+							margin = { 0 4 }
+							margin_left = 12
+							margin_top = 8
+							spacing = 4
+
+							hbox = {
+								layoutpolicy_horizontal = expanding
+
+								text_multi = {
+									autoresize = yes
+									max_width = 440
+									align = left
+									text = "leo_oae_mbge_ui_summary"
+								}
+
+								expand = {}
+							}
+
+							# Grease Palms is the only method that charges gold,
+							# so the other four get a line that does not mention
+							# it. Every bucket carries a gold figure regardless,
+							# because it was counted before the method was known.
+							hbox = {
+								layoutpolicy_horizontal = expanding
+
+								text_multi = {
+									autoresize = yes
+									max_width = 440
+									align = left
+									text = "[SelectLocalization( EqualTo_CFixedPoint( GetPlayer.MakeScope.Var('leo_oae_mbge_opt').GetValue, '(CFixedPoint)2' ), 'leo_oae_mbge_ui_summary_cost_gold', 'leo_oae_mbge_ui_summary_cost' )]"
+								}
+
+								expand = {}
+							}
+						}
+					}
+
+					### Who the run will visit.
+					###
+					### A datamodel over a character list script rebuilds at the
+					### end of every recount, so it always matches the figures
+					### above. Rows are ordered worst governed first, the order
+					### the budget spends in.
+					###
+					### One list, holding everyone the threshold catches whether
+					### or not they have been set aside. Ticking one changes its
+					### tick and nothing else: the row keeps its place, so
+					### nothing under the cursor moves.
+					###
+					### That is possible because being set aside is a variable on
+					### the governor rather than an entry in a list on the
+					### player, and a variable on any character can be read from
+					### GUI directly. There is no datafunction for list
+					### membership, which is what forced the earlier split into
+					### two lists and the jumping that came with it.
+					vbox = {
+						layoutpolicy_horizontal = expanding
+
+						text_label_left = {
+							layoutpolicy_horizontal = expanding
+							margin_left = 12
+							text = "leo_oae_mbge_ui_heading_governors"
+						}
+
+						vbox = {
+							layoutpolicy_horizontal = expanding
+							margin = { 0 4 }
+							margin_top = 8
+							spacing = 2
+
+							# Script clears this at the start of every rebuild,
+							# so when there is nobody to show it is empty and the
+							# rows cease to exist on their own. No stand-in list
+							# is needed here, unlike the dropdowns, which have to
+							# be emptied by name when they close.
+							datamodel = "[GetPlayer.MakeScope.GetList('leo_oae_mbge_targets')]"
+
+							item = {
+								leo_oae_mbge_governor_row = {
+									blockoverride "checked" {
+										checked = "[Not( EqualTo_CFixedPoint( Character.MakeScope.Var('leo_oae_mbge_excl').GetValue, '(CFixedPoint)1' ) )]"
+									}
+								}
+							}
+						}
+					}
+
+				}
+			}
+		}
+
+		### The action, kept out of the scrollbox so it cannot scroll away.
+		hbox = {
+			layoutpolicy_horizontal = expanding
+			margin_top = 10
+			margin_right = 16
+			margin_bottom = 14
+			margin_left = 16
+
+			button_standard = {
+				layoutpolicy_horizontal = expanding
+				size = { -1 44 }
+
+				text = "leo_oae_mbge_ui_apply"
+				tooltip = "leo_oae_mbge_ui_note"
+
+				onclick = "[GetScriptedGui('leo_oae_mbge_apply').Execute( GuiScope.SetRoot( GetPlayer.MakeScope ).End )]"
+
+				# Two variable reads rather than the scripted GUI's IsValid, so
+				# no script runs per frame anywhere in this panel, whether it is
+				# open or sitting hidden. A binding is not obviously skipped
+				# while its window is invisible, and this is cheap enough that
+				# it does not matter either way.
+				#
+				# Nothing is lost by not asking script here. That entry keeps
+				# its is_valid, which is the authoritative check on the click
+				# itself, and every governor is checked again for affordability
+				# as the run reaches them. So the worst a stale reading can do
+				# is leave the button lit for a run that turns out to bolster
+				# fewer governors than it advertised, which is the same
+				# staleness the figures above already carry.
+				enabled = "[And( GreaterThanOrEqualTo_CFixedPoint( GetPlayer.MakeScope.Var('leo_oae_mbge_count').GetValue, '(CFixedPoint)1' ), GreaterThanOrEqualTo_CFixedPoint( GetPlayer.MakeScope.Var('leo_oae_mbge_afford_sel').GetValue, '(CFixedPoint)1' ) )]"
+			}
+		}
+	}
+}

@@ -42,6 +42,10 @@ use()  { # <label> <regex>                        proxy against GUI, WARN on mis
 	if _g "$GAME/gui" "$2"; then printf '  ok    %s\n' "$1"; P=$((P+1))
 	else printf '  warn  %s (vanilla GUI no longer uses it - verify by hand)\n' "$1"; W=$((W+1)); fi
 }
+suse() { # <label> <regex>                        the same for script built-ins
+	if _g "$GAME/common" "$2"; then printf '  ok    %s\n' "$1"; P=$((P+1))
+	else printf '  warn  %s (vanilla script no longer uses it - verify by hand)\n' "$1"; W=$((W+1)); fi
+}
 file() { # <label> <path under GAME>              strong, FAIL if missing
 	if [ -f "$GAME/$2" ]; then printf '  ok    %s\n' "$1"; P=$((P+1))
 	else printf '  FAIL  %s\n' "$1"; F=$((F+1)); FAILS="$FAILS\n  - $1"; fi
@@ -149,6 +153,175 @@ else
 		fi
 	done
 fi
+
+echo
+echo "Mass Bolster Governance - the interaction it stands in for"
+# The whole feature is this one interaction, applied many times. If it is
+# renamed or removed, nothing here has anything to do.
+def  "boost_efficiency_interaction defined" \
+     "common/character_interactions" "^boost_efficiency_interaction = [{]"
+# The two effects the mass action calls in place of the interaction's on_accept.
+# These are vanilla's own, which is what makes a mass bolster identical to a
+# hand-sent one. They read scope:actor and scope:recipient and nothing else; if
+# that stops being true, the run breaks quietly rather than loudly.
+def  "boost_governor_efficiency_success_effect" \
+     "common/scripted_effects" "^boost_governor_efficiency_success_effect = [{]"
+def  "boost_governor_efficiency_duel_effect" \
+     "common/scripted_effects" "^boost_governor_efficiency_duel_effect = [{]"
+# The duel effect takes the skill by macro. All three we pass must still be
+# accepted, and the interaction must still route them the same way.
+def  "on_accept still routes the three skill options" \
+     "common/character_interactions" "boost_governor_efficiency_duel_effect = [{] SKILL = stewardship [}]"
+# The panel quotes the odds on the three skill methods, which means it repeats
+# vanilla's duel arithmetic rather than reading it. Each of these three numbers
+# is one the mod hardcodes a mirror of, so a rebalance that changes any of them
+# turns every percentage on screen into a lie without anything else noticing.
+def  "duel target rating"        "common/script_values" "^mediocre_skill_rating = "
+def  "duel skew per skill point" "common/scripted_effects" "value = scope:duel_value[[:space:]]*$|multiplier = 1\.5"
+def  "duel weight floor"         "common/scripted_effects" "min = -49"
+# The cooldown is a variable list on the recipient, not a cooldown field, so the
+# mass action has to write it by hand. Both names are read when deciding who is
+# still eligible.
+def  "efficiency_boosters cooldown list"  "common/character_interactions" "name = efficiency_boosters"
+def  "efficiency_damagers cooldown list"  "common/character_interactions" "name = efficiency_damagers"
+
+echo
+echo "Mass Bolster Governance - what it counts and what it charges"
+# Efficiency as the interface states it, which is what the thresholds compare
+# against and what vanilla's own eligibility limit is written in.
+def  "governor_efficiency_presented"      "common/script_values" "^governor_efficiency_presented = [{]"
+def  "boost_efficiency_maximum_value"     "common/script_values" "^boost_efficiency_maximum_value = "
+# The three constants the cost block is built from. Reading vanilla's own names
+# rather than hardcoding 30, 60 and the gold formula is what keeps a mass
+# bolster priced exactly like a hand-sent one after a rebalance.
+def  "minor_influence_value"              "common/script_values" "^minor_influence_value = "
+def  "medium_influence_value"             "common/script_values" "^medium_influence_value = "
+def  "medium_gold_value"                  "common/script_values" "^medium_gold_value = [{]"
+# The cost block itself, so a patch that changes which currencies are charged,
+# or drops the per-recipient gold, is caught rather than silently mispriced.
+def  "cost is still minor influence plus medium gold" \
+     "common/character_interactions" "value = scope:recipient\.medium_gold_value"
+
+echo
+echo "Mass Bolster Governance - script built-ins it leans on"
+# Engine triggers and effects with no definition file of their own. The best a
+# file scan can do is confirm vanilla still uses them.
+suse "is_character_interaction_valid"     "is_character_interaction_valid = [{]"
+suse "is_governor"                        "is_governor = yes"
+suse "ordered_vassal with order_by"       "ordered_vassal = [{]"
+suse "government_allows = administrative" "government_allows = administrative"
+suse "change_influence"                   "change_influence = [{]"
+suse "remove_short_term_gold"             "remove_short_term_gold = "
+# The pool is top_liege's vassals, not the player's, because that is what the
+# interaction's own is_shown asks for. If this clause goes, re-derive the
+# iterator rather than leaving it as it is.
+def  "recipient shares the actor's top liege" \
+     "common/character_interactions" "top_liege = scope:actor\.top_liege"
+
+echo
+echo "Mass Bolster Governance - the panel and the way in"
+def  "admin decision group still exists"  "common/decision_group_types" "^admin = [{]"
+file "decision picture"  "gfx/interface/illustrations/decisions/decision_misc.dds"
+# Why the panel is a window of ours and not the decision's own body. A decision
+# widget is shown only if the decision declares a second step, and declaring one
+# makes the window draw its next-step button in place of its confirm button, so
+# Bolster Governance could never be the primary action on that page. These two
+# pin that arrangement: if a patch ever decouples them, the panel could move
+# into the decision window and this is what would say so.
+def  "next-step and confirm are still mutually exclusive" \
+     "gui/window_decisions_detail.gui" "Not\( DecisionDetailView.HasNextStep \)"
+def  "stepping across still toggles the custom widget" \
+     "gui/window_decisions_detail.gui" "ToggleCustomWidgetState"
+use  "header_pattern"        "type header_pattern = "
+# Copied into the panel rather than overridden, because vanilla sets
+# button_trigger = none on both and that would swallow our onclick. Re-diff the
+# copies in gui/leo_oae_mbge_panel.gui when these change.
+def  "button_drop type"      "gui/shared/buttons.gui" "type button_drop = "
+def  "button_dropdown type"  "gui/shared/buttons.gui" "type button_dropdown = "
+use  "Background_DropDown"   "template Background_DropDown"
+use  "text_label_left"       "type text_label_left = "
+use  "scrollbox_content block"        "block \"scrollbox_content\""
+use  "scrollbox_background_fade block" "block \"scrollbox_background_fade\""
+# The governor list. A datamodel over a variable list of characters yields
+# scopes, and Scope.Char is what turns each row back into a character; the row's
+# checkbox hands that character to script through AddScope, which the scripted
+# GUI receives because it declares saved_scopes.
+def  "button_checkbox type"  "gui/shared/buttons.gui" "type button_checkbox = "
+# The row copies the shape of vanilla's own governor row, and reuses the
+# character sheet's own name and age lines so they read and translate the same.
+def  "widget_current_governor (the row we mirror)" \
+     "gui/window_admin_vassal_detail.gui" "type widget_current_governor = "
+use  "portrait_head_small"   "type portrait_head_small = "
+use  "Background_Area"       "template Background_Area\b"
+use  "GetHealthIconFrame"    "GetHealthIconFrame"
+file "health icon"           "gfx/interface/icons/character_status/icon_health.dds"
+def  "CHARACTER_VIEW_NAME_SHORT" "localization/english" "^ *CHARACTER_VIEW_NAME_SHORT:"
+def  "CHARACTER_VIEW_AGE"        "localization/english" "^ *CHARACTER_VIEW_AGE:"
+# Governance is shown with the game's own pair, so the number is colored by the
+# same bands and the tooltip breaks it down the same way as the character sheet
+# and the theme panel. Printing the number ourselves would lose all three.
+def  "efficiency value key"      "localization/english" "^ *ADMIN_WINDOW_THEME_GOVERNOR_EFFICIENCY_VALUE:"
+def  "efficiency breakdown key"  "localization/english" "^ *ADMIN_WINDOW_THEME_GOVERNOR_EFFICIENCY_TT:"
+use  "icon_governor_efficiency"  "type icon_governor_efficiency = "
+# The relation and house lines, copied from the same vanilla row.
+use  "GetRelationToString"       "GetRelationToString"
+def  "EXTENDED_RELATIONS_TOOLTIP" "localization/english" "^ *EXTENDED_RELATIONS_TOOLTIP:"
+use  "coa_house_microscopic"    "type coa_house_microscopic = "
+def  "house name key"            "localization/english" "^ *ADMINISTRATIVE_GOVERNMENT_HOUSE_WITH_NAME:"
+# The per-governor price under Grease Palms. A widget rather than the
+# @gold_icon! texticon, which renders at 25 square and cannot be told otherwise.
+use  "icon_gold"                 "type icon_gold = "
+use  "Scope.Char"            "Scope\.Char"
+use  "AddScope with a character" "AddScope\( *'[a-z_]+', *Character\.MakeScope *\)"
+def  "saved_scopes on scripted guis" "common/scripted_guis" "saved_scopes = [{]"
+suse "remove_list_variable"  "remove_list_variable = [{]"
+# The shortcut's gate is written out of these rather than pointed at the
+# scripted GUI that says the same thing, because its widget is alive all
+# session and a scripted GUI there would run script every frame. They have to
+# keep saying what leo_oae_mbge_available_trigger says.
+use  "GetPlayer.IsRuler"                 "GetPlayer\.IsRuler"
+use  "GetPlayer.IsAdult"                 "GetPlayer\.IsAdult"
+use  "HasRule( 'administrative' )"       "HasRule\( *'administrative' *\)"
+def  "on_game_start_after_lobby" "common/on_action" "^on_game_start_after_lobby = [{]"
+# The settings live on the player's character, so an heir starts without them.
+# There is no on_action for the player's character changing, and gaining a title
+# is the closest thing to one. If a patch ever adds a real hook, prefer it: this
+# one fires for every character in the world and leans on its trigger to be
+# cheap.
+def  "on_title_gain"             "common/on_action" "^on_title_gain = [{]"
+# The shortcut. Same arrangement as the map mode's: vanilla pre-binds the
+# combination, the mod only names it.
+def  "_ctrl_shift_b still bound"          "gui/shortcuts.shortcuts" "_ctrl_shift_b = \"ctrl\+shift\+b\""
+ndef "ctrl+shift+B is still ours alone"   "gui/shortcuts.shortcuts" \
+     "^[[:space:]]*[a-zA-Z][a-zA-Z0-9_]* = \"ctrl\+shift\+[bB]\""
+
+echo
+echo "Mass Bolster Governance - vanilla text it reuses"
+# The five method names and the button are pointed at vanilla's own keys, so
+# they translate for free and stay in step with the game's wording. A rename
+# here shows up on screen as a raw key.
+def  "influence_boost_desc"    "localization/english" "^ *influence_boost_desc:"
+def  "gold_boost_desc"         "localization/english" "^ *gold_boost_desc:"
+def  "diplomacy_boost_desc"    "localization/english" "^ *diplomacy_boost_desc:"
+def  "stewardship_boost_desc"  "localization/english" "^ *stewardship_boost_desc:"
+def  "intrigue_boost_desc"     "localization/english" "^ *intrigue_boost_desc:"
+def  "boost_efficiency_interaction (button label)" \
+     "localization/english" "^ *boost_efficiency_interaction:"
+# The shortcut is named in prose out of vanilla's own modifier keys rather than
+# spelled out, so it reads the way the game spells it in each language (Strg+ in
+# German, Mayús+ in Spanish, Ctrl + with a space in Russian). There is no
+# datafunction for a named binding, so this is as close as prose gets.
+def  "SHORTCUT_KEY_MOD_ctrl"   "localization/english" "^ *SHORTCUT_KEY_MOD_ctrl:"
+def  "SHORTCUT_KEY_MOD_shift"  "localization/english" "^ *SHORTCUT_KEY_MOD_shift:"
+def  "governor_efficiency concept"  "common/game_concepts" "^governor_efficiency = [{]"
+def  "governor concept"             "common/game_concepts" "^governor = [{]"
+# Linked as [governors|E] in most languages and, where the noun has to inflect,
+# as Concept('governors','...'). Both forms resolve through this alias, so it is
+# named here rather than assumed.
+def  "governors concept alias"      "common/game_concepts" "alias = [{] governors "
+# Linked as [diplomacy|E] and friends, which are aliases rather than concepts in
+# their own right.
+def  "skill concept aliases"        "common/game_concepts" "alias = [{] diplomacy_i diplomacy [}]"
 
 echo
 printf '%s ok, %s failed, %s warned\n' "$P" "$F" "$W"

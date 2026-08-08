@@ -1,23 +1,22 @@
 ﻿### Leo VI's Odds and Ends - keyboard shortcuts.
 ###
-### A shortcut on the map mode button itself only puts the key in that button's
-### tooltip. It cannot fire the map mode, because the Additional Map Modes
-### flyout the button lives in is hidden until the player opens it, and a hidden
-### widget takes no input. Vanilla has the same problem and solves it with
+### A shortcut only fires while its widget is alive and taking input, so a key
+### declared on a button inside something hidden does nothing but put itself in
+### that button's tooltip. Vanilla has the same problem and solves it with
 ### hotkeys_HUD (game/gui/hud.gui), a widget of nothing but shortcut-carrying
 ### buttons that is always present. Every map mode key is declared twice there:
 ### once on the flyout button for the tooltip, once in hotkeys_HUD to work.
 ###
 ### hotkeys_HUD cannot be added to without overriding hud.gui, so this is our
 ### own copy of the idea, registered through gui/scripted_widgets/ so no vanilla
-### file is touched.
+### file is touched. Every feature's key lives here, under its own heading.
 ###
-### The key itself needs no binding of our own. game/gui/shortcuts.shortcuts
+### The keys themselves need no binding of our own. game/gui/shortcuts.shortcuts
 ### pre-binds every key combination under a "### all the keys for modders ###"
-### heading, exactly so a mod need not replace that file (which CK3 does not
-### let a mod do). _ctrl_shift_g is ctrl+shift+G. Vanilla binds ctrl+shift+F and
-### nothing else in that family, and G already carries two map modes
-### (ctrl+G simple terrain, shift+G mandala), so this stays mnemonic and free.
+### heading, exactly so a mod need not replace that file (which CK3 does not let
+### a mod do). Naming one from a widget claims it. Before claiming another,
+### check that no vanilla binding whose name starts with a letter maps to the
+### same keys: the modders' own entries all start with an underscore.
 
 window = {
 	name = "leo_oae_hotkeys"
@@ -31,6 +30,10 @@ window = {
 	visible = yes
 
 	### Governors map mode.
+	###
+	### _ctrl_shift_g is ctrl+shift+G. Vanilla binds ctrl+shift+F and nothing
+	### else in that family, and G already carries two map modes (ctrl+G simple
+	### terrain, shift+G mandala), so this stays mnemonic and free.
 	button_normal = {
 		name = "leo_oae_govmap_shortcut"
 		onclick = "[SetMapMode( 'admin_vassal_types_map' )]"
@@ -41,5 +44,33 @@ window = {
 		# way too (hud.gui's players entry uses enabled, not visible), because
 		# the widget has to stay alive to be listening at all.
 		enabled = "[And( CanChangeMapMode, Or( GetPlayer.GetTopLiege.GetGovernment.HasRule( 'noble_families' ), Or( GetPlayer.GetGovernment.IsType( 'japan_feudal_government' ), Or( GetPlayer.GetGovernment.IsType( 'japan_administrative_government' ), GetPlayer.GetGovernment.IsType( 'celestial_government' ) ) ) ) )]"
+	}
+
+	### Mass Bolster Governance.
+	###
+	### _ctrl_shift_b is ctrl+shift+B, for Bolster. Nothing in vanilla claims it:
+	### the only binding on those keys is the modders' own. B alone is Back, and
+	### that is a different combination.
+	###
+	### The key toggles rather than opens, because the panel is a window of our
+	### own and a key that only opened it would leave no way to put it away
+	### without reaching for the mouse. The decision opens it as well, and skips
+	### its own window straight to ours.
+	button_normal = {
+		name = "leo_oae_mbge_shortcut"
+		onclick = "[GetScriptedGui('leo_oae_mbge_toggle').Execute( GuiScope.SetRoot( GetPlayer.MakeScope ).End )]"
+		shortcut = "_ctrl_shift_b"
+
+		# Gated with enabled, never visible: the widget has to stay alive to be
+		# listening at all. This is the same gate the decision carries, so the
+		# key is dead for anyone the decision is hidden from.
+		#
+		# Written out of datafunctions rather than pointed at the scripted GUI's
+		# IsValid, even though that entry says exactly this. This window is alive
+		# for the whole session by design, so a scripted GUI here would be a
+		# script call every frame from the main menu onwards, which is the one
+		# place in the mod where that would genuinely cost something. Keep it in
+		# step with leo_oae_mbge_available_trigger by hand.
+		enabled = "[And( GetPlayer.IsRuler, And( GetPlayer.IsAdult, GetPlayer.GetGovernment.HasRule( 'administrative' ) ) )]"
 	}
 }

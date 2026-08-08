@@ -1,0 +1,249 @@
+﻿### Leo VI's Odds and Ends - Mass Bolster Governance, panel controls.
+###
+### Each is invoked from the panel with the player as root:
+###   [GetScriptedGui('name').Execute( GuiScope.SetRoot( GetPlayer.MakeScope ).End )]
+###
+### Convention, as elsewhere in this mod:
+###   is_shown -> the control's checked or selected state (IsShown binding)
+###   is_valid -> whether the control is enabled          (IsValid binding)
+###   effect   -> runs on click                           (Execute binding)
+###
+### The threshold rows are the exception: whether one is selectable is simply
+### "can it be paid for", which script has already written into a variable, so
+### the panel reads that directly and those rows need no is_valid here.
+
+### Opening and closing.
+
+# The keyboard shortcut. The decision opens the panel; the key does both, since
+# a key that only opened it would leave no way to put it away again.
+leo_oae_mbge_toggle = {
+	scope = character
+	is_shown = { var:leo_oae_mbge_open = 1 }
+	is_valid = { leo_oae_mbge_available_trigger = yes }
+	effect = {
+		leo_oae_mbge_init_defaults_effect = yes
+		if = {
+			limit = { var:leo_oae_mbge_open = 1 }
+			leo_oae_mbge_close_effect = yes
+		}
+		else = {
+			leo_oae_mbge_open_effect = yes
+		}
+	}
+}
+
+leo_oae_mbge_close = {
+	scope = character
+	effect = { leo_oae_mbge_close_effect = yes }
+}
+
+### Counting.
+
+# Recounts without changing a setting. The panel calls this as it is created and
+# again whenever a dropdown is opened, so a window left sitting while influence
+# accrued prices itself off current numbers rather than whatever was true when
+# it opened.
+#
+leo_oae_mbge_refresh = {
+	scope = character
+	is_valid = { leo_oae_mbge_available_trigger = yes }
+	effect = {
+		leo_oae_mbge_init_defaults_effect = yes
+		leo_oae_mbge_recount_effect = yes
+	}
+}
+
+### Which of vanilla's five options to use.
+#
+# Changing the option changes what every governor costs, so it reprices the
+# whole board rather than just the selected row.
+
+leo_oae_mbge_set_opt_1 = {
+	scope = character
+	effect = {
+		set_variable = { name = leo_oae_mbge_opt value = 1 }
+		leo_oae_mbge_recount_effect = yes
+	}
+}
+
+leo_oae_mbge_set_opt_2 = {
+	scope = character
+	effect = {
+		set_variable = { name = leo_oae_mbge_opt value = 2 }
+		leo_oae_mbge_recount_effect = yes
+	}
+}
+
+leo_oae_mbge_set_opt_3 = {
+	scope = character
+	effect = {
+		set_variable = { name = leo_oae_mbge_opt value = 3 }
+		leo_oae_mbge_recount_effect = yes
+	}
+}
+
+leo_oae_mbge_set_opt_4 = {
+	scope = character
+	effect = {
+		set_variable = { name = leo_oae_mbge_opt value = 4 }
+		leo_oae_mbge_recount_effect = yes
+	}
+}
+
+leo_oae_mbge_set_opt_5 = {
+	scope = character
+	effect = {
+		set_variable = { name = leo_oae_mbge_opt value = 5 }
+		leo_oae_mbge_recount_effect = yes
+	}
+}
+
+### How far down the list to go.
+#
+# Every bucket was already counted and priced by the last recount, so picking
+# one only copies its figures onto the summary line. It does have to rebuild the
+# list of governors underneath, though, which is per selection rather than per
+# bucket: leaving that out was what left the list showing one threshold's
+# governors while the summary described another. Codes are append-only: they
+# persist in saves.
+
+leo_oae_mbge_set_t_m40 = {
+	scope = character
+	effect = {
+		set_variable = { name = leo_oae_mbge_thresh value = 1 }
+		leo_oae_mbge_reselect_effect = yes
+	}
+}
+
+leo_oae_mbge_set_t_m30 = {
+	scope = character
+	effect = {
+		set_variable = { name = leo_oae_mbge_thresh value = 2 }
+		leo_oae_mbge_reselect_effect = yes
+	}
+}
+
+leo_oae_mbge_set_t_m20 = {
+	scope = character
+	effect = {
+		set_variable = { name = leo_oae_mbge_thresh value = 3 }
+		leo_oae_mbge_reselect_effect = yes
+	}
+}
+
+leo_oae_mbge_set_t_m10 = {
+	scope = character
+	effect = {
+		set_variable = { name = leo_oae_mbge_thresh value = 4 }
+		leo_oae_mbge_reselect_effect = yes
+	}
+}
+
+leo_oae_mbge_set_t_0 = {
+	scope = character
+	effect = {
+		set_variable = { name = leo_oae_mbge_thresh value = 5 }
+		leo_oae_mbge_reselect_effect = yes
+	}
+}
+
+leo_oae_mbge_set_t_10 = {
+	scope = character
+	effect = {
+		set_variable = { name = leo_oae_mbge_thresh value = 6 }
+		leo_oae_mbge_reselect_effect = yes
+	}
+}
+
+leo_oae_mbge_set_t_20 = {
+	scope = character
+	effect = {
+		set_variable = { name = leo_oae_mbge_thresh value = 7 }
+		leo_oae_mbge_reselect_effect = yes
+	}
+}
+
+leo_oae_mbge_set_t_30 = {
+	scope = character
+	effect = {
+		set_variable = { name = leo_oae_mbge_thresh value = 8 }
+		leo_oae_mbge_reselect_effect = yes
+	}
+}
+
+# There is no leo_oae_mbge_set_t_all. Code 9 was "every eligible governor",
+# which demanded the whole pool be payable, and code 10 reaches the same
+# governors whenever the money is there and as many of them as it stretches to
+# otherwise. One entry does both, so t_all is no longer in the dropdown's list
+# and nothing can build this name.
+
+leo_oae_mbge_set_t_bud = {
+	scope = character
+	effect = {
+		set_variable = { name = leo_oae_mbge_thresh value = 10 }
+		leo_oae_mbge_reselect_effect = yes
+	}
+}
+
+### Who the budget is spent on first.
+#
+# Only Grease Palms charges a different price per governor, so this only ever
+# changes the answer there, and the panel only shows it there. It still
+# reprices, because it changes who the budget row picked.
+
+leo_oae_mbge_set_order_1 = {
+	scope = character
+	effect = {
+		set_variable = { name = leo_oae_mbge_order value = 1 }
+		leo_oae_mbge_recount_effect = yes
+	}
+}
+
+leo_oae_mbge_set_order_2 = {
+	scope = character
+	effect = {
+		set_variable = { name = leo_oae_mbge_order value = 2 }
+		leo_oae_mbge_recount_effect = yes
+	}
+}
+
+### Setting a governor aside.
+#
+# The panel hands the row's character over as scope:leo_oae_mbge_gov, which is
+# what saved_scopes declares.
+#
+# There is deliberately no is_shown here. The checkbox's tick does not ask this
+# entry anything: it reads leo_oae_mbge_excl straight off the governor, which is
+# a plain variable read. Binding the tick to a scripted GUI instead would run
+# script once per row per frame for as long as the panel is open, and this
+# control is only ever meant to run on a click.
+leo_oae_mbge_toggle_exclude = {
+	scope = character
+	saved_scopes = { leo_oae_mbge_gov }
+	effect = { leo_oae_mbge_toggle_exclude_effect = yes }
+}
+
+### Doing it.
+#
+# The panel carries its own Bolster button rather than leaning on the window's.
+# It has to: the decision's own confirm button lives on a second step, and
+# stepping to it toggles the panel off, so reaching it means configuring on one
+# page and confirming on another with the settings out of sight. This button
+# sits under the summary it acts on, and one click runs the whole thing.
+#
+# is_valid is the authoritative check on the click. The panel grays the button
+# from two variables rather than asking here, so that nothing in the window runs
+# script per frame, and this is what catches the gap: it asks that the feature
+# still applies, that the last count found someone, and that there is influence
+# enough for at least one bolster right now. Whether each individual governor
+# can be paid for is checked again as the run reaches them.
+leo_oae_mbge_apply = {
+	scope = character
+	is_valid = {
+		leo_oae_mbge_available_trigger = yes
+		leo_oae_mbge_has_targets_trigger = yes
+		var:leo_oae_mbge_afford_sel = 1
+		influence >= leo_oae_mbge_unit_influence_value
+	}
+	effect = { leo_oae_mbge_apply_effect = yes }
+}

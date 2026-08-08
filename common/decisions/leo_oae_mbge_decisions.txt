@@ -1,0 +1,67 @@
+﻿### Leo VI's Odds and Ends - Mass Bolster Governance, the way in.
+###
+### The decision opens the panel and does nothing else. It costs nothing and
+### commits to nothing: what is spent, and on whom, is chosen in the panel and
+### paid for there.
+###
+### Building the panel into this window instead was tried and does not work. A
+### decision's custom widget is only shown at all if the decision declares
+### decision_to_second_step_button, and declaring that makes the window draw its
+### next-step button in place of its confirm button
+### (window_decisions_detail.gui:249-270, the two are mutually exclusive), with
+### the step across toggling the panel off again. The primary action on the page
+### could therefore never be Bolster Governance, which is the entire point of
+### the feature. So the panel is our own window, and this window's one job is to
+### explain the feature and open it.
+###
+### A button in the Administrative Government panel would sit closer to the
+### governors it acts on, but that panel is one 4,000-line vanilla file and
+### overriding it would collide with every other administrative mod and go stale
+### on most patches. The decision plus ctrl+shift+B touches no vanilla file.
+
+leo_oae_mbge_decision = {
+	picture = {
+		reference = "gfx/interface/illustrations/decisions/decision_misc.dds"
+	}
+
+	sort_order = 100
+	decision_group_type = admin
+
+	desc = leo_oae_mbge_decision_desc
+	selection_tooltip = leo_oae_mbge_decision_tooltip
+	confirm_text = leo_oae_mbge_decision_confirm
+
+	# The AI never takes this: it opens a window, and the AI does not have
+	# windows. It bolsters governors through the interaction itself, as before.
+	ai_check_interval = 0
+
+	# Mirrors the actor half of the interaction's own is_shown, so the decision
+	# is absent for anyone who could not send a single Bolster Governance by
+	# hand. Administrative government carries its own DLC, so this gates on
+	# ownership without naming a DLC.
+	is_shown = {
+		leo_oae_mbge_available_trigger = yes
+	}
+
+	# The window draws an Effects heading whenever a decision has an effect at
+	# all, and fills it with whatever the effect describes itself as. Hiding the
+	# effect outright therefore leaves a heading over an empty box, so the work
+	# is hidden and one honest line is written in its place: what the counting
+	# pass does is set variables, which is not an outcome worth listing, and
+	# what the player wants to know is that taking this spends nothing.
+	effect = {
+		custom_tooltip = leo_oae_mbge_decision_effect_tt
+
+		hidden_effect = {
+			leo_oae_mbge_open_effect = yes
+		}
+	}
+
+	ai_potential = {
+		always = no
+	}
+
+	ai_will_do = {
+		base = 0
+	}
+}
