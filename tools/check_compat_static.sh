@@ -268,6 +268,9 @@ use  "GetRelationToString"       "GetRelationToString"
 def  "EXTENDED_RELATIONS_TOOLTIP" "localization/english" "^ *EXTENDED_RELATIONS_TOOLTIP:"
 use  "coa_house_microscopic"    "type coa_house_microscopic = "
 def  "house name key"            "localization/english" "^ *ADMINISTRATIVE_GOVERNMENT_HOUSE_WITH_NAME:"
+# The per-governor price under Grease Palms. A widget rather than the
+# @gold_icon! texticon, which renders at 25 square and cannot be told otherwise.
+use  "icon_gold"                 "type icon_gold = "
 use  "Scope.Char"            "Scope\.Char"
 use  "AddScope with a character" "AddScope\( *'[a-z_]+', *Character\.MakeScope *\)"
 def  "saved_scopes on scripted guis" "common/scripted_guis" "saved_scopes = [{]"

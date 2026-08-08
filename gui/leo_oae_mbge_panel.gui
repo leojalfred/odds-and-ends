@@ -124,6 +124,32 @@ types leo_oae_mbge_dropdown_types {
 					}
 
 					expand = {}
+
+					# Only Grease Palms charges gold, and only it charges a
+					# different amount per governor, so it is the one method
+					# where a per-row price says anything. It sits at the end of
+					# the title line, which is otherwise empty, rather than on the
+					# line below, which already carries four things.
+					#
+					# The icon is a widget rather than the @gold_icon! texticon
+					# the summary line uses, because that one renders at 25 square
+					# and dwarfs both of the row's other icons. A widget takes a
+					# size, and the box's spacing sets the gap to the number,
+					# neither of which a texticon inside a loc string will give up.
+					hbox = {
+						visible = "[EqualTo_CFixedPoint( GetPlayer.MakeScope.Var('leo_oae_mbge_opt').GetValue, '(CFixedPoint)2' )]"
+						spacing = 1
+
+						icon_gold = {
+							size = { 16 16 }
+						}
+
+						text_single = {
+							text = "leo_oae_mbge_ui_row_gold"
+							default_format = "#weak"
+							align = nobaseline
+						}
+					}
 				}
 
 				### How well they govern, then who they are.
@@ -196,23 +222,6 @@ types leo_oae_mbge_dropdown_types {
 						frame = "[Character.GetHealthIconFrame]"
 						texture = "gfx/interface/icons/character_status/icon_health.dds"
 						tooltip = "CHARACTER_VIEW_ALIVE_TT"
-					}
-
-					# Only Grease Palms charges gold, and only it charges a
-					# different amount per governor, so it is the one method
-					# where a per-row price says anything.
-					#
-					# The figure goes through a loc key like every other string
-					# here rather than being spelled out on the widget. text
-					# takes a key, not a literal, so a literal is looked up,
-					# missed, and logged as unlocalized every time the row draws.
-					text_single = {
-						visible = "[EqualTo_CFixedPoint( GetPlayer.MakeScope.Var('leo_oae_mbge_opt').GetValue, '(CFixedPoint)2' )]"
-						margin_left = 8
-						text = "leo_oae_mbge_ui_row_gold"
-						fontsize = 16
-						align = nobaseline
-						default_format = "#weak"
 					}
 
 					expand = {}

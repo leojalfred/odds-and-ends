@@ -37,7 +37,7 @@
  leo_oae_mbge_ui_heading_governors:0 "Gobernadores"
  leo_oae_mbge_ui_heading_summary:0 "Resumen"
  leo_oae_mbge_ui_row_tt:0 "Incluir a este [governor|E] al reforzar la gobernanza."
- leo_oae_mbge_ui_row_gold:0 "@gold_icon! [Character.MakeScope.ScriptValue('medium_gold_value')|0]"
+ leo_oae_mbge_ui_row_gold:0 "[Character.MakeScope.ScriptValue('medium_gold_value')|0]"
 
  leo_oae_mbge_ui_opt_0:0 "#weak Elige un método#!"
  leo_oae_mbge_ui_opt_1:0 "$influence_boost_desc$"
