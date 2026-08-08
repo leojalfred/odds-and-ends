@@ -261,6 +261,12 @@ def  "stewardship_boost_desc"  "localization/english" "^ *stewardship_boost_desc
 def  "intrigue_boost_desc"     "localization/english" "^ *intrigue_boost_desc:"
 def  "boost_efficiency_interaction (button label)" \
      "localization/english" "^ *boost_efficiency_interaction:"
+# The shortcut is named in prose out of vanilla's own modifier keys rather than
+# spelled out, so it reads the way the game spells it in each language (Strg+ in
+# German, Mayús+ in Spanish, Ctrl + with a space in Russian). There is no
+# datafunction for a named binding, so this is as close as prose gets.
+def  "SHORTCUT_KEY_MOD_ctrl"   "localization/english" "^ *SHORTCUT_KEY_MOD_ctrl:"
+def  "SHORTCUT_KEY_MOD_shift"  "localization/english" "^ *SHORTCUT_KEY_MOD_shift:"
 def  "governor_efficiency concept"  "common/game_concepts" "^governor_efficiency = [{]"
 def  "governor concept"             "common/game_concepts" "^governor = [{]"
 # Linked as [diplomacy|E] and friends, which are aliases rather than concepts in

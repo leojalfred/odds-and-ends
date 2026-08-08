@@ -25,7 +25,7 @@
  ### tooltip box at all, and the heading above them already says what graying
  ### means.
  leo_oae_mbge_decision:0 "Verwaltung im großen Stil stärken"
- leo_oae_mbge_decision_desc:0 "Stärkt die [governor_efficiency|E] vieler [governor|E] auf einmal, statt einen nach dem anderen.\n\nÖffnet ein Fenster, in dem Ihr die Vorgehensweise wählt und wie weit die Liste hinab gegangen wird. Ausgegeben wird erst, wenn Ihr es dort bestätigt.\n\n#weak Ihr könnt es jederzeit auch mit Strg+Umschalt+B öffnen.#!"
+ leo_oae_mbge_decision_desc:0 "Stärkt die [governor_efficiency|E] vieler [governor|E] auf einmal, statt einen nach dem anderen.\n\nÖffnet ein Fenster, in dem Ihr die Vorgehensweise wählt und wie weit die Liste hinab gegangen wird. Ausgegeben wird erst, wenn Ihr es dort bestätigt.\n\n#weak Ihr könnt es jederzeit auch mit $SHORTCUT_KEY_MOD_ctrl$$SHORTCUT_KEY_MOD_shift$B öffnen.#!"
  leo_oae_mbge_decision_tooltip:0 "Das Fenster zum Stärken im großen Stil öffnen"
  leo_oae_mbge_decision_confirm:0 "Fenster öffnen"
  leo_oae_mbge_decision_effect_tt:0 "Öffnet das Fenster. Ausgegeben wird nichts, bis Ihr von dort aus stärkt."

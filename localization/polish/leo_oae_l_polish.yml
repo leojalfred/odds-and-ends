@@ -25,7 +25,7 @@
  ### tooltip box at all, and the heading above them already says what graying
  ### means.
  leo_oae_mbge_decision:0 "Masowe wzmacnianie zarządzania"
- leo_oae_mbge_decision_desc:0 "Wzmocnij [governor_efficiency|E] wielu [governor|E]ów naraz, zamiast robić to po kolei.\n\nOtwiera panel, w którym wybierasz sposób i to, jak daleko zejść po liście. Nic nie zostanie wydane, dopóki tam tego nie potwierdzisz.\n\n#weak Możesz go też otworzyć w każdej chwili skrótem ctrl+shift+B.#!"
+ leo_oae_mbge_decision_desc:0 "Wzmocnij [governor_efficiency|E] wielu [governor|E]ów naraz, zamiast robić to po kolei.\n\nOtwiera panel, w którym wybierasz sposób i to, jak daleko zejść po liście. Nic nie zostanie wydane, dopóki tam tego nie potwierdzisz.\n\n#weak Możesz go też otworzyć w każdej chwili skrótem $SHORTCUT_KEY_MOD_ctrl$$SHORTCUT_KEY_MOD_shift$B.#!"
  leo_oae_mbge_decision_tooltip:0 "Otwórz panel masowego wzmacniania"
  leo_oae_mbge_decision_confirm:0 "Otwórz panel"
  leo_oae_mbge_decision_effect_tt:0 "Otwiera panel. Nic nie zostanie wydane, dopóki nie wzmocnisz stamtąd."

@@ -25,7 +25,7 @@
  ### tooltip box at all, and the heading above them already says what graying
  ### means.
  leo_oae_mbge_decision:0 "批量提振治理"
- leo_oae_mbge_decision_desc:0 "一次提振众多[governor|E]的[governor_efficiency|E]，而不必逐个处理。\n\n打开一个面板，在其中选择方式以及在名单上向下延伸到何处。在那里确认之前不会有任何花费。\n\n#weak 也可以随时用 ctrl+shift+B 打开。#!"
+ leo_oae_mbge_decision_desc:0 "一次提振众多[governor|E]的[governor_efficiency|E]，而不必逐个处理。\n\n打开一个面板，在其中选择方式以及在名单上向下延伸到何处。在那里确认之前不会有任何花费。\n\n#weak 也可以随时用 $SHORTCUT_KEY_MOD_ctrl$$SHORTCUT_KEY_MOD_shift$B 打开。#!"
  leo_oae_mbge_decision_tooltip:0 "打开批量提振面板"
  leo_oae_mbge_decision_confirm:0 "打开面板"
  leo_oae_mbge_decision_effect_tt:0 "打开面板。在那里执行提振之前不会有任何花费。"

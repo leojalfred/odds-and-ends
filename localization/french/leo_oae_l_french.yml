@@ -25,7 +25,7 @@
  ### tooltip box at all, and the heading above them already says what graying
  ### means.
  leo_oae_mbge_decision:0 "Renforcer la gouvernance en masse"
- leo_oae_mbge_decision_desc:0 "Renforcez l'[governor_efficiency|E] de nombreux [governor|E]s d'un seul coup, au lieu de les traiter un par un.\n\nOuvre un panneau où vous choisissez la méthode et jusqu'où descendre dans la liste. Rien n'est dépensé tant que vous ne l'avez pas confirmé là.\n\n#weak Vous pouvez aussi l'ouvrir à tout moment avec ctrl+maj+B.#!"
+ leo_oae_mbge_decision_desc:0 "Renforcez l'[governor_efficiency|E] de nombreux [governor|E]s d'un seul coup, au lieu de les traiter un par un.\n\nOuvre un panneau où vous choisissez la méthode et jusqu'où descendre dans la liste. Rien n'est dépensé tant que vous ne l'avez pas confirmé là.\n\n#weak Vous pouvez aussi l'ouvrir à tout moment avec $SHORTCUT_KEY_MOD_ctrl$$SHORTCUT_KEY_MOD_shift$B.#!"
  leo_oae_mbge_decision_tooltip:0 "Ouvrir le panneau de renforcement en masse"
  leo_oae_mbge_decision_confirm:0 "Ouvrir le panneau"
  leo_oae_mbge_decision_effect_tt:0 "Ouvre le panneau. Rien n'est dépensé tant que vous n'y avez pas lancé le renforcement."

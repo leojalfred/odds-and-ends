@@ -25,7 +25,7 @@
  ### tooltip box at all, and the heading above them already says what graying
  ### means.
  leo_oae_mbge_decision:0 "Mass Bolster Governance"
- leo_oae_mbge_decision_desc:0 "Bolster the [governor_efficiency|E] of many [governor|E]s at once, instead of one at a time.\n\nOpens a panel where you choose how to go about it and how far down the list to go. Nothing is spent until you say so there.\n\n#weak You can also open it at any time with ctrl+shift+B.#!"
+ leo_oae_mbge_decision_desc:0 "Bolster the [governor_efficiency|E] of many [governor|E]s at once, instead of one at a time.\n\nOpens a panel where you choose how to go about it and how far down the list to go. Nothing is spent until you say so there.\n\n#weak You can also open it at any time with $SHORTCUT_KEY_MOD_ctrl$$SHORTCUT_KEY_MOD_shift$B.#!"
  leo_oae_mbge_decision_tooltip:0 "Open the mass bolster panel"
  leo_oae_mbge_decision_confirm:0 "Open Panel"
  leo_oae_mbge_decision_effect_tt:0 "Opens the panel. Nothing is spent until you bolster from there."

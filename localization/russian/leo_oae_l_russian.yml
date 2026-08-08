@@ -25,7 +25,7 @@
  ### tooltip box at all, and the heading above them already says what graying
  ### means.
  leo_oae_mbge_decision:0 "Массовое укрепление управления"
- leo_oae_mbge_decision_desc:0 "Укрепите [governor_efficiency|E] сразу многих [governor|E], а не по одному.\n\nОткрывает панель, где вы выбираете способ и то, как далеко спускаться по списку. Ничего не тратится, пока вы это там не подтвердите.\n\n#weak Её также можно открыть в любой момент клавишами ctrl+shift+B.#!"
+ leo_oae_mbge_decision_desc:0 "Укрепите [governor_efficiency|E] сразу многих [governor|E], а не по одному.\n\nОткрывает панель, где вы выбираете способ и то, как далеко спускаться по списку. Ничего не тратится, пока вы это там не подтвердите.\n\n#weak Её также можно открыть в любой момент клавишами $SHORTCUT_KEY_MOD_ctrl$$SHORTCUT_KEY_MOD_shift$B.#!"
  leo_oae_mbge_decision_tooltip:0 "Открыть панель массового укрепления"
  leo_oae_mbge_decision_confirm:0 "Открыть панель"
  leo_oae_mbge_decision_effect_tt:0 "Открывает панель. Ничего не тратится, пока вы не укрепите оттуда."
