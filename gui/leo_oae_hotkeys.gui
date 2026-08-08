@@ -64,6 +64,13 @@ window = {
 		# Gated with enabled, never visible: the widget has to stay alive to be
 		# listening at all. This is the same gate the decision carries, so the
 		# key is dead for anyone the decision is hidden from.
-		enabled = "[GetScriptedGui('leo_oae_mbge_toggle').IsValid( GuiScope.SetRoot( GetPlayer.MakeScope ).End )]"
+		#
+		# Written out of datafunctions rather than pointed at the scripted GUI's
+		# IsValid, even though that entry says exactly this. This window is alive
+		# for the whole session by design, so a scripted GUI here would be a
+		# script call every frame from the main menu onwards, which is the one
+		# place in the mod where that would genuinely cost something. Keep it in
+		# step with leo_oae_mbge_available_trigger by hand.
+		enabled = "[And( GetPlayer.IsRuler, And( GetPlayer.IsAdult, GetPlayer.GetGovernment.HasRule( 'administrative' ) ) )]"
 	}
 }

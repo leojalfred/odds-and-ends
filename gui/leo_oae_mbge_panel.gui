@@ -505,10 +505,21 @@ window = {
 				tooltip = "leo_oae_mbge_ui_note"
 
 				onclick = "[GetScriptedGui('leo_oae_mbge_apply').Execute( GuiScope.SetRoot( GetPlayer.MakeScope ).End )]"
-				# Asked every frame, unlike the figures above, which are only as
-				# fresh as the last recount. This is what actually stops the
-				# treasury going under.
-				enabled = "[GetScriptedGui('leo_oae_mbge_apply').IsValid( GuiScope.SetRoot( GetPlayer.MakeScope ).End )]"
+
+				# Two variable reads rather than the scripted GUI's IsValid, so
+				# no script runs per frame anywhere in this panel, whether it is
+				# open or sitting hidden. A binding is not obviously skipped
+				# while its window is invisible, and this is cheap enough that
+				# it does not matter either way.
+				#
+				# Nothing is lost by not asking script here. That entry keeps
+				# its is_valid, which is the authoritative check on the click
+				# itself, and every governor is checked again for affordability
+				# as the run reaches them. So the worst a stale reading can do
+				# is leave the button lit for a run that turns out to bolster
+				# fewer governors than it advertised, which is the same
+				# staleness the figures above already carry.
+				enabled = "[And( GreaterThanOrEqualTo_CFixedPoint( GetPlayer.MakeScope.Var('leo_oae_mbge_count').GetValue, '(CFixedPoint)1' ), GreaterThanOrEqualTo_CFixedPoint( GetPlayer.MakeScope.Var('leo_oae_mbge_afford_sel').GetValue, '(CFixedPoint)1' ) )]"
 			}
 		}
 	}

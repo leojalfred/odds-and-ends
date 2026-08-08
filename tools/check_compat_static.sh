@@ -251,6 +251,13 @@ use  "Scope.Char"            "Scope\.Char"
 use  "AddScope with a character" "AddScope\( *'[a-z_]+', *Character\.MakeScope *\)"
 def  "saved_scopes on scripted guis" "common/scripted_guis" "saved_scopes = [{]"
 suse "remove_list_variable"  "remove_list_variable = [{]"
+# The shortcut's gate is written out of these rather than pointed at the
+# scripted GUI that says the same thing, because its widget is alive all
+# session and a scripted GUI there would run script every frame. They have to
+# keep saying what leo_oae_mbge_available_trigger says.
+use  "GetPlayer.IsRuler"                 "GetPlayer\.IsRuler"
+use  "GetPlayer.IsAdult"                 "GetPlayer\.IsAdult"
+use  "HasRule( 'administrative' )"       "HasRule\( *'administrative' *\)"
 def  "on_game_start_after_lobby" "common/on_action" "^on_game_start_after_lobby = [{]"
 # The shortcut. Same arrangement as the map mode's: vanilla pre-binds the
 # combination, the mod only names it.
