@@ -63,6 +63,56 @@ types leo_oae_mbge_dropdown_types {
 		}
 	}
 
+	### One governor in the list.
+	###
+	### Used twice, once per list, and the tick is a literal handed in by
+	### whichever list the row came from. Nothing here is evaluated while the
+	### panel sits open: GUI cannot ask whether a character is in a variable
+	### list, so the alternative was a scripted GUI per row per frame, and
+	### script sorting the pool into two lists costs nothing instead.
+	###
+	### Clicking still runs script, which is fine because a click is not a
+	### frame. The row hands its own character over as scope:leo_oae_mbge_gov,
+	### which is what lets one template serve every row.
+	type leo_oae_mbge_governor_row = hbox {
+		datacontext = "[Scope.Char]"
+		layoutpolicy_horizontal = expanding
+		spacing = 6
+		margin = { 2 1 }
+
+		button_checkbox = {
+			size = { 22 22 }
+			tooltip = "leo_oae_mbge_ui_row_tt"
+			onclick = "[GetScriptedGui('leo_oae_mbge_toggle_exclude').Execute( GuiScope.SetRoot( GetPlayer.MakeScope ).AddScope( 'leo_oae_mbge_gov', Character.MakeScope ).End )]"
+			block "checked" {}
+		}
+
+		text_single = {
+			layoutpolicy_horizontal = expanding
+			align = left|nobaseline
+			max_width = 190
+			text = "[Character.GetShortUINameNoTooltip]"
+		}
+
+		# Their governance now, which is what the thresholds are measured
+		# against. Written inline rather than through a loc key because the only
+		# words in it are a percent sign and an icon.
+		text_single = {
+			align = right|nobaseline
+			default_format = "#weak"
+			text = "[Character.MakeScope.ScriptValue('governor_efficiency_presented')|0]%"
+		}
+
+		# Only Grease Palms charges gold, and only it charges a different amount
+		# per governor, so it is the one method where a per-row price says
+		# anything.
+		text_single = {
+			visible = "[EqualTo_CFixedPoint( GetPlayer.MakeScope.Var('leo_oae_mbge_opt').GetValue, '(CFixedPoint)2' )]"
+			align = right|nobaseline
+			text = "@gold_icon! [Character.MakeScope.ScriptValue('medium_gold_value')|0]"
+		}
+	}
+
 	type leo_oae_mbge_button_dropdown = button_normal {
 		size = { 225 30 }
 		gfxtype = framedbuttongfx
@@ -385,68 +435,49 @@ window = {
 							margin_top = 8
 							spacing = 2
 
-							# Script clears this list at the start of every
-							# rebuild, so when there is nobody to show it is
-							# empty and the rows cease to exist on their own. No
-							# stand-in list is needed here, unlike the dropdowns,
-							# which have to be emptied by name when they close.
+							# Script clears these at the start of every rebuild,
+							# so when there is nobody to show they are empty and
+							# the rows cease to exist on their own. No stand-in
+							# list is needed here, unlike the dropdowns, which
+							# have to be emptied by name when they close.
+							#
+							# The ones the run will visit, ticked.
 							datamodel = "[GetPlayer.MakeScope.GetList('leo_oae_mbge_targets')]"
 
 							item = {
-								hbox = {
-									datacontext = "[Scope.Char]"
-									layoutpolicy_horizontal = expanding
-									spacing = 6
+								leo_oae_mbge_governor_row = {
+									blockoverride "checked" { checked = yes }
+								}
+							}
+						}
 
-									# Ticked means the run will visit them. The
-									# row's character is handed to script as
-									# scope:leo_oae_mbge_gov, which is what lets
-									# one template serve every row.
-									button_checkbox = {
-										size = { 22 22 }
-										tooltip = "leo_oae_mbge_ui_row_tt"
-										onclick = "[GetScriptedGui('leo_oae_mbge_toggle_exclude').Execute( GuiScope.SetRoot( GetPlayer.MakeScope ).AddScope( 'leo_oae_mbge_gov', Character.MakeScope ).End )]"
-										checked = "[GetScriptedGui('leo_oae_mbge_toggle_exclude').IsShown( GuiScope.SetRoot( GetPlayer.MakeScope ).AddScope( 'leo_oae_mbge_gov', Character.MakeScope ).End )]"
-									}
+						# The ones set aside, unticked, gathered below the rest
+						# rather than mixed through it. A second list is what
+						# lets the tick be a literal instead of a per-frame
+						# question.
+						vbox = {
+							layoutpolicy_horizontal = expanding
+							margin = { 6 4 }
+							spacing = 2
 
-									text_single = {
-										layoutpolicy_horizontal = expanding
-										align = left|nobaseline
-										max_width = 200
-										text = "[Character.GetShortUINameNoTooltip]"
-									}
+							datamodel = "[GetPlayer.MakeScope.GetList('leo_oae_mbge_skipped')]"
 
-									# Their governance now, which is what the
-									# thresholds are measured against. Written
-									# inline rather than through a loc key
-									# because the only words in it are a percent
-									# sign and an icon.
-									text_single = {
-										align = right|nobaseline
-										default_format = "#weak"
-										text = "[Character.MakeScope.ScriptValue('governor_efficiency_presented')|0]%"
-									}
-
-									# Only Grease Palms charges gold, and only it
-									# charges a different amount per governor, so
-									# this is the one method where a per-row price
-									# tells the player anything.
-									text_single = {
-										visible = "[EqualTo_CFixedPoint( GetPlayer.MakeScope.Var('leo_oae_mbge_opt').GetValue, '(CFixedPoint)2' )]"
-										align = right|nobaseline
-										text = "@gold_icon! [Character.MakeScope.ScriptValue('medium_gold_value')|0]"
-									}
+							item = {
+								leo_oae_mbge_governor_row = {
+									blockoverride "checked" { checked = no }
 								}
 							}
 						}
 
 						# Absent rather than dead when nothing is set aside.
+						# Reads the count straight out of the variable, so this
+						# costs no script either.
 						button_standard = {
 							layoutpolicy_horizontal = expanding
 							size = { -1 32 }
 							margin_top = 6
 
-							visible = "[GetScriptedGui('leo_oae_mbge_clear_exclusions').IsValid( GuiScope.SetRoot( GetPlayer.MakeScope ).End )]"
+							visible = "[GreaterThanOrEqualTo_CFixedPoint( GetPlayer.MakeScope.Var('leo_oae_mbge_excluded_count').GetValue, '(CFixedPoint)1' )]"
 							text = "leo_oae_mbge_ui_clear_exclusions"
 							tooltip = "leo_oae_mbge_ui_clear_exclusions_tt"
 							onclick = "[GetScriptedGui('leo_oae_mbge_clear_exclusions').Execute( GuiScope.SetRoot( GetPlayer.MakeScope ).End )]"

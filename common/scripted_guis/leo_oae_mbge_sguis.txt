@@ -209,29 +209,23 @@ leo_oae_mbge_set_order_2 = {
 ### Setting a governor aside.
 #
 # The panel hands the row's character over as scope:leo_oae_mbge_gov, which is
-# what saved_scopes declares. is_shown is the checkbox's own tick, and it reads
-# the opposite of excluded: a checked row is one the run will visit.
+# what saved_scopes declares.
+#
+# There is deliberately no is_shown here. The checkbox's tick does not ask this
+# entry anything: script sorts the pool into a ticked list and a set-aside list,
+# and each row's template carries its answer as a literal. Binding the tick to a
+# scripted GUI instead would run script once per row per frame for as long as
+# the panel is open, and this control is only ever meant to run on a click.
 leo_oae_mbge_toggle_exclude = {
 	scope = character
 	saved_scopes = { leo_oae_mbge_gov }
-
-	is_shown = {
-		NOT = {
-			is_target_in_variable_list = {
-				name = leo_oae_mbge_excluded
-				target = scope:leo_oae_mbge_gov
-			}
-		}
-	}
-
 	effect = { leo_oae_mbge_toggle_exclude_effect = yes }
 }
 
-# Only offered when something is actually set aside, so the panel does not carry
-# a button that would do nothing.
+# Whether this is worth offering is decided in the panel by reading the count
+# variable, which costs nothing, so there is no is_valid here either.
 leo_oae_mbge_clear_exclusions = {
 	scope = character
-	is_valid = { var:leo_oae_mbge_excluded_count > 0 }
 	effect = { leo_oae_mbge_clear_exclusions_effect = yes }
 }
 

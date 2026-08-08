@@ -213,8 +213,15 @@ leo_oae_mbge_recount_effect = {
 #
 # This is the one place that asks the plain eligibility trigger rather than the
 # one that honors exclusions: a governor the player has set aside still has to
-# appear, or there would be no way to put them back. The row's own checkbox is
-# what says which is which.
+# appear, or there would be no way to put them back.
+#
+# It sorts them into two lists rather than one, because GUI has no way to ask
+# whether a row is in a variable list. There is no datafunction for it, so the
+# only way to tick a row from a single mixed list would be a scripted GUI
+# evaluated per row per frame. Splitting the pool here instead means each row's
+# tick is a literal on its template and nothing is evaluated at all while the
+# panel sits open. It is the same move as the dropdowns: let script decide which
+# list a thing belongs in, and let GUI pick the list by name.
 #
 # Worst governed first, so the list reads in the order the budget would spend
 # in. Under the budget row there is no threshold to filter by, so it shows
@@ -222,6 +229,7 @@ leo_oae_mbge_recount_effect = {
 leo_oae_mbge_build_targets_effect = {
 	save_scope_as = leo_oae_mbge_actor
 	clear_variable_list = leo_oae_mbge_targets
+	clear_variable_list = leo_oae_mbge_skipped
 	set_variable = { name = leo_oae_mbge_excluded_count value = 0 }
 
 	top_liege = {
@@ -243,10 +251,6 @@ leo_oae_mbge_build_targets_effect = {
 
 			save_temporary_scope_as = leo_oae_mbge_gov
 			scope:leo_oae_mbge_actor = {
-				add_to_variable_list = {
-					name = leo_oae_mbge_targets
-					target = scope:leo_oae_mbge_gov
-				}
 				if = {
 					limit = {
 						is_target_in_variable_list = {
@@ -254,7 +258,17 @@ leo_oae_mbge_build_targets_effect = {
 							target = scope:leo_oae_mbge_gov
 						}
 					}
+					add_to_variable_list = {
+						name = leo_oae_mbge_skipped
+						target = scope:leo_oae_mbge_gov
+					}
 					change_variable = { name = leo_oae_mbge_excluded_count add = 1 }
+				}
+				else = {
+					add_to_variable_list = {
+						name = leo_oae_mbge_targets
+						target = scope:leo_oae_mbge_gov
+					}
 				}
 			}
 		}

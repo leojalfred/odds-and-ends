@@ -187,5 +187,6 @@ leo_oae_mbge_ack_trigger = {
 	is_target_in_variable_list = { name = leo_oae_mbge_threshes target = flag:t_all }
 	is_target_in_variable_list = { name = leo_oae_mbge_orders target = flag:order_1 }
 	is_target_in_variable_list = { name = leo_oae_mbge_targets target = this }
+	is_target_in_variable_list = { name = leo_oae_mbge_skipped target = this }
 	is_target_in_variable_list = { name = leo_oae_mbge_excluded target = this }
 }
