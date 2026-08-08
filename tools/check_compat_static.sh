@@ -266,7 +266,7 @@ use  "icon_governor_efficiency"  "type icon_governor_efficiency = "
 # The relation and house lines, copied from the same vanilla row.
 use  "GetRelationToString"       "GetRelationToString"
 def  "EXTENDED_RELATIONS_TOOLTIP" "localization/english" "^ *EXTENDED_RELATIONS_TOOLTIP:"
-use  "coa_house_tiny"            "type coa_house_tiny = "
+use  "coa_house_microscopic"    "type coa_house_microscopic = "
 def  "house name key"            "localization/english" "^ *ADMINISTRATIVE_GOVERNMENT_HOUSE_WITH_NAME:"
 use  "Scope.Char"            "Scope\.Char"
 use  "AddScope with a character" "AddScope\( *'[a-z_]+', *Character\.MakeScope *\)"

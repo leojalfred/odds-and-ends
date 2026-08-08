@@ -102,10 +102,6 @@ leo_oae_mbge_init_defaults_effect = {
 		set_variable = { name = leo_oae_mbge_gold value = 0 }
 		set_variable = { name = leo_oae_mbge_afford_sel value = 0 }
 	}
-	if = {
-		limit = { NOT = { has_variable = leo_oae_mbge_excluded_count } }
-		set_variable = { name = leo_oae_mbge_excluded_count value = 0 }
-	}
 }
 
 ### Counting and pricing.
@@ -242,8 +238,6 @@ leo_oae_mbge_reselect_effect = {
 leo_oae_mbge_build_targets_effect = {
 	save_scope_as = leo_oae_mbge_actor
 	clear_variable_list = leo_oae_mbge_targets
-	clear_variable_list = leo_oae_mbge_skipped
-	set_variable = { name = leo_oae_mbge_excluded_count value = 0 }
 
 	top_liege = {
 		ordered_vassal = {
@@ -260,28 +254,20 @@ leo_oae_mbge_build_targets_effect = {
 			}
 			save_temporary_scope_as = leo_oae_mbge_gov
 
+			# The panel reads this per row to draw the tick, and GUI has no
+			# defined reading for a variable that might not exist, so every
+			# governor that reaches the list carries one either way.
+			if = {
+				limit = { NOT = { has_variable = leo_oae_mbge_excl } }
+				set_variable = { name = leo_oae_mbge_excl value = 0 }
+			}
+
 			scope:leo_oae_mbge_actor = {
 				if = {
 					limit = { leo_oae_mbge_row_shown_trigger = yes }
-
-					if = {
-						limit = {
-							is_target_in_variable_list = {
-								name = leo_oae_mbge_excluded
-								target = scope:leo_oae_mbge_gov
-							}
-						}
-						add_to_variable_list = {
-							name = leo_oae_mbge_skipped
-							target = scope:leo_oae_mbge_gov
-						}
-						change_variable = { name = leo_oae_mbge_excluded_count add = 1 }
-					}
-					else = {
-						add_to_variable_list = {
-							name = leo_oae_mbge_targets
-							target = scope:leo_oae_mbge_gov
-						}
+					add_to_variable_list = {
+						name = leo_oae_mbge_targets
+						target = scope:leo_oae_mbge_gov
 					}
 				}
 			}
@@ -293,35 +279,25 @@ leo_oae_mbge_build_targets_effect = {
 
 # Current scope: the player. Requires scope:leo_oae_mbge_gov.
 #
-# Exclusions live on the player, so an heir starts with none: they are a working
-# note about this run, not a standing opinion about the governor.
+# Being set aside is kept on the governor, not on the player, so the panel can
+# read it per row without asking script. It therefore stays with that governor
+# across a succession, which reads as the more useful of the two: it is a note
+# that this one is not worth spending on, and that does not stop being true
+# because the player died.
 leo_oae_mbge_toggle_exclude_effect = {
-	if = {
-		limit = {
-			is_target_in_variable_list = {
-				name = leo_oae_mbge_excluded
-				target = scope:leo_oae_mbge_gov
-			}
+	scope:leo_oae_mbge_gov = {
+		if = {
+			limit = { var:leo_oae_mbge_excl = 1 }
+			set_variable = { name = leo_oae_mbge_excl value = 0 }
 		}
-		remove_list_variable = {
-			name = leo_oae_mbge_excluded
-			target = scope:leo_oae_mbge_gov
-		}
-	}
-	else = {
-		add_to_variable_list = {
-			name = leo_oae_mbge_excluded
-			target = scope:leo_oae_mbge_gov
+		else = {
+			set_variable = { name = leo_oae_mbge_excl value = 1 }
 		}
 	}
 
 	# The count and the bill both move when one is set aside, so they are worked
-	# out again rather than left to the next dropdown.
-	leo_oae_mbge_recount_effect = yes
-}
-
-leo_oae_mbge_clear_exclusions_effect = {
-	clear_variable_list = leo_oae_mbge_excluded
+	# out again rather than left to the next dropdown. The list itself does not
+	# move: the row stays where it is and only its tick changes.
 	leo_oae_mbge_recount_effect = yes
 }
 

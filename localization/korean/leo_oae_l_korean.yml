@@ -39,8 +39,6 @@
  leo_oae_mbge_ui_heading_governors:0 "총독"
  leo_oae_mbge_ui_heading_summary:0 "요약"
  leo_oae_mbge_ui_row_tt:0 "체크를 해제하면 이 [governor|E]은 대상에서 빠집니다. 위의 합계에서도 비용이 사라집니다."
- leo_oae_mbge_ui_clear_exclusions:0 "모두 다시 포함"
- leo_oae_mbge_ui_clear_exclusions_tt:0 "제외해 둔 모든 [governor|E]을 다시 대상에 넣습니다."
 
  leo_oae_mbge_ui_opt_0:0 "#weak 방식을 고르십시오#!"
  leo_oae_mbge_ui_opt_1:0 "$influence_boost_desc$"

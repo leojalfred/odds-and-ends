@@ -39,8 +39,6 @@
  leo_oae_mbge_ui_heading_governors:0 "総督"
  leo_oae_mbge_ui_heading_summary:0 "概要"
  leo_oae_mbge_ui_row_tt:0 "チェックを外すと、この[governor|E]は対象から外れる。上の合計からも費用が消える。"
- leo_oae_mbge_ui_clear_exclusions:0 "全員を戻す"
- leo_oae_mbge_ui_clear_exclusions_tt:0 "外しておいた[governor|E]を全て対象に戻す。"
 
  leo_oae_mbge_ui_opt_0:0 "#weak 方法を選べ#!"
  leo_oae_mbge_ui_opt_1:0 "$influence_boost_desc$"

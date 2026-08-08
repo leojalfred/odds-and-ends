@@ -39,8 +39,6 @@
  leo_oae_mbge_ui_heading_governors:0 "总督"
  leo_oae_mbge_ui_heading_summary:0 "概要"
  leo_oae_mbge_ui_row_tt:0 "取消勾选后，这位[governor|E]将被排除在外，其花费也会从上面的总计中扣除。"
- leo_oae_mbge_ui_clear_exclusions:0 "重新纳入所有人"
- leo_oae_mbge_ui_clear_exclusions_tt:0 "把你排除掉的所有[governor|E]重新纳入。"
 
  leo_oae_mbge_ui_opt_0:0 "#weak 选择一种方式#!"
  leo_oae_mbge_ui_opt_1:0 "$influence_boost_desc$"

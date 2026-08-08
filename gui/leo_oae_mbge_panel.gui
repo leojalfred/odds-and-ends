@@ -108,12 +108,49 @@ types leo_oae_mbge_dropdown_types {
 			vbox = {
 				layoutpolicy_horizontal = expanding
 				layoutpolicy_vertical = expanding
-				margin_top = 8
+				margin_top = 6
 
-				### Name, age, health, and how well they govern.
+				### What they govern, where vanilla's row names the office.
+				hbox = {
+					layoutpolicy_horizontal = expanding
+
+					text_single = {
+						text = "[Character.GetPrimaryTitle.GetNameNoTooltip]"
+						default_format = "#low"
+						align = nobaseline
+						max_width = 300
+					}
+
+					expand = {}
+				}
+
+				### How well they govern, then who they are.
 				hbox = {
 					layoutpolicy_horizontal = expanding
 					spacing = 2
+
+					# Governance, exactly as the game writes it elsewhere: the
+					# same loc key colors the number by band and the same
+					# tooltip breaks down every term that produced it. Reusing
+					# the pair rather than printing the number ourselves is what
+					# gets the coloring, the breakdown and the translation.
+					hbox = {
+						margin_right = 4
+						spacing = 1
+
+						tooltip = "ADMIN_WINDOW_THEME_GOVERNOR_EFFICIENCY_TT"
+						using = tooltip_ne
+
+						icon_governor_efficiency = {
+							size = { 20 20 }
+						}
+
+						text_single = {
+							text = "ADMIN_WINDOW_THEME_GOVERNOR_EFFICIENCY_VALUE"
+							fontsize = 16
+							align = nobaseline
+						}
+					}
 
 					text_single = {
 						text = "CHARACTER_VIEW_NAME_SHORT"
@@ -121,7 +158,7 @@ types leo_oae_mbge_dropdown_types {
 						fontsize = 16
 						fontsize_min = 12
 						align = nobaseline
-						max_width = 190
+						max_width = 180
 						tooltip = "CHARACTER_VIEW_NAME_TT"
 					}
 
@@ -142,29 +179,6 @@ types leo_oae_mbge_dropdown_types {
 						frame = "[Character.GetHealthIconFrame]"
 						texture = "gfx/interface/icons/character_status/icon_health.dds"
 						tooltip = "CHARACTER_VIEW_ALIVE_TT"
-					}
-
-					# Governance, exactly as the game writes it elsewhere: the
-					# same loc key colors the number by band and the same
-					# tooltip breaks down every term that produced it. Reusing
-					# the pair rather than printing the number ourselves is what
-					# gets the coloring, the breakdown and the translation.
-					hbox = {
-						margin_left = 8
-						spacing = 1
-
-						tooltip = "ADMIN_WINDOW_THEME_GOVERNOR_EFFICIENCY_TT"
-						using = tooltip_ne
-
-						icon_governor_efficiency = {
-							size = { 20 20 }
-						}
-
-						text_single = {
-							text = "ADMIN_WINDOW_THEME_GOVERNOR_EFFICIENCY_VALUE"
-							fontsize = 16
-							align = nobaseline
-						}
 					}
 
 					# Only Grease Palms charges gold, and only it charges a
@@ -201,18 +215,20 @@ types leo_oae_mbge_dropdown_types {
 				hbox = {
 					layoutpolicy_horizontal = expanding
 
-					widget = {
-						size = { 40 40 }
-						allow_outside = yes
-
-						coa_house_tiny = {
-							datacontext = "[Character.GetHouse]"
-							position = { -4 0 }
-						}
+					# coa_house_tiny is 48 square, which is heavy beside a line
+					# of text, and shrinking it by overriding the instance size
+					# does not work: the arms, the frame and the mask inside are
+					# each sized in the type, so the widget clips instead of
+					# scaling and the shield spills over the name. Vanilla ships
+					# the smaller size as its own type with all of that scaled
+					# down together, so use that rather than fight this one.
+					coa_house_microscopic = {
+						datacontext = "[Character.GetHouse]"
 					}
 
 					text_single = {
 						datacontext = "[Character.GetHouse]"
+						margin_left = 5
 						text = "ADMINISTRATIVE_GOVERNMENT_HOUSE_WITH_NAME"
 						align = nobaseline
 						max_width = 290
@@ -547,9 +563,17 @@ window = {
 					### above. Rows are ordered worst governed first, the order
 					### the budget spends in.
 					###
-					### The list includes governors that have been set aside, so
-					### they can be put back: the checkbox is what says which is
-					### which, not presence in the list.
+					### One list, holding everyone the threshold catches whether
+					### or not they have been set aside. Ticking one changes its
+					### tick and nothing else: the row keeps its place, so
+					### nothing under the cursor moves.
+					###
+					### That is possible because being set aside is a variable on
+					### the governor rather than an entry in a list on the
+					### player, and a variable on any character can be read from
+					### GUI directly. There is no datafunction for list
+					### membership, which is what forced the earlier split into
+					### two lists and the jumping that came with it.
 					vbox = {
 						layoutpolicy_horizontal = expanding
 
@@ -564,52 +588,20 @@ window = {
 							margin_top = 8
 							spacing = 4
 
-							# Script clears these at the start of every rebuild,
-							# so when there is nobody to show they are empty and
-							# the rows cease to exist on their own. No stand-in
-							# list is needed here, unlike the dropdowns, which
-							# have to be emptied by name when they close.
-							#
-							# The ones the run will visit, ticked.
+							# Script clears this at the start of every rebuild,
+							# so when there is nobody to show it is empty and the
+							# rows cease to exist on their own. No stand-in list
+							# is needed here, unlike the dropdowns, which have to
+							# be emptied by name when they close.
 							datamodel = "[GetPlayer.MakeScope.GetList('leo_oae_mbge_targets')]"
 
 							item = {
 								leo_oae_mbge_governor_row = {
-									blockoverride "checked" { checked = yes }
+									blockoverride "checked" {
+										checked = "[Not( EqualTo_CFixedPoint( Character.MakeScope.Var('leo_oae_mbge_excl').GetValue, '(CFixedPoint)1' ) )]"
+									}
 								}
 							}
-						}
-
-						# The ones set aside, unticked, gathered below the rest
-						# rather than mixed through it. A second list is what
-						# lets the tick be a literal instead of a per-frame
-						# question.
-						vbox = {
-							layoutpolicy_horizontal = expanding
-							margin = { 6 4 }
-							spacing = 4
-
-							datamodel = "[GetPlayer.MakeScope.GetList('leo_oae_mbge_skipped')]"
-
-							item = {
-								leo_oae_mbge_governor_row = {
-									blockoverride "checked" { checked = no }
-								}
-							}
-						}
-
-						# Absent rather than dead when nothing is set aside.
-						# Reads the count straight out of the variable, so this
-						# costs no script either.
-						button_standard = {
-							layoutpolicy_horizontal = expanding
-							size = { -1 32 }
-							margin_top = 6
-
-							visible = "[GreaterThanOrEqualTo_CFixedPoint( GetPlayer.MakeScope.Var('leo_oae_mbge_excluded_count').GetValue, '(CFixedPoint)1' )]"
-							text = "leo_oae_mbge_ui_clear_exclusions"
-							tooltip = "leo_oae_mbge_ui_clear_exclusions_tt"
-							onclick = "[GetScriptedGui('leo_oae_mbge_clear_exclusions').Execute( GuiScope.SetRoot( GetPlayer.MakeScope ).End )]"
 						}
 					}
 

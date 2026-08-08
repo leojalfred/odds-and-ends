@@ -56,18 +56,16 @@ leo_oae_mbge_target_trigger = {
 # counts, prices or spends asks this; only the list on screen asks the trigger
 # above, because a governor who has been set aside still has to be shown, or
 # there would be no way to put them back.
+#
+# Being set aside is a variable on the governor rather than a list on the
+# player, so that the panel can read it per row with a plain variable read.
+# There is no datafunction for list membership, and the alternatives were a
+# scripted GUI per row per frame or splitting the pool into two lists, which
+# made rows jump between them on every click. It also means the test lives in
+# the same scope as the thing it tests, with no cross-scope read at all.
 leo_oae_mbge_included_trigger = {
 	leo_oae_mbge_target_trigger = yes
-
-	save_temporary_scope_as = leo_oae_mbge_gov
-	scope:leo_oae_mbge_actor = {
-		NOT = {
-			is_target_in_variable_list = {
-				name = leo_oae_mbge_excluded
-				target = scope:leo_oae_mbge_gov
-			}
-		}
-	}
+	NOT = { var:leo_oae_mbge_excl = 1 }
 }
 
 # Current scope: the player. Requires scope:leo_oae_mbge_eff, the efficiency of
@@ -155,12 +153,8 @@ leo_oae_mbge_ack_trigger = {
 	var:leo_oae_mbge_afford_t_all = 0
 	var:leo_oae_mbge_afford_t_bud = 0
 
-	var:leo_oae_mbge_excluded_count = 0
-
 	is_target_in_variable_list = { name = leo_oae_mbge_opts target = flag:opt_1 }
 	is_target_in_variable_list = { name = leo_oae_mbge_threshes target = flag:t_all }
 	is_target_in_variable_list = { name = leo_oae_mbge_orders target = flag:order_1 }
 	is_target_in_variable_list = { name = leo_oae_mbge_targets target = this }
-	is_target_in_variable_list = { name = leo_oae_mbge_skipped target = this }
-	is_target_in_variable_list = { name = leo_oae_mbge_excluded target = this }
 }

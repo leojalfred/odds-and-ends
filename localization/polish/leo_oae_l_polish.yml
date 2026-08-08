@@ -39,8 +39,6 @@
  leo_oae_mbge_ui_heading_governors:0 "Gubernatorzy"
  leo_oae_mbge_ui_heading_summary:0 "Podsumowanie"
  leo_oae_mbge_ui_row_tt:0 "Bez zaznaczenia ten [governor|E] zostaje pominięty. Jego koszt znika z sumy powyżej."
- leo_oae_mbge_ui_clear_exclusions:0 "Uwzględnij znów wszystkich"
- leo_oae_mbge_ui_clear_exclusions_tt:0 "Przywraca do działania wszystkich [governor|E]ów, których pominąłeś."
 
  leo_oae_mbge_ui_opt_0:0 "#weak Wybierz sposób#!"
  leo_oae_mbge_ui_opt_1:0 "$influence_boost_desc$"

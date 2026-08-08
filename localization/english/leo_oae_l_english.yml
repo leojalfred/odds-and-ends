@@ -39,8 +39,6 @@
  leo_oae_mbge_ui_heading_governors:0 "Governors"
  leo_oae_mbge_ui_heading_summary:0 "Summary"
  leo_oae_mbge_ui_row_tt:0 "Unticked, this [governor|E] is left out of the run. Their cost drops off the total above."
- leo_oae_mbge_ui_clear_exclusions:0 "Include Everyone Again"
- leo_oae_mbge_ui_clear_exclusions_tt:0 "Puts every [governor|E] you have set aside back into the run."
 
  leo_oae_mbge_ui_opt_0:0 "#weak Choose a Method#!"
  leo_oae_mbge_ui_opt_1:0 "$influence_boost_desc$"

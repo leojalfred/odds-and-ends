@@ -39,8 +39,6 @@
  leo_oae_mbge_ui_heading_governors:0 "Statthalter"
  leo_oae_mbge_ui_heading_summary:0 "Übersicht"
  leo_oae_mbge_ui_row_tt:0 "Ohne Haken bleibt dieser [governor|E] außen vor. Seine Kosten fallen aus der Summe oben heraus."
- leo_oae_mbge_ui_clear_exclusions:0 "Wieder alle einbeziehen"
- leo_oae_mbge_ui_clear_exclusions_tt:0 "Nimmt jeden beiseitegelegten [governor|E] wieder in den Durchlauf auf."
 
  leo_oae_mbge_ui_opt_0:0 "#weak Wählt eine Vorgehensweise#!"
  leo_oae_mbge_ui_opt_1:0 "$influence_boost_desc$"
