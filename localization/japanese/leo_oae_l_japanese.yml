@@ -22,23 +22,22 @@
  ### be built from, including the 0 an unset variable reads, or the raw key
  ### shows up on screen. That is what the _0 and _tc_ entries are for. The
  ### threshold rows have deliberately empty tooltips: an empty value renders no
- ### tooltip box at all, and the heading above them already says what graying
+ ### tooltip box at all, and the dropdown's own tooltip already says what graying
  ### means.
  leo_oae_mbge_decision:0 "統治力の一括強化"
- leo_oae_mbge_decision_desc:0 "多数の[governor|E]の[governor_efficiency|E]を、一人ずつではなく一度に強化する。\n\n方法と名簿をどこまで下るかを選ぶパネルを開く。そこで決定するまで何も消費されない。\n\n#weak $SHORTCUT_KEY_MOD_ctrl$$SHORTCUT_KEY_MOD_shift$Bでいつでも開くこともできる。#!"
+ leo_oae_mbge_decision_desc:0 "多数の[governor|E]の[governor_efficiency|E]を、一人ずつではなく一度に強化する。\n\n方法と対象とする総督を選ぶパネルを開く。そこで決定するまで何も消費されない。\n\n#weak $SHORTCUT_KEY_MOD_ctrl$$SHORTCUT_KEY_MOD_shift$Bでいつでも開くこともできる。#!"
  leo_oae_mbge_decision_tooltip:0 "一括強化パネルを開く"
  leo_oae_mbge_decision_confirm:0 "パネルを開く"
  leo_oae_mbge_decision_effect_tt:0 "パネルを開く。そこで強化するまで何も消費されない。"
 
  leo_oae_mbge_ui_heading_method:0 "方法"
- leo_oae_mbge_ui_heading_method_tt:0 "対象となる全ての[governor|E]に用いる方法だ。[governor|E]を一人ずつ手作業で強化するときに示されるものと同じ5種であり、挙動も変わらない。"
- leo_oae_mbge_ui_heading_targets:0 "対象"
- leo_oae_mbge_ui_heading_targets_tt:0 "名簿をどこまで下るかを決める。選んだ値を下回る[governor|E]が全て強化される。\n\n#weak 全額を支払えない段階は灰色で表示される。手持ちを使い切って止めるなら#!#T 賄える限り#!#weak を選ぶとよい。#!"
+ leo_oae_mbge_ui_heading_method_tt:0 "[governor|E]を一人だけ強化するときと同じ5種を、対象となる全ての総督に用いる。"
+ leo_oae_mbge_ui_heading_targets_tt:0 "どの[governors|E]を対象とするか。該当者がいない場合や、全額を支払えない場合、その選択肢は無効になる。"
  leo_oae_mbge_ui_heading_order:0 "順序"
- leo_oae_mbge_ui_heading_order_tt:0 "全員には足りないとき、誰に先に充てるかを決める。\n\n#weak 影響するのは#!#T $gold_boost_desc$#!#weak だけだ。[governor|E]ごとに値段が変わる唯一の方法だからである。#!"
+ leo_oae_mbge_ui_heading_order_tt:0 "全員には足りないとき、誰に先に充てるか。影響するのは$gold_boost_desc$だけで、[governor|E]ごとに値段が変わる唯一の方法だ。"
  leo_oae_mbge_ui_heading_governors:0 "総督"
  leo_oae_mbge_ui_heading_summary:0 "概要"
- leo_oae_mbge_ui_row_tt:0 "チェックを外すと、この[governor|E]は対象から外れる。上の合計からも費用が消える。"
+ leo_oae_mbge_ui_row_tt:0 "統治力を強化する際にこの[governor|E]を含める。"
 
  leo_oae_mbge_ui_opt_0:0 "#weak 方法を選べ#!"
  leo_oae_mbge_ui_opt_1:0 "$influence_boost_desc$"
@@ -48,7 +47,7 @@
  leo_oae_mbge_ui_opt_5:0 "$intrigue_boost_desc$ #weak ([GetPlayer.MakeScope.ScriptValue('leo_oae_mbge_chance_intrigue')|0]%)#!"
 
  leo_oae_mbge_ui_opt_1_tt:0 "[governor|E]1人につき@influence_icon! [EmptyScope.ScriptValue('leo_oae_mbge_divert_influence_value')|0]。必ず成功する。"
- leo_oae_mbge_ui_opt_2_tt:0 "[governor|E]1人につき@influence_icon! [EmptyScope.ScriptValue('minor_influence_value')|0]、加えてその[governor|E]の収入に見合った@gold_icon! 金貨がかかる。裕福な者ほど高くつく。必ず成功する。"
+ leo_oae_mbge_ui_opt_2_tt:0 "[governor|E]1人につき@influence_icon! [EmptyScope.ScriptValue('minor_influence_value')|0]、加えてその収入に見合った@gold_icon! 金貨がかかる。裕福な者ほど高くつく。必ず成功する。"
  leo_oae_mbge_ui_opt_3_tt:0 "[governor|E]1人につき@influence_icon! [EmptyScope.ScriptValue('minor_influence_value')|0]。汝の[diplomacy|E]が試され、失敗もありうる。いずれにせよ費用はかかる。"
  leo_oae_mbge_ui_opt_4_tt:0 "[governor|E]1人につき@influence_icon! [EmptyScope.ScriptValue('minor_influence_value')|0]。汝の[stewardship|E]が試され、失敗もありうる。いずれにせよ費用はかかる。"
  leo_oae_mbge_ui_opt_5_tt:0 "[governor|E]1人につき@influence_icon! [EmptyScope.ScriptValue('minor_influence_value')|0]。汝の[intrigue|E]が試され、失敗もありうる。いずれにせよ費用はかかる。"
@@ -99,4 +98,4 @@
 
  leo_oae_mbge_ui_title:0 "$leo_oae_mbge_decision$"
  leo_oae_mbge_ui_apply:0 "$boost_efficiency_interaction$"
- leo_oae_mbge_ui_note:0 "上に挙げた[governor|E]を順に一人ずつ強化する。自ら一人ひとりを訪ね、手作業で行ったのと全く同じだ。\n\n#weak 再使用待ちの者や、既に統治が十分な者は、ゲーム自身の規則によって除かれる。#!"
+ leo_oae_mbge_ui_note:0 "再使用待ちの[governors|E]や、既に統治が十分な者は、ゲームの規則によって除外される。"

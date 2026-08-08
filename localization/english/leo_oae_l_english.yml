@@ -22,23 +22,22 @@
  ### be built from, including the 0 an unset variable reads, or the raw key
  ### shows up on screen. That is what the _0 and _tc_ entries are for. The
  ### threshold rows have deliberately empty tooltips: an empty value renders no
- ### tooltip box at all, and the heading above them already says what graying
+ ### tooltip box at all, and the dropdown's own tooltip already says what graying
  ### means.
  leo_oae_mbge_decision:0 "Mass Bolster Governance"
- leo_oae_mbge_decision_desc:0 "Bolster the [governor_efficiency|E] of many [governor|E]s at once, instead of one at a time.\n\nOpens a panel where you choose how to go about it and how far down the list to go. Nothing is spent until you say so there.\n\n#weak You can also open it at any time with $SHORTCUT_KEY_MOD_ctrl$$SHORTCUT_KEY_MOD_shift$B.#!"
+ leo_oae_mbge_decision_desc:0 "Bolster the [governor_efficiency|E] of many [governors|E] at once, instead of one at a time.\n\nOpens a panel where you choose the method and which governors to reach. Nothing is spent until you say so there.\n\n#weak You can also open it at any time with $SHORTCUT_KEY_MOD_ctrl$$SHORTCUT_KEY_MOD_shift$B.#!"
  leo_oae_mbge_decision_tooltip:0 "Open the mass bolster panel"
  leo_oae_mbge_decision_confirm:0 "Open Panel"
  leo_oae_mbge_decision_effect_tt:0 "Opens the panel. Nothing is spent until you bolster from there."
 
  leo_oae_mbge_ui_heading_method:0 "Method"
- leo_oae_mbge_ui_heading_method_tt:0 "Which approach to use on every [governor|E] the run reaches. These are the same five you are offered when you bolster a single [governor|E] by hand, and they behave the same way."
- leo_oae_mbge_ui_heading_targets:0 "Targets"
- leo_oae_mbge_ui_heading_targets_tt:0 "How far down the list to go. Every [governor|E] below the level you pick is bolstered.\n\n#weak A level you cannot pay for in full is grayed out. Pick #!#T As Many As I Can Afford#!#weak  to spend what you have and stop.#!"
+ leo_oae_mbge_ui_heading_method_tt:0 "The same five the game offers for a single [governor|E], used on every one the run reaches."
+ leo_oae_mbge_ui_heading_targets_tt:0 "Which [governors|E] the run reaches. A choice is disabled if it catches nobody, or if you cannot pay for it in full."
  leo_oae_mbge_ui_heading_order:0 "Order"
- leo_oae_mbge_ui_heading_order_tt:0 "Who the money reaches first when it will not stretch to everyone.\n\n#weak Only matters for #!#T $gold_boost_desc$#!#weak , the one method that charges a different price for each [governor|E].#!"
+ leo_oae_mbge_ui_heading_order_tt:0 "Who the money reaches first when it will not stretch to everyone. Only matters for $gold_boost_desc$, the one method that charges a different price per [governor|E]."
  leo_oae_mbge_ui_heading_governors:0 "Governors"
  leo_oae_mbge_ui_heading_summary:0 "Summary"
- leo_oae_mbge_ui_row_tt:0 "Unticked, this [governor|E] is left out of the run. Their cost drops off the total above."
+ leo_oae_mbge_ui_row_tt:0 "Include this [governor|E] when bolstering governance."
 
  leo_oae_mbge_ui_opt_0:0 "#weak Choose a Method#!"
  leo_oae_mbge_ui_opt_1:0 "$influence_boost_desc$"
@@ -48,7 +47,7 @@
  leo_oae_mbge_ui_opt_5:0 "$intrigue_boost_desc$ #weak ([GetPlayer.MakeScope.ScriptValue('leo_oae_mbge_chance_intrigue')|0]%)#!"
 
  leo_oae_mbge_ui_opt_1_tt:0 "@influence_icon! [EmptyScope.ScriptValue('leo_oae_mbge_divert_influence_value')|0] per [governor|E]. Always works."
- leo_oae_mbge_ui_opt_2_tt:0 "@influence_icon! [EmptyScope.ScriptValue('minor_influence_value')|0] per [governor|E], plus @gold_icon! gold scaled to what that [governor|E] earns, so a wealthy one costs more. Always works."
+ leo_oae_mbge_ui_opt_2_tt:0 "@influence_icon! [EmptyScope.ScriptValue('minor_influence_value')|0] per [governor|E], plus @gold_icon! gold scaled to what they earn, so a wealthy one costs more. Always works."
  leo_oae_mbge_ui_opt_3_tt:0 "@influence_icon! [EmptyScope.ScriptValue('minor_influence_value')|0] per [governor|E]. Tests your [diplomacy|E] and can fail. You pay either way."
  leo_oae_mbge_ui_opt_4_tt:0 "@influence_icon! [EmptyScope.ScriptValue('minor_influence_value')|0] per [governor|E]. Tests your [stewardship|E] and can fail. You pay either way."
  leo_oae_mbge_ui_opt_5_tt:0 "@influence_icon! [EmptyScope.ScriptValue('minor_influence_value')|0] per [governor|E]. Tests your [intrigue|E] and can fail. You pay either way."
@@ -90,8 +89,8 @@
  leo_oae_mbge_ui_order_0:0 "#weak Choose an Order#!"
  leo_oae_mbge_ui_order_1:0 "Worst Governance First"
  leo_oae_mbge_ui_order_2:0 "Cheapest First"
- leo_oae_mbge_ui_order_1_tt:0 "Spend on the [governor|E]s with the lowest [governor_efficiency|E] first, so the worst are helped even if fewer are reached."
- leo_oae_mbge_ui_order_2_tt:0 "Spend on the cheapest [governor|E]s first, reaching as many as possible for the money."
+ leo_oae_mbge_ui_order_1_tt:0 "Spend on the [governors|E] with the lowest [governor_efficiency|E] first, so the worst are helped even if fewer are reached."
+ leo_oae_mbge_ui_order_2_tt:0 "Spend on the cheapest [governors|E] first, reaching as many as possible for the money."
 
  leo_oae_mbge_ui_summary:0 "Governors to bolster: #T [GetPlayer.MakeScope.Var('leo_oae_mbge_count').GetValue|0]#!"
  leo_oae_mbge_ui_summary_cost:0 "Total cost: @influence_icon! [GetPlayer.MakeScope.Var('leo_oae_mbge_infl').GetValue|0]"
@@ -99,4 +98,4 @@
 
  leo_oae_mbge_ui_title:0 "$leo_oae_mbge_decision$"
  leo_oae_mbge_ui_apply:0 "$boost_efficiency_interaction$"
- leo_oae_mbge_ui_note:0 "Bolster every [governor|E] listed above, one after another, exactly as if you had visited each of them and done it by hand.\n\n#weak Governors on cooldown, or already too well governed, are left out by the game's own rules.#!"
+ leo_oae_mbge_ui_note:0 "[governors|E] on cooldown, or already too well governed, are excluded by the game's own rules."

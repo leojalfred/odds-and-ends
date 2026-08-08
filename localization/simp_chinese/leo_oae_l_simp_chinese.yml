@@ -22,23 +22,22 @@
  ### be built from, including the 0 an unset variable reads, or the raw key
  ### shows up on screen. That is what the _0 and _tc_ entries are for. The
  ### threshold rows have deliberately empty tooltips: an empty value renders no
- ### tooltip box at all, and the heading above them already says what graying
+ ### tooltip box at all, and the dropdown's own tooltip already says what graying
  ### means.
  leo_oae_mbge_decision:0 "批量提振治理"
- leo_oae_mbge_decision_desc:0 "一次提振众多[governor|E]的[governor_efficiency|E]，而不必逐个处理。\n\n打开一个面板，在其中选择方式以及在名单上向下延伸到何处。在那里确认之前不会有任何花费。\n\n#weak 也可以随时用 $SHORTCUT_KEY_MOD_ctrl$$SHORTCUT_KEY_MOD_shift$B 打开。#!"
+ leo_oae_mbge_decision_desc:0 "一次提振众多[governor|E]的[governor_efficiency|E]，而不必逐个处理。\n\n打开一个面板，在其中选择方式以及要涉及哪些总督。在那里确认之前不会有任何花费。\n\n#weak 也可以随时用 $SHORTCUT_KEY_MOD_ctrl$$SHORTCUT_KEY_MOD_shift$B 打开。#!"
  leo_oae_mbge_decision_tooltip:0 "打开批量提振面板"
  leo_oae_mbge_decision_confirm:0 "打开面板"
  leo_oae_mbge_decision_effect_tt:0 "打开面板。在那里执行提振之前不会有任何花费。"
 
  leo_oae_mbge_ui_heading_method:0 "方式"
- leo_oae_mbge_ui_heading_method_tt:0 "对每一位被涉及的[governor|E]所采用的方式。这与你手动提振单个[governor|E]时可选的五种完全相同，效果也一样。"
- leo_oae_mbge_ui_heading_targets:0 "目标"
- leo_oae_mbge_ui_heading_targets_tt:0 "在名单上向下延伸到何处。低于所选数值的每一位[governor|E]都会被提振。\n\n#weak 无力全额支付的档位会显示为灰色。选择#!#T 力所能及的数量#!#weak 可以把手头的资源用完即止。#!"
+ leo_oae_mbge_ui_heading_method_tt:0 "与单独提振一位[governor|E]时相同的五种方式，用于本次涉及的每一位总督。"
+ leo_oae_mbge_ui_heading_targets_tt:0 "本次会涉及哪些[governors|E]。若没有符合的总督，或无力全额支付，该选项会被禁用。"
  leo_oae_mbge_ui_heading_order:0 "顺序"
- leo_oae_mbge_ui_heading_order_tt:0 "当资源不够所有人时，先花在谁身上。\n\n#weak 只有#!#T $gold_boost_desc$#!#weak 才有影响，因为它是唯一一种价格因[governor|E]而异的方式。#!"
+ leo_oae_mbge_ui_heading_order_tt:0 "当资源不够所有人时，先花在谁身上。只有$gold_boost_desc$才有影响，因为它是唯一一种价格因[governor|E]而异的方式。"
  leo_oae_mbge_ui_heading_governors:0 "总督"
  leo_oae_mbge_ui_heading_summary:0 "概要"
- leo_oae_mbge_ui_row_tt:0 "取消勾选后，这位[governor|E]将被排除在外，其花费也会从上面的总计中扣除。"
+ leo_oae_mbge_ui_row_tt:0 "提振治理时包含这位[governor|E]。"
 
  leo_oae_mbge_ui_opt_0:0 "#weak 选择一种方式#!"
  leo_oae_mbge_ui_opt_1:0 "$influence_boost_desc$"
@@ -48,7 +47,7 @@
  leo_oae_mbge_ui_opt_5:0 "$intrigue_boost_desc$ #weak ([GetPlayer.MakeScope.ScriptValue('leo_oae_mbge_chance_intrigue')|0]%)#!"
 
  leo_oae_mbge_ui_opt_1_tt:0 "每位[governor|E]消耗 @influence_icon! [EmptyScope.ScriptValue('leo_oae_mbge_divert_influence_value')|0]。必定成功。"
- leo_oae_mbge_ui_opt_2_tt:0 "每位[governor|E]消耗 @influence_icon! [EmptyScope.ScriptValue('minor_influence_value')|0]，另加与该[governor|E]收入相称的 @gold_icon! 金币，因此富裕者花费更高。必定成功。"
+ leo_oae_mbge_ui_opt_2_tt:0 "每位[governor|E]消耗 @influence_icon! [EmptyScope.ScriptValue('minor_influence_value')|0]，另加与其收入相称的 @gold_icon! 金币，因此富裕者花费更高。必定成功。"
  leo_oae_mbge_ui_opt_3_tt:0 "每位[governor|E]消耗 @influence_icon! [EmptyScope.ScriptValue('minor_influence_value')|0]。考验你的[diplomacy|E]，可能失败。无论成败都要付出代价。"
  leo_oae_mbge_ui_opt_4_tt:0 "每位[governor|E]消耗 @influence_icon! [EmptyScope.ScriptValue('minor_influence_value')|0]。考验你的[stewardship|E]，可能失败。无论成败都要付出代价。"
  leo_oae_mbge_ui_opt_5_tt:0 "每位[governor|E]消耗 @influence_icon! [EmptyScope.ScriptValue('minor_influence_value')|0]。考验你的[intrigue|E]，可能失败。无论成败都要付出代价。"
@@ -99,4 +98,4 @@
 
  leo_oae_mbge_ui_title:0 "$leo_oae_mbge_decision$"
  leo_oae_mbge_ui_apply:0 "$boost_efficiency_interaction$"
- leo_oae_mbge_ui_note:0 "逐一提振上面列出的每一位[governor|E]，与你亲自登门、一个个手动处理完全相同。\n\n#weak 处于冷却中，或治理已经足够好的总督，会依游戏自身的规则被排除在外。#!"
+ leo_oae_mbge_ui_note:0 "处于冷却中，或治理已经足够好的[governors|E]，会依游戏规则被排除。"

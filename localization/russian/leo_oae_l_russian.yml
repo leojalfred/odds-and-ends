@@ -22,23 +22,22 @@
  ### be built from, including the 0 an unset variable reads, or the raw key
  ### shows up on screen. That is what the _0 and _tc_ entries are for. The
  ### threshold rows have deliberately empty tooltips: an empty value renders no
- ### tooltip box at all, and the heading above them already says what graying
+ ### tooltip box at all, and the dropdown's own tooltip already says what graying
  ### means.
  leo_oae_mbge_decision:0 "Массовое укрепление управления"
- leo_oae_mbge_decision_desc:0 "Укрепите [governor_efficiency|E] сразу многих [governor|E], а не по одному.\n\nОткрывает панель, где вы выбираете способ и то, как далеко спускаться по списку. Ничего не тратится, пока вы это там не подтвердите.\n\n#weak Её также можно открыть в любой момент клавишами $SHORTCUT_KEY_MOD_ctrl$$SHORTCUT_KEY_MOD_shift$B.#!"
+ leo_oae_mbge_decision_desc:0 "Укрепите [governor_efficiency|E] сразу многих губернаторов, а не по одному.\n\nОткрывает панель, где вы выбираете способ и каких губернаторов охватить. Ничего не тратится, пока вы это там не подтвердите.\n\n#weak Её также можно открыть в любой момент клавишами $SHORTCUT_KEY_MOD_ctrl$$SHORTCUT_KEY_MOD_shift$B.#!"
  leo_oae_mbge_decision_tooltip:0 "Открыть панель массового укрепления"
  leo_oae_mbge_decision_confirm:0 "Открыть панель"
  leo_oae_mbge_decision_effect_tt:0 "Открывает панель. Ничего не тратится, пока вы не укрепите оттуда."
 
  leo_oae_mbge_ui_heading_method:0 "Способ"
- leo_oae_mbge_ui_heading_method_tt:0 "Как действовать с каждым [governor|E], до которого дойдёт дело. Это те же пять способов, что предлагаются при укреплении одного [governor|E] вручную, и работают они так же."
- leo_oae_mbge_ui_heading_targets:0 "Цели"
- leo_oae_mbge_ui_heading_targets_tt:0 "Как далеко спускаться по списку. Укрепляется каждый [governor|E] ниже выбранного уровня.\n\n#weak Уровень, который вы не можете оплатить полностью, затенён. Выберите #!#T Сколько смогу себе позволить#!#weak , чтобы потратить всё, что есть, и остановиться.#!"
+ leo_oae_mbge_ui_heading_method_tt:0 "Те же пять способов, что игра предлагает для одного губернатора, применённые к каждому, до кого дойдёт дело."
+ leo_oae_mbge_ui_heading_targets_tt:0 "Кого затронет дело. Вариант отключён, если под него никто не подпадает или если вы не можете оплатить его полностью."
  leo_oae_mbge_ui_heading_order:0 "Порядок"
- leo_oae_mbge_ui_heading_order_tt:0 "До кого деньги дойдут первыми, когда их не хватает на всех.\n\n#weak Имеет значение только для #!#T $gold_boost_desc$#!#weak , единственного способа, цена которого различается от [governor|E] к [governor|E].#!"
+ leo_oae_mbge_ui_heading_order_tt:0 "До кого деньги дойдут первыми, когда их не хватает на всех. Имеет значение только для $gold_boost_desc$, единственного способа, цена которого различается для каждого губернатора."
  leo_oae_mbge_ui_heading_governors:0 "Губернаторы"
  leo_oae_mbge_ui_heading_summary:0 "Сводка"
- leo_oae_mbge_ui_row_tt:0 "Без галочки этот [governor|E] в дело не попадёт. Его стоимость уйдёт из общей суммы выше."
+ leo_oae_mbge_ui_row_tt:0 "Включить этого губернатора в укрепление управления."
 
  leo_oae_mbge_ui_opt_0:0 "#weak Выберите способ#!"
  leo_oae_mbge_ui_opt_1:0 "$influence_boost_desc$"
@@ -47,11 +46,11 @@
  leo_oae_mbge_ui_opt_4:0 "$stewardship_boost_desc$ #weak ([GetPlayer.MakeScope.ScriptValue('leo_oae_mbge_chance_stewardship')|0]%)#!"
  leo_oae_mbge_ui_opt_5:0 "$intrigue_boost_desc$ #weak ([GetPlayer.MakeScope.ScriptValue('leo_oae_mbge_chance_intrigue')|0]%)#!"
 
- leo_oae_mbge_ui_opt_1_tt:0 "@influence_icon! [EmptyScope.ScriptValue('leo_oae_mbge_divert_influence_value')|0] за [governor|E]. Срабатывает всегда."
- leo_oae_mbge_ui_opt_2_tt:0 "@influence_icon! [EmptyScope.ScriptValue('minor_influence_value')|0] за [governor|E], плюс @gold_icon! золото соразмерно доходу этого [governor|E], так что богатый обойдётся дороже. Срабатывает всегда."
- leo_oae_mbge_ui_opt_3_tt:0 "@influence_icon! [EmptyScope.ScriptValue('minor_influence_value')|0] за [governor|E]. Проверяет вашу [diplomacy|E] и может не удаться. Платите вы в любом случае."
- leo_oae_mbge_ui_opt_4_tt:0 "@influence_icon! [EmptyScope.ScriptValue('minor_influence_value')|0] за [governor|E]. Проверяет ваше [stewardship|E] и может не удаться. Платите вы в любом случае."
- leo_oae_mbge_ui_opt_5_tt:0 "@influence_icon! [EmptyScope.ScriptValue('minor_influence_value')|0] за [governor|E]. Проверяет вашу [intrigue|E] и может не удаться. Платите вы в любом случае."
+ leo_oae_mbge_ui_opt_1_tt:0 "@influence_icon! [EmptyScope.ScriptValue('leo_oae_mbge_divert_influence_value')|0] за губернатора. Срабатывает всегда."
+ leo_oae_mbge_ui_opt_2_tt:0 "@influence_icon! [EmptyScope.ScriptValue('minor_influence_value')|0] за губернатора, плюс @gold_icon! золото соразмерно его доходу, так что богатый обойдётся дороже. Срабатывает всегда."
+ leo_oae_mbge_ui_opt_3_tt:0 "@influence_icon! [EmptyScope.ScriptValue('minor_influence_value')|0] за губернатора. Проверяет вашу [diplomacy|E] и может не удаться. Платите вы в любом случае."
+ leo_oae_mbge_ui_opt_4_tt:0 "@influence_icon! [EmptyScope.ScriptValue('minor_influence_value')|0] за губернатора. Проверяет ваше [stewardship|E] и может не удаться. Платите вы в любом случае."
+ leo_oae_mbge_ui_opt_5_tt:0 "@influence_icon! [EmptyScope.ScriptValue('minor_influence_value')|0] за губернатора. Проверяет вашу [intrigue|E] и может не удаться. Платите вы в любом случае."
 
  leo_oae_mbge_ui_t_m40:0 "Ниже -40 %"
  leo_oae_mbge_ui_t_m30:0 "Ниже -30 %"
@@ -90,8 +89,8 @@
  leo_oae_mbge_ui_order_0:0 "#weak Выберите порядок#!"
  leo_oae_mbge_ui_order_1:0 "Сначала худшее управление"
  leo_oae_mbge_ui_order_2:0 "Сначала самые дешёвые"
- leo_oae_mbge_ui_order_1_tt:0 "Тратьте сначала на [governor|E] с наименьшей [governor_efficiency|E], чтобы помощь получили худшие, пусть их и окажется меньше."
- leo_oae_mbge_ui_order_2_tt:0 "Тратьте сначала на самых дешёвых [governor|E], чтобы охватить как можно больше за те же деньги."
+ leo_oae_mbge_ui_order_1_tt:0 "Тратьте сначала на губернаторов с наименьшей [governor_efficiency|E], чтобы помощь получили худшие, пусть их и окажется меньше."
+ leo_oae_mbge_ui_order_2_tt:0 "Тратьте сначала на самых дешёвых губернаторов, чтобы охватить как можно больше за те же деньги."
 
  leo_oae_mbge_ui_summary:0 "Губернаторов к укреплению: #T [GetPlayer.MakeScope.Var('leo_oae_mbge_count').GetValue|0]#!"
  leo_oae_mbge_ui_summary_cost:0 "Общая стоимость: @influence_icon! [GetPlayer.MakeScope.Var('leo_oae_mbge_infl').GetValue|0]"
@@ -99,4 +98,4 @@
 
  leo_oae_mbge_ui_title:0 "$leo_oae_mbge_decision$"
  leo_oae_mbge_ui_apply:0 "$boost_efficiency_interaction$"
- leo_oae_mbge_ui_note:0 "Укрепить каждого [governor|E] из списка выше, одного за другим, ровно так же, как если бы вы обошли их всех и сделали это вручную.\n\n#weak Губернаторы на перезарядке или уже слишком хорошо управляющие остаются в стороне по правилам самой игры.#!"
+ leo_oae_mbge_ui_note:0 "[governors|E] на перезарядке или уже слишком хорошо управляющие исключены по правилам игры."

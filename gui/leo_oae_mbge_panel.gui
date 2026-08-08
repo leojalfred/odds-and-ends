@@ -357,7 +357,7 @@ window = {
 
 						vbox = {
 							layoutpolicy_horizontal = expanding
-							margin = { 6 4 }
+							margin = { 0 4 }
 							margin_top = 8
 							spacing = 0
 
@@ -405,18 +405,20 @@ window = {
 					}
 
 					### How far down the pool to go.
+					###
+					### No heading of its own: it sits directly under the method
+					### it qualifies, and its own label says what it is. The
+					### negative top margin cancels the spacing the surrounding
+					### vbox puts between sections, so the two dropdowns read as
+					### one pair rather than two headings' worth apart.
 					vbox = {
 						layoutpolicy_horizontal = expanding
-
-						text_label_left = {
-							layoutpolicy_horizontal = expanding
-							text = "leo_oae_mbge_ui_heading_targets"
-						}
+						margin_top = -8
 
 						vbox = {
 							layoutpolicy_horizontal = expanding
-							margin = { 6 4 }
-							margin_top = 8
+							margin = { 0 0 }
+							margin_bottom = 4
 							spacing = 0
 
 							leo_oae_mbge_button_drop = {
@@ -487,7 +489,7 @@ window = {
 
 						vbox = {
 							layoutpolicy_horizontal = expanding
-							margin = { 6 4 }
+							margin = { 0 4 }
 							margin_top = 8
 							spacing = 0
 
@@ -541,8 +543,8 @@ window = {
 
 						vbox = {
 							layoutpolicy_horizontal = expanding
-							margin = { 6 4 }
-							margin_top = 12
+							margin = { 0 4 }
+							margin_top = 8
 							spacing = 4
 
 							text_multi = {
@@ -595,9 +597,9 @@ window = {
 
 						vbox = {
 							layoutpolicy_horizontal = expanding
-							margin = { 6 4 }
+							margin = { 0 4 }
 							margin_top = 8
-							spacing = 4
+							spacing = 2
 
 							# Script clears this at the start of every rebuild,
 							# so when there is nobody to show it is empty and the
@@ -616,7 +618,6 @@ window = {
 						}
 					}
 
-					expand = {}
 				}
 			}
 		}

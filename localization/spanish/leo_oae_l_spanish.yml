@@ -22,23 +22,22 @@
  ### be built from, including the 0 an unset variable reads, or the raw key
  ### shows up on screen. That is what the _0 and _tc_ entries are for. The
  ### threshold rows have deliberately empty tooltips: an empty value renders no
- ### tooltip box at all, and the heading above them already says what graying
+ ### tooltip box at all, and the dropdown's own tooltip already says what graying
  ### means.
  leo_oae_mbge_decision:0 "Reforzar la gobernanza en masa"
- leo_oae_mbge_decision_desc:0 "Refuerza la [governor_efficiency|E] de muchos [governor|E]es de una vez, en lugar de uno por uno.\n\nAbre un panel donde eliges el método y hasta dónde bajar en la lista. No se gasta nada hasta que lo confirmes allí.\n\n#weak También puedes abrirlo en cualquier momento con $SHORTCUT_KEY_MOD_ctrl$$SHORTCUT_KEY_MOD_shift$B.#!"
+ leo_oae_mbge_decision_desc:0 "Refuerza la [governor_efficiency|E] de muchos [governors|E] de una vez, en lugar de uno por uno.\n\nAbre un panel donde eliges el método y a qué gobernadores llegar. No se gasta nada hasta que lo confirmes allí.\n\n#weak También puedes abrirlo en cualquier momento con $SHORTCUT_KEY_MOD_ctrl$$SHORTCUT_KEY_MOD_shift$B.#!"
  leo_oae_mbge_decision_tooltip:0 "Abrir el panel de refuerzo en masa"
  leo_oae_mbge_decision_confirm:0 "Abrir panel"
  leo_oae_mbge_decision_effect_tt:0 "Abre el panel. No se gasta nada hasta que refuerces desde allí."
 
  leo_oae_mbge_ui_heading_method:0 "Método"
- leo_oae_mbge_ui_heading_method_tt:0 "El método que se empleará con cada [governor|E] al que llegue la acción. Son los mismos cinco que se te ofrecen cuando refuerzas a un solo [governor|E] a mano, y se comportan igual."
- leo_oae_mbge_ui_heading_targets:0 "Objetivos"
- leo_oae_mbge_ui_heading_targets_tt:0 "Hasta dónde bajar en la lista. Se refuerza a todo [governor|E] por debajo del nivel que elijas.\n\n#weak Un nivel que no puedas pagar por completo aparece atenuado. Elige #!#T Tantos como pueda permitirme#!#weak  para gastar lo que tienes y detenerte ahí.#!"
+ leo_oae_mbge_ui_heading_method_tt:0 "Los mismos cinco que el juego ofrece para un solo [governor|E], aplicados a cada uno al que llegue la acción."
+ leo_oae_mbge_ui_heading_targets_tt:0 "A qué [governors|E] llega la acción. Una opción está desactivada si no alcanza a nadie, o si no puedes pagarla por completo."
  leo_oae_mbge_ui_heading_order:0 "Orden"
- leo_oae_mbge_ui_heading_order_tt:0 "A quién llega antes el dinero cuando no alcanza para todos.\n\n#weak Solo importa con #!#T $gold_boost_desc$#!#weak , el único método cuyo precio cambia de un [governor|E] a otro.#!"
+ leo_oae_mbge_ui_heading_order_tt:0 "A quién llega antes el dinero cuando no alcanza para todos. Solo importa con $gold_boost_desc$, el único método cuyo precio cambia según el [governor|E]."
  leo_oae_mbge_ui_heading_governors:0 "Gobernadores"
  leo_oae_mbge_ui_heading_summary:0 "Resumen"
- leo_oae_mbge_ui_row_tt:0 "Sin marcar, este [governor|E] queda fuera de la acción. Su coste desaparece del total de arriba."
+ leo_oae_mbge_ui_row_tt:0 "Incluir a este [governor|E] al reforzar la gobernanza."
 
  leo_oae_mbge_ui_opt_0:0 "#weak Elige un método#!"
  leo_oae_mbge_ui_opt_1:0 "$influence_boost_desc$"
@@ -48,7 +47,7 @@
  leo_oae_mbge_ui_opt_5:0 "$intrigue_boost_desc$ #weak ([GetPlayer.MakeScope.ScriptValue('leo_oae_mbge_chance_intrigue')|0]%)#!"
 
  leo_oae_mbge_ui_opt_1_tt:0 "@influence_icon! [EmptyScope.ScriptValue('leo_oae_mbge_divert_influence_value')|0] por [governor|E]. Siempre funciona."
- leo_oae_mbge_ui_opt_2_tt:0 "@influence_icon! [EmptyScope.ScriptValue('minor_influence_value')|0] por [governor|E], más @gold_icon! oro proporcional a lo que ese [governor|E] ingresa, de modo que uno rico cuesta más. Siempre funciona."
+ leo_oae_mbge_ui_opt_2_tt:0 "@influence_icon! [EmptyScope.ScriptValue('minor_influence_value')|0] por [governor|E], más @gold_icon! oro proporcional a lo que ingresa, de modo que uno rico cuesta más. Siempre funciona."
  leo_oae_mbge_ui_opt_3_tt:0 "@influence_icon! [EmptyScope.ScriptValue('minor_influence_value')|0] por [governor|E]. Pone a prueba tu [diplomacy|E] y puede fallar. Pagas en cualquier caso."
  leo_oae_mbge_ui_opt_4_tt:0 "@influence_icon! [EmptyScope.ScriptValue('minor_influence_value')|0] por [governor|E]. Pone a prueba tu [stewardship|E] y puede fallar. Pagas en cualquier caso."
  leo_oae_mbge_ui_opt_5_tt:0 "@influence_icon! [EmptyScope.ScriptValue('minor_influence_value')|0] por [governor|E]. Pone a prueba tu [intrigue|E] y puede fallar. Pagas en cualquier caso."
@@ -90,8 +89,8 @@
  leo_oae_mbge_ui_order_0:0 "#weak Elige un orden#!"
  leo_oae_mbge_ui_order_1:0 "Peor gobernanza primero"
  leo_oae_mbge_ui_order_2:0 "Los más baratos primero"
- leo_oae_mbge_ui_order_1_tt:0 "Gasta primero en los [governor|E]es con la [governor_efficiency|E] más baja, de modo que se ayude a los peores aunque se llegue a menos."
- leo_oae_mbge_ui_order_2_tt:0 "Gasta primero en los [governor|E]es más baratos, para llegar al mayor número posible con el mismo dinero."
+ leo_oae_mbge_ui_order_1_tt:0 "Gasta primero en los [governors|E] con la [governor_efficiency|E] más baja, de modo que se ayude a los peores aunque se llegue a menos."
+ leo_oae_mbge_ui_order_2_tt:0 "Gasta primero en los [governors|E] más baratos, para llegar al mayor número posible con el mismo dinero."
 
  leo_oae_mbge_ui_summary:0 "Gobernadores por reforzar: #T [GetPlayer.MakeScope.Var('leo_oae_mbge_count').GetValue|0]#!"
  leo_oae_mbge_ui_summary_cost:0 "Coste total: @influence_icon! [GetPlayer.MakeScope.Var('leo_oae_mbge_infl').GetValue|0]"
@@ -99,4 +98,4 @@
 
  leo_oae_mbge_ui_title:0 "$leo_oae_mbge_decision$"
  leo_oae_mbge_ui_apply:0 "$boost_efficiency_interaction$"
- leo_oae_mbge_ui_note:0 "Refuerza a cada [governor|E] de la lista anterior, uno tras otro, exactamente como si hubieras visitado a cada uno y lo hubieras hecho a mano.\n\n#weak Los gobernadores en tiempo de reutilización, o ya demasiado bien gobernados, quedan fuera por las propias reglas del juego.#!"
+ leo_oae_mbge_ui_note:0 "Los [governors|E] en tiempo de reutilización, o ya demasiado bien gobernados, quedan excluidos por las reglas del juego."

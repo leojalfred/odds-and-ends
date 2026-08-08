@@ -22,23 +22,22 @@
  ### be built from, including the 0 an unset variable reads, or the raw key
  ### shows up on screen. That is what the _0 and _tc_ entries are for. The
  ### threshold rows have deliberately empty tooltips: an empty value renders no
- ### tooltip box at all, and the heading above them already says what graying
+ ### tooltip box at all, and the dropdown's own tooltip already says what graying
  ### means.
  leo_oae_mbge_decision:0 "Verwaltung im großen Stil stärken"
- leo_oae_mbge_decision_desc:0 "Stärkt die [governor_efficiency|E] vieler [governor|E] auf einmal, statt einen nach dem anderen.\n\nÖffnet ein Fenster, in dem Ihr die Vorgehensweise wählt und wie weit die Liste hinab gegangen wird. Ausgegeben wird erst, wenn Ihr es dort bestätigt.\n\n#weak Ihr könnt es jederzeit auch mit $SHORTCUT_KEY_MOD_ctrl$$SHORTCUT_KEY_MOD_shift$B öffnen.#!"
+ leo_oae_mbge_decision_desc:0 "Stärkt die [governor_efficiency|E] vieler [governor|E] auf einmal, statt einen nach dem anderen.\n\nÖffnet ein Fenster, in dem Ihr die Vorgehensweise und die zu erreichenden Statthalter wählt. Ausgegeben wird erst, wenn Ihr es dort bestätigt.\n\n#weak Ihr könnt es jederzeit auch mit $SHORTCUT_KEY_MOD_ctrl$$SHORTCUT_KEY_MOD_shift$B öffnen.#!"
  leo_oae_mbge_decision_tooltip:0 "Das Fenster zum Stärken im großen Stil öffnen"
  leo_oae_mbge_decision_confirm:0 "Fenster öffnen"
  leo_oae_mbge_decision_effect_tt:0 "Öffnet das Fenster. Ausgegeben wird nichts, bis Ihr von dort aus stärkt."
 
  leo_oae_mbge_ui_heading_method:0 "Vorgehensweise"
- leo_oae_mbge_ui_heading_method_tt:0 "Wie bei jedem [governor|E] vorgegangen wird, den der Durchlauf erreicht. Es sind dieselben fünf, die Euch angeboten werden, wenn Ihr einen einzelnen [governor|E] von Hand stärkt, und sie verhalten sich genauso."
- leo_oae_mbge_ui_heading_targets:0 "Ziele"
- leo_oae_mbge_ui_heading_targets_tt:0 "Wie weit die Liste hinab gegangen wird. Jeder [governor|E] unterhalb der gewählten Marke wird gestärkt.\n\n#weak Eine Marke, die Ihr nicht vollständig bezahlen könnt, ist ausgegraut. Wählt #!#T So viele, wie ich mir leisten kann#!#weak , um auszugeben, was Ihr habt, und dann aufzuhören.#!"
+ leo_oae_mbge_ui_heading_method_tt:0 "Dieselben fünf, die das Spiel für einen einzelnen [governor|E] anbietet, angewandt auf jeden, den der Durchlauf erreicht."
+ leo_oae_mbge_ui_heading_targets_tt:0 "Welche [governors|E] der Durchlauf erreicht. Eine Wahl ist deaktiviert, wenn sie niemanden erfasst oder Ihr sie nicht vollständig bezahlen könnt."
  leo_oae_mbge_ui_heading_order:0 "Reihenfolge"
- leo_oae_mbge_ui_heading_order_tt:0 "Wen das Geld zuerst erreicht, wenn es nicht für alle reicht.\n\n#weak Zählt nur bei #!#T $gold_boost_desc$#!#weak , der einzigen Vorgehensweise, deren Preis sich von [governor|E] zu [governor|E] unterscheidet.#!"
+ leo_oae_mbge_ui_heading_order_tt:0 "Wen das Geld zuerst erreicht, wenn es nicht für alle reicht. Zählt nur bei $gold_boost_desc$, der einzigen Vorgehensweise, deren Preis sich je [governor|E] unterscheidet."
  leo_oae_mbge_ui_heading_governors:0 "Statthalter"
  leo_oae_mbge_ui_heading_summary:0 "Übersicht"
- leo_oae_mbge_ui_row_tt:0 "Ohne Haken bleibt dieser [governor|E] außen vor. Seine Kosten fallen aus der Summe oben heraus."
+ leo_oae_mbge_ui_row_tt:0 "Diesen [governor|E] beim Stärken der Verwaltung einbeziehen."
 
  leo_oae_mbge_ui_opt_0:0 "#weak Wählt eine Vorgehensweise#!"
  leo_oae_mbge_ui_opt_1:0 "$influence_boost_desc$"
@@ -48,7 +47,7 @@
  leo_oae_mbge_ui_opt_5:0 "$intrigue_boost_desc$ #weak ([GetPlayer.MakeScope.ScriptValue('leo_oae_mbge_chance_intrigue')|0]%)#!"
 
  leo_oae_mbge_ui_opt_1_tt:0 "@influence_icon! [EmptyScope.ScriptValue('leo_oae_mbge_divert_influence_value')|0] je [governor|E]. Gelingt immer."
- leo_oae_mbge_ui_opt_2_tt:0 "@influence_icon! [EmptyScope.ScriptValue('minor_influence_value')|0] je [governor|E], dazu @gold_icon! Gold im Verhältnis zu dem, was dieser [governor|E] einnimmt, ein wohlhabender kostet also mehr. Gelingt immer."
+ leo_oae_mbge_ui_opt_2_tt:0 "@influence_icon! [EmptyScope.ScriptValue('minor_influence_value')|0] je [governor|E], dazu @gold_icon! Gold im Verhältnis zu seinen Einnahmen, ein wohlhabender kostet also mehr. Gelingt immer."
  leo_oae_mbge_ui_opt_3_tt:0 "@influence_icon! [EmptyScope.ScriptValue('minor_influence_value')|0] je [governor|E]. Stellt Eure [diplomacy|E] auf die Probe und kann scheitern. Bezahlt wird in beiden Fällen."
  leo_oae_mbge_ui_opt_4_tt:0 "@influence_icon! [EmptyScope.ScriptValue('minor_influence_value')|0] je [governor|E]. Stellt Eure [stewardship|E] auf die Probe und kann scheitern. Bezahlt wird in beiden Fällen."
  leo_oae_mbge_ui_opt_5_tt:0 "@influence_icon! [EmptyScope.ScriptValue('minor_influence_value')|0] je [governor|E]. Stellt Eure [intrigue|E] auf die Probe und kann scheitern. Bezahlt wird in beiden Fällen."
@@ -99,4 +98,4 @@
 
  leo_oae_mbge_ui_title:0 "$leo_oae_mbge_decision$"
  leo_oae_mbge_ui_apply:0 "$boost_efficiency_interaction$"
- leo_oae_mbge_ui_note:0 "Stärkt jeden oben aufgeführten [governor|E], einen nach dem anderen, genau als wärt Ihr zu jedem Einzelnen gegangen und hättet es von Hand getan.\n\n#weak Statthalter mit laufender Abklingzeit oder bereits zu guter Verwaltung bleiben durch die Regeln des Spiels selbst außen vor.#!"
+ leo_oae_mbge_ui_note:0 "[governors|E] mit laufender Abklingzeit oder bereits zu guter Verwaltung sind durch die Regeln des Spiels ausgeschlossen."
