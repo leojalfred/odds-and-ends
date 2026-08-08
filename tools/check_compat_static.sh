@@ -257,6 +257,17 @@ use  "GetHealthIconFrame"    "GetHealthIconFrame"
 file "health icon"           "gfx/interface/icons/character_status/icon_health.dds"
 def  "CHARACTER_VIEW_NAME_SHORT" "localization/english" "^ *CHARACTER_VIEW_NAME_SHORT:"
 def  "CHARACTER_VIEW_AGE"        "localization/english" "^ *CHARACTER_VIEW_AGE:"
+# Governance is shown with the game's own pair, so the number is colored by the
+# same bands and the tooltip breaks it down the same way as the character sheet
+# and the theme panel. Printing the number ourselves would lose all three.
+def  "efficiency value key"      "localization/english" "^ *ADMIN_WINDOW_THEME_GOVERNOR_EFFICIENCY_VALUE:"
+def  "efficiency breakdown key"  "localization/english" "^ *ADMIN_WINDOW_THEME_GOVERNOR_EFFICIENCY_TT:"
+use  "icon_governor_efficiency"  "type icon_governor_efficiency = "
+# The relation and house lines, copied from the same vanilla row.
+use  "GetRelationToString"       "GetRelationToString"
+def  "EXTENDED_RELATIONS_TOOLTIP" "localization/english" "^ *EXTENDED_RELATIONS_TOOLTIP:"
+use  "coa_house_tiny"            "type coa_house_tiny = "
+def  "house name key"            "localization/english" "^ *ADMINISTRATIVE_GOVERNMENT_HOUSE_WITH_NAME:"
 use  "Scope.Char"            "Scope\.Char"
 use  "AddScope with a character" "AddScope\( *'[a-z_]+', *Character\.MakeScope *\)"
 def  "saved_scopes on scripted guis" "common/scripted_guis" "saved_scopes = [{]"

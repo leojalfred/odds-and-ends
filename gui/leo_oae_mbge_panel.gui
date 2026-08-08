@@ -91,7 +91,7 @@ types leo_oae_mbge_dropdown_types {
 	type leo_oae_mbge_governor_row = widget {
 		datacontext = "[Scope.Char]"
 		layoutpolicy_horizontal = expanding
-		size = { 0 100 }
+		size = { 0 108 }
 
 		background = {
 			using = Background_Area
@@ -108,11 +108,12 @@ types leo_oae_mbge_dropdown_types {
 			vbox = {
 				layoutpolicy_horizontal = expanding
 				layoutpolicy_vertical = expanding
-				margin_top = 10
+				margin_top = 8
 
-				### Name and age, as the character sheet writes them.
+				### Name, age, health, and how well they govern.
 				hbox = {
 					layoutpolicy_horizontal = expanding
+					spacing = 2
 
 					text_single = {
 						text = "CHARACTER_VIEW_NAME_SHORT"
@@ -120,7 +121,7 @@ types leo_oae_mbge_dropdown_types {
 						fontsize = 16
 						fontsize_min = 12
 						align = nobaseline
-						max_width = 230
+						max_width = 190
 						tooltip = "CHARACTER_VIEW_NAME_TT"
 					}
 
@@ -135,31 +136,35 @@ types leo_oae_mbge_dropdown_types {
 
 					icon = {
 						visible = "[Not( Character.IsDeadAndValid )]"
-						margin_left = 4
-						size = { 19 19 }
+						margin_left = 3
+						size = { 18 18 }
 						framesize = { 60 60 }
 						frame = "[Character.GetHealthIconFrame]"
 						texture = "gfx/interface/icons/character_status/icon_health.dds"
 						tooltip = "CHARACTER_VIEW_ALIVE_TT"
 					}
 
-					expand = {}
-				}
+					# Governance, exactly as the game writes it elsewhere: the
+					# same loc key colors the number by band and the same
+					# tooltip breaks down every term that produced it. Reusing
+					# the pair rather than printing the number ourselves is what
+					# gets the coloring, the breakdown and the translation.
+					hbox = {
+						margin_left = 8
+						spacing = 1
 
-				### What the run cares about.
-				hbox = {
-					layoutpolicy_horizontal = expanding
-					margin_top = 4
-					spacing = 12
+						tooltip = "ADMIN_WINDOW_THEME_GOVERNOR_EFFICIENCY_TT"
+						using = tooltip_ne
 
-					# Their governance now, which is what the thresholds are
-					# measured against. Written inline rather than through a loc
-					# key because the only words in it are a percent sign and an
-					# icon.
-					text_single = {
-						text = "[Character.MakeScope.ScriptValue('governor_efficiency_presented')|0]%"
-						align = nobaseline
-						default_format = "#weak"
+						icon_governor_efficiency = {
+							size = { 20 20 }
+						}
+
+						text_single = {
+							text = "ADMIN_WINDOW_THEME_GOVERNOR_EFFICIENCY_VALUE"
+							fontsize = 16
+							align = nobaseline
+						}
 					}
 
 					# Only Grease Palms charges gold, and only it charges a
@@ -167,9 +172,50 @@ types leo_oae_mbge_dropdown_types {
 					# where a per-row price says anything.
 					text_single = {
 						visible = "[EqualTo_CFixedPoint( GetPlayer.MakeScope.Var('leo_oae_mbge_opt').GetValue, '(CFixedPoint)2' )]"
+						margin_left = 8
 						text = "@gold_icon! [Character.MakeScope.ScriptValue('medium_gold_value')|0]"
+						fontsize = 16
 						align = nobaseline
 						default_format = "#weak"
+					}
+
+					expand = {}
+				}
+
+				### What they are to you.
+				hbox = {
+					layoutpolicy_horizontal = expanding
+
+					text_single = {
+						text = "[Character.GetRelationToString( GetPlayer )]"
+						align = nobaseline
+						max_width = 330
+						tooltip = "EXTENDED_RELATIONS_TOOLTIP"
+						using = tooltip_se
+					}
+
+					expand = {}
+				}
+
+				### Whose house they belong to.
+				hbox = {
+					layoutpolicy_horizontal = expanding
+
+					widget = {
+						size = { 40 40 }
+						allow_outside = yes
+
+						coa_house_tiny = {
+							datacontext = "[Character.GetHouse]"
+							position = { -4 0 }
+						}
+					}
+
+					text_single = {
+						datacontext = "[Character.GetHouse]"
+						text = "ADMINISTRATIVE_GOVERNMENT_HOUSE_WITH_NAME"
+						align = nobaseline
+						max_width = 290
 					}
 
 					expand = {}
