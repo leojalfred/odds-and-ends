@@ -171,13 +171,11 @@ leo_oae_mbge_set_t_30 = {
 	}
 }
 
-leo_oae_mbge_set_t_all = {
-	scope = character
-	effect = {
-		set_variable = { name = leo_oae_mbge_thresh value = 9 }
-		leo_oae_mbge_reselect_effect = yes
-	}
-}
+# There is no leo_oae_mbge_set_t_all. Code 9 was "every eligible governor",
+# which demanded the whole pool be payable, and code 10 reaches the same
+# governors whenever the money is there and as many of them as it stretches to
+# otherwise. One entry does both, so t_all is no longer in the dropdown's list
+# and nothing can build this name.
 
 leo_oae_mbge_set_t_bud = {
 	scope = character

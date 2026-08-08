@@ -33,7 +33,6 @@
  leo_oae_mbge_ui_heading_method:0 "Método"
  leo_oae_mbge_ui_heading_method_tt:0 "Los mismos cinco que el juego ofrece para un solo [governor|E], aplicados a cada uno al que llegue la acción."
  leo_oae_mbge_ui_heading_targets_tt:0 "A qué [governors|E] llega la acción. Una opción está desactivada si no alcanza a nadie, o si no puedes pagarla por completo."
- leo_oae_mbge_ui_heading_order:0 "Orden"
  leo_oae_mbge_ui_heading_order_tt:0 "A quién llega antes el dinero cuando no alcanza para todos. Solo importa con $gold_boost_desc$, el único método cuyo precio cambia según el [governor|E]."
  leo_oae_mbge_ui_heading_governors:0 "Gobernadores"
  leo_oae_mbge_ui_heading_summary:0 "Resumen"
@@ -61,8 +60,7 @@
  leo_oae_mbge_ui_t_10:0 "Por debajo del 10 %"
  leo_oae_mbge_ui_t_20:0 "Por debajo del 20 %"
  leo_oae_mbge_ui_t_30:0 "Por debajo del 30 %"
- leo_oae_mbge_ui_t_all:0 "Todos los gobernadores elegibles"
- leo_oae_mbge_ui_t_bud:0 "Tantos como pueda permitirme"
+ leo_oae_mbge_ui_t_bud:0 "Todos los gobernadores elegibles"
 
  leo_oae_mbge_ui_t_m40_tt:0 ""
  leo_oae_mbge_ui_t_m30_tt:0 ""
@@ -72,8 +70,7 @@
  leo_oae_mbge_ui_t_10_tt:0 ""
  leo_oae_mbge_ui_t_20_tt:0 ""
  leo_oae_mbge_ui_t_30_tt:0 ""
- leo_oae_mbge_ui_t_all_tt:0 ""
- leo_oae_mbge_ui_t_bud_tt:0 ""
+ leo_oae_mbge_ui_t_bud_tt:0 "Cada [governor|E] que el juego permite, hasta donde alcance el tesoro."
 
  leo_oae_mbge_ui_tc_0:0 "#weak Elige un nivel#!"
  leo_oae_mbge_ui_tc_1:0 "$leo_oae_mbge_ui_t_m40$"
@@ -84,7 +81,7 @@
  leo_oae_mbge_ui_tc_6:0 "$leo_oae_mbge_ui_t_10$"
  leo_oae_mbge_ui_tc_7:0 "$leo_oae_mbge_ui_t_20$"
  leo_oae_mbge_ui_tc_8:0 "$leo_oae_mbge_ui_t_30$"
- leo_oae_mbge_ui_tc_9:0 "$leo_oae_mbge_ui_t_all$"
+ leo_oae_mbge_ui_tc_9:0 "$leo_oae_mbge_ui_t_bud$"
  leo_oae_mbge_ui_tc_10:0 "$leo_oae_mbge_ui_t_bud$"
 
  leo_oae_mbge_ui_order_0:0 "#weak Elige un orden#!"

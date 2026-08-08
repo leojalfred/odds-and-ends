@@ -22,9 +22,9 @@
 ### CFixedPoint, so literals take the form '(CFixedPoint)1'.
 ###
 ### Every dropdown is a datamodel over a list script builds, with one item
-### template. An item's flag name is its whole identity: the flag t_all gives
-### the label key leo_oae_mbge_ui_t_all and the click target
-### leo_oae_mbge_set_t_all, both built with Concatenate. When a dropdown is shut
+### template. An item's flag name is its whole identity: the flag t_m40 gives
+### the label key leo_oae_mbge_ui_t_m40 and the click target
+### leo_oae_mbge_set_t_m40, both built with Concatenate. When a dropdown is shut
 ### its datamodel points at leo_oae_mbge_none, a list nothing ever creates, so
 ### the rows do not merely hide, they cease to exist.
 
@@ -420,13 +420,81 @@ window = {
 						}
 					}
 
+					### Who the budget reaches first.
+					###
+					### Only Grease Palms charges a different price per governor,
+					### so it is the only option under which the two orderings
+					### can give different answers. Hidden for the rest rather
+					### than disabled, because a control that never matters is
+					### better absent than gray.
+					###
+					### No heading of its own, and the same negative top margin the
+					### level picker below carries, so the three read as one stack
+					### under the method rather than as separate sections. It
+					### qualifies the method, so it sits with it: appearing and
+					### disappearing between the method and the level is what a
+					### control that belongs to the method above it should do.
+					vbox = {
+						visible = "[EqualTo_CFixedPoint( GetPlayer.MakeScope.Var('leo_oae_mbge_opt').GetValue, '(CFixedPoint)2' )]"
+						layoutpolicy_horizontal = expanding
+						margin_top = -8
+
+						vbox = {
+							layoutpolicy_horizontal = expanding
+							margin = { 0 0 }
+							margin_bottom = 4
+							spacing = 0
+
+							leo_oae_mbge_button_drop = {
+								layoutpolicy_horizontal = expanding
+								# Reprices first, as the other two dropdowns do,
+								# so all three offer rows priced off what is in
+								# the treasury now.
+								onclick = "[GetScriptedGui('leo_oae_mbge_refresh').Execute( GuiScope.SetRoot( GetPlayer.MakeScope ).End )]"
+								onclick = "[GetVariableSystem.Set( 'leo_oae_mbge_dd', Select_CString( GetVariableSystem.HasValue( 'leo_oae_mbge_dd', 'order' ), 'none', 'order' ) )]"
+								tooltip = "leo_oae_mbge_ui_heading_order_tt"
+								text = "[Localize(Concatenate('leo_oae_mbge_ui_order_', IntToString(FixedPointToInt(GetPlayer.MakeScope.Var('leo_oae_mbge_order').GetValue))))]"
+							}
+
+							vbox = {
+								layoutpolicy_horizontal = expanding
+								margin = { 3 0 }
+
+								vbox = {
+									visible = "[GetVariableSystem.HasValue( 'leo_oae_mbge_dd', 'order' )]"
+									layoutpolicy_horizontal = expanding
+									using = Background_DropDown
+									spacing = 0
+
+									datamodel = "[GetPlayer.MakeScope.GetList( Select_CString( GetVariableSystem.HasValue( 'leo_oae_mbge_dd', 'order' ), 'leo_oae_mbge_orders', 'leo_oae_mbge_none' ) )]"
+
+									item = {
+										leo_oae_mbge_button_dropdown = {
+											layoutpolicy_horizontal = expanding
+											size = { -1 30 }
+											onclick = "[GetScriptedGui( Concatenate( 'leo_oae_mbge_set_', Scope.GetFlagName ) ).Execute( GuiScope.SetRoot( GetPlayer.MakeScope ).End )]"
+											onclick = "[GetVariableSystem.Set( 'leo_oae_mbge_dd', 'none' )]"
+											tooltip = "[Localize( Concatenate( Concatenate( 'leo_oae_mbge_ui_', Scope.GetFlagName ), '_tt' ) )]"
+											text = "[Localize( Concatenate( 'leo_oae_mbge_ui_', Scope.GetFlagName ) )]"
+										}
+									}
+								}
+							}
+
+							widget = {
+								visible = "[GetVariableSystem.HasValue( 'leo_oae_mbge_dd', 'order' )]"
+								size = { 1 12 }
+							}
+						}
+					}
+
 					### How far down the pool to go.
 					###
-					### No heading of its own: it sits directly under the method
-					### it qualifies, and its own label says what it is. The
-					### negative top margin cancels the spacing the surrounding
-					### vbox puts between sections, so the two dropdowns read as
-					### one pair rather than two headings' worth apart.
+					### No heading of its own: it sits in the method's stack and
+					### its own label says what it is. The negative top margin
+					### cancels the spacing the surrounding vbox puts between
+					### sections, so the pickers read as one group rather than
+					### as two or three headings' worth apart.
 					vbox = {
 						layoutpolicy_horizontal = expanding
 						margin_top = -8
@@ -482,72 +550,6 @@ window = {
 
 							widget = {
 								visible = "[GetVariableSystem.HasValue( 'leo_oae_mbge_dd', 'thresh' )]"
-								size = { 1 12 }
-							}
-						}
-					}
-
-					### Who the budget reaches first.
-					###
-					### Only Grease Palms charges a different price per governor,
-					### so it is the only option under which the two orderings
-					### can give different answers. Hidden for the rest rather
-					### than disabled, because a control that never matters is
-					### better absent than gray.
-					vbox = {
-						visible = "[EqualTo_CFixedPoint( GetPlayer.MakeScope.Var('leo_oae_mbge_opt').GetValue, '(CFixedPoint)2' )]"
-						layoutpolicy_horizontal = expanding
-
-						text_label_left = {
-							layoutpolicy_horizontal = expanding
-							margin_left = 12
-							text = "leo_oae_mbge_ui_heading_order"
-						}
-
-						vbox = {
-							layoutpolicy_horizontal = expanding
-							margin = { 0 4 }
-							margin_top = 8
-							spacing = 0
-
-							leo_oae_mbge_button_drop = {
-								layoutpolicy_horizontal = expanding
-								# Reprices first, as the other two dropdowns do,
-								# so all three offer rows priced off what is in
-								# the treasury now.
-								onclick = "[GetScriptedGui('leo_oae_mbge_refresh').Execute( GuiScope.SetRoot( GetPlayer.MakeScope ).End )]"
-								onclick = "[GetVariableSystem.Set( 'leo_oae_mbge_dd', Select_CString( GetVariableSystem.HasValue( 'leo_oae_mbge_dd', 'order' ), 'none', 'order' ) )]"
-								tooltip = "leo_oae_mbge_ui_heading_order_tt"
-								text = "[Localize(Concatenate('leo_oae_mbge_ui_order_', IntToString(FixedPointToInt(GetPlayer.MakeScope.Var('leo_oae_mbge_order').GetValue))))]"
-							}
-
-							vbox = {
-								layoutpolicy_horizontal = expanding
-								margin = { 3 0 }
-
-								vbox = {
-									visible = "[GetVariableSystem.HasValue( 'leo_oae_mbge_dd', 'order' )]"
-									layoutpolicy_horizontal = expanding
-									using = Background_DropDown
-									spacing = 0
-
-									datamodel = "[GetPlayer.MakeScope.GetList( Select_CString( GetVariableSystem.HasValue( 'leo_oae_mbge_dd', 'order' ), 'leo_oae_mbge_orders', 'leo_oae_mbge_none' ) )]"
-
-									item = {
-										leo_oae_mbge_button_dropdown = {
-											layoutpolicy_horizontal = expanding
-											size = { -1 30 }
-											onclick = "[GetScriptedGui( Concatenate( 'leo_oae_mbge_set_', Scope.GetFlagName ) ).Execute( GuiScope.SetRoot( GetPlayer.MakeScope ).End )]"
-											onclick = "[GetVariableSystem.Set( 'leo_oae_mbge_dd', 'none' )]"
-											tooltip = "[Localize( Concatenate( Concatenate( 'leo_oae_mbge_ui_', Scope.GetFlagName ), '_tt' ) )]"
-											text = "[Localize( Concatenate( 'leo_oae_mbge_ui_', Scope.GetFlagName ) )]"
-										}
-									}
-								}
-							}
-
-							widget = {
-								visible = "[GetVariableSystem.HasValue( 'leo_oae_mbge_dd', 'order' )]"
 								size = { 1 12 }
 							}
 						}

@@ -33,7 +33,6 @@
  leo_oae_mbge_ui_heading_method:0 "Method"
  leo_oae_mbge_ui_heading_method_tt:0 "The same five the game offers for a single [governor|E], used on every one the run reaches."
  leo_oae_mbge_ui_heading_targets_tt:0 "Which [governors|E] the run reaches. A choice is disabled if it catches nobody, or if you cannot pay for it in full."
- leo_oae_mbge_ui_heading_order:0 "Order"
  leo_oae_mbge_ui_heading_order_tt:0 "Who the money reaches first when it will not stretch to everyone. Only matters for $gold_boost_desc$, the one method that charges a different price per [governor|E]."
  leo_oae_mbge_ui_heading_governors:0 "Governors"
  leo_oae_mbge_ui_heading_summary:0 "Summary"
@@ -61,8 +60,7 @@
  leo_oae_mbge_ui_t_10:0 "Below 10%"
  leo_oae_mbge_ui_t_20:0 "Below 20%"
  leo_oae_mbge_ui_t_30:0 "Below 30%"
- leo_oae_mbge_ui_t_all:0 "Every Eligible Governor"
- leo_oae_mbge_ui_t_bud:0 "As Many As I Can Afford"
+ leo_oae_mbge_ui_t_bud:0 "Every Eligible Governor"
 
  leo_oae_mbge_ui_t_m40_tt:0 ""
  leo_oae_mbge_ui_t_m30_tt:0 ""
@@ -72,8 +70,7 @@
  leo_oae_mbge_ui_t_10_tt:0 ""
  leo_oae_mbge_ui_t_20_tt:0 ""
  leo_oae_mbge_ui_t_30_tt:0 ""
- leo_oae_mbge_ui_t_all_tt:0 ""
- leo_oae_mbge_ui_t_bud_tt:0 ""
+ leo_oae_mbge_ui_t_bud_tt:0 "Every [governor|E] the game allows, as far down the list as the treasury reaches."
 
  leo_oae_mbge_ui_tc_0:0 "#weak Choose a Level#!"
  leo_oae_mbge_ui_tc_1:0 "$leo_oae_mbge_ui_t_m40$"
@@ -84,7 +81,7 @@
  leo_oae_mbge_ui_tc_6:0 "$leo_oae_mbge_ui_t_10$"
  leo_oae_mbge_ui_tc_7:0 "$leo_oae_mbge_ui_t_20$"
  leo_oae_mbge_ui_tc_8:0 "$leo_oae_mbge_ui_t_30$"
- leo_oae_mbge_ui_tc_9:0 "$leo_oae_mbge_ui_t_all$"
+ leo_oae_mbge_ui_tc_9:0 "$leo_oae_mbge_ui_t_bud$"
  leo_oae_mbge_ui_tc_10:0 "$leo_oae_mbge_ui_t_bud$"
 
  leo_oae_mbge_ui_order_0:0 "#weak Choose an Order#!"

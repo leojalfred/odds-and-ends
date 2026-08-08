@@ -33,7 +33,6 @@
  leo_oae_mbge_ui_heading_method:0 "方法"
  leo_oae_mbge_ui_heading_method_tt:0 "[governor|E]を一人だけ強化するときと同じ5種を、対象となる全ての総督に用いる。"
  leo_oae_mbge_ui_heading_targets_tt:0 "どの[governors|E]を対象とするか。該当者がいない場合や、全額を支払えない場合、その選択肢は無効になる。"
- leo_oae_mbge_ui_heading_order:0 "順序"
  leo_oae_mbge_ui_heading_order_tt:0 "全員には足りないとき、誰に先に充てるか。影響するのは$gold_boost_desc$だけで、[governor|E]ごとに値段が変わる唯一の方法だ。"
  leo_oae_mbge_ui_heading_governors:0 "総督"
  leo_oae_mbge_ui_heading_summary:0 "概要"
@@ -61,8 +60,7 @@
  leo_oae_mbge_ui_t_10:0 "10%未満"
  leo_oae_mbge_ui_t_20:0 "20%未満"
  leo_oae_mbge_ui_t_30:0 "30%未満"
- leo_oae_mbge_ui_t_all:0 "条件を満たす全ての総督"
- leo_oae_mbge_ui_t_bud:0 "賄える限り"
+ leo_oae_mbge_ui_t_bud:0 "条件を満たす全ての総督"
 
  leo_oae_mbge_ui_t_m40_tt:0 ""
  leo_oae_mbge_ui_t_m30_tt:0 ""
@@ -72,8 +70,7 @@
  leo_oae_mbge_ui_t_10_tt:0 ""
  leo_oae_mbge_ui_t_20_tt:0 ""
  leo_oae_mbge_ui_t_30_tt:0 ""
- leo_oae_mbge_ui_t_all_tt:0 ""
- leo_oae_mbge_ui_t_bud_tt:0 ""
+ leo_oae_mbge_ui_t_bud_tt:0 "ゲームが許す全ての[governor|E]に、国庫が届く限り。"
 
  leo_oae_mbge_ui_tc_0:0 "#weak 段階を選べ#!"
  leo_oae_mbge_ui_tc_1:0 "$leo_oae_mbge_ui_t_m40$"
@@ -84,7 +81,7 @@
  leo_oae_mbge_ui_tc_6:0 "$leo_oae_mbge_ui_t_10$"
  leo_oae_mbge_ui_tc_7:0 "$leo_oae_mbge_ui_t_20$"
  leo_oae_mbge_ui_tc_8:0 "$leo_oae_mbge_ui_t_30$"
- leo_oae_mbge_ui_tc_9:0 "$leo_oae_mbge_ui_t_all$"
+ leo_oae_mbge_ui_tc_9:0 "$leo_oae_mbge_ui_t_bud$"
  leo_oae_mbge_ui_tc_10:0 "$leo_oae_mbge_ui_t_bud$"
 
  leo_oae_mbge_ui_order_0:0 "#weak 順序を選べ#!"

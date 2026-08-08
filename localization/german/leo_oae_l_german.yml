@@ -33,7 +33,6 @@
  leo_oae_mbge_ui_heading_method:0 "Vorgehensweise"
  leo_oae_mbge_ui_heading_method_tt:0 "Dieselben fünf, die das Spiel für einen einzelnen [governor|E] anbietet, angewandt auf jeden, den der Durchlauf erreicht."
  leo_oae_mbge_ui_heading_targets_tt:0 "Welche [governors|E] der Durchlauf erreicht. Eine Wahl ist deaktiviert, wenn sie niemanden erfasst oder Ihr sie nicht vollständig bezahlen könnt."
- leo_oae_mbge_ui_heading_order:0 "Reihenfolge"
  leo_oae_mbge_ui_heading_order_tt:0 "Wen das Geld zuerst erreicht, wenn es nicht für alle reicht. Zählt nur bei $gold_boost_desc$, der einzigen Vorgehensweise, deren Preis sich je [governor|E] unterscheidet."
  leo_oae_mbge_ui_heading_governors:0 "Statthalter"
  leo_oae_mbge_ui_heading_summary:0 "Übersicht"
@@ -61,8 +60,7 @@
  leo_oae_mbge_ui_t_10:0 "Unter 10 %"
  leo_oae_mbge_ui_t_20:0 "Unter 20 %"
  leo_oae_mbge_ui_t_30:0 "Unter 30 %"
- leo_oae_mbge_ui_t_all:0 "Alle infrage kommenden Statthalter"
- leo_oae_mbge_ui_t_bud:0 "So viele, wie ich mir leisten kann"
+ leo_oae_mbge_ui_t_bud:0 "Alle infrage kommenden Statthalter"
 
  leo_oae_mbge_ui_t_m40_tt:0 ""
  leo_oae_mbge_ui_t_m30_tt:0 ""
@@ -72,8 +70,7 @@
  leo_oae_mbge_ui_t_10_tt:0 ""
  leo_oae_mbge_ui_t_20_tt:0 ""
  leo_oae_mbge_ui_t_30_tt:0 ""
- leo_oae_mbge_ui_t_all_tt:0 ""
- leo_oae_mbge_ui_t_bud_tt:0 ""
+ leo_oae_mbge_ui_t_bud_tt:0 "Jeder [governor|E], den das Spiel zulässt, so weit die Schatzkammer reicht."
 
  leo_oae_mbge_ui_tc_0:0 "#weak Wählt eine Marke#!"
  leo_oae_mbge_ui_tc_1:0 "$leo_oae_mbge_ui_t_m40$"
@@ -84,7 +81,7 @@
  leo_oae_mbge_ui_tc_6:0 "$leo_oae_mbge_ui_t_10$"
  leo_oae_mbge_ui_tc_7:0 "$leo_oae_mbge_ui_t_20$"
  leo_oae_mbge_ui_tc_8:0 "$leo_oae_mbge_ui_t_30$"
- leo_oae_mbge_ui_tc_9:0 "$leo_oae_mbge_ui_t_all$"
+ leo_oae_mbge_ui_tc_9:0 "$leo_oae_mbge_ui_t_bud$"
  leo_oae_mbge_ui_tc_10:0 "$leo_oae_mbge_ui_t_bud$"
 
  leo_oae_mbge_ui_order_0:0 "#weak Wählt eine Reihenfolge#!"

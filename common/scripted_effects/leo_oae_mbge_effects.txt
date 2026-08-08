@@ -16,13 +16,15 @@
 ### script variable name cannot be built at runtime. Codes 1-10 map to
 ### t_m40 t_m30 t_m20 t_m10 t_0 t_10 t_20 t_30 t_all t_bud, in that order, and
 ### are append-only: they live in saved variables, so renumbering would rewrite
-### the settings of everyone already playing.
+### the settings of everyone already playing. Code 9, t_all, is retired and its
+### bucket is gone, but the number stays reserved for exactly that reason. The
+### defaults move a save sitting on it to 10.
 
 ### The dropdown contents.
 #
 # The panel's dropdowns are datamodels over these lists, and each entry's flag
-# name is its whole identity: t_all gives the label key leo_oae_mbge_ui_t_all
-# and the scripted GUI leo_oae_mbge_set_t_all. Adding an option means adding a
+# name is its whole identity: t_m40 gives the label key leo_oae_mbge_ui_t_m40
+# and the scripted GUI leo_oae_mbge_set_t_m40. Adding an option means adding a
 # flag here, a loc key, and a scripted GUI with the matching name.
 leo_oae_mbge_build_options_effect = {
 	clear_variable_list = leo_oae_mbge_opts
@@ -32,12 +34,18 @@ leo_oae_mbge_build_options_effect = {
 	add_to_variable_list = { name = leo_oae_mbge_opts target = flag:opt_4 }
 	add_to_variable_list = { name = leo_oae_mbge_opts target = flag:opt_5 }
 
-	# The two that need no thinking about come first: everyone the game allows,
-	# then everyone the treasury allows. The graduated levels follow for when a
+	# The one that needs no thinking about comes first: everyone the game allows,
+	# as far down as the treasury reaches. The graduated levels follow for when a
 	# run wants aiming. Display order is not code order, and deliberately so:
 	# the codes are append-only because they persist in saves.
+	#
+	# There used to be two entries here rather than one. "Every eligible
+	# governor" demanded the whole pool be payable and was disabled otherwise,
+	# and "as many as I can afford" walked the same pool taking whoever still
+	# fit. The second is the first whenever the money stretches, so the first
+	# only ever added a disabled row saying no. Code 9 was its own and is
+	# retired rather than reused: saves hold these numbers.
 	clear_variable_list = leo_oae_mbge_threshes
-	add_to_variable_list = { name = leo_oae_mbge_threshes target = flag:t_all }
 	add_to_variable_list = { name = leo_oae_mbge_threshes target = flag:t_bud }
 	add_to_variable_list = { name = leo_oae_mbge_threshes target = flag:t_m40 }
 	add_to_variable_list = { name = leo_oae_mbge_threshes target = flag:t_m30 }
@@ -55,7 +63,7 @@ leo_oae_mbge_build_options_effect = {
 	# Stamps what these lists were built from, so a save carrying an older set
 	# is rebuilt rather than trusted. Bump it whenever the entries or their
 	# order change, or a save keeps showing the old list.
-	set_variable = { name = leo_oae_mbge_opts_version value = 1 }
+	set_variable = { name = leo_oae_mbge_opts_version value = 2 }
 
 	# The branch never runs. See the trigger for why it has to be named.
 	if = { limit = { leo_oae_mbge_ack_trigger = yes } }
@@ -71,7 +79,7 @@ leo_oae_mbge_init_defaults_effect = {
 		limit = {
 			OR = {
 				NOT = { has_variable = leo_oae_mbge_opts_version }
-				NOT = { var:leo_oae_mbge_opts_version = 1 }
+				NOT = { var:leo_oae_mbge_opts_version = 2 }
 			}
 		}
 		leo_oae_mbge_build_options_effect = yes
@@ -85,11 +93,19 @@ leo_oae_mbge_init_defaults_effect = {
 		limit = { NOT = { has_variable = leo_oae_mbge_opt } }
 		set_variable = { name = leo_oae_mbge_opt value = 1 }
 	}
-	# Every eligible governor, which the recount downgrades on the spot if it
-	# turns out not to be payable.
+	# Every eligible governor the treasury reaches, which is the case the
+	# feature is for and is payable by construction.
 	if = {
 		limit = { NOT = { has_variable = leo_oae_mbge_thresh } }
-		set_variable = { name = leo_oae_mbge_thresh value = 9 }
+		set_variable = { name = leo_oae_mbge_thresh value = 10 }
+	}
+	# Code 9 was the old "every eligible governor", which demanded the whole
+	# pool be payable and is now the same option as code 10. A save sitting on
+	# it is moved, rather than left pointing at an entry no list contains, which
+	# would leave the dropdown reading its label with nothing to select.
+	if = {
+		limit = { var:leo_oae_mbge_thresh = 9 }
+		set_variable = { name = leo_oae_mbge_thresh value = 10 }
 	}
 	if = {
 		limit = { NOT = { has_variable = leo_oae_mbge_order } }
@@ -157,7 +173,6 @@ leo_oae_mbge_recount_effect = {
 	leo_oae_mbge_zero_bucket_effect = { B = t_10 }
 	leo_oae_mbge_zero_bucket_effect = { B = t_20 }
 	leo_oae_mbge_zero_bucket_effect = { B = t_30 }
-	leo_oae_mbge_zero_bucket_effect = { B = t_all }
 	leo_oae_mbge_zero_bucket_effect = { B = t_bud }
 
 	clear_variable_list = leo_oae_mbge_pool
@@ -192,9 +207,6 @@ leo_oae_mbge_recount_effect = {
 					value = governor_efficiency_presented
 				}
 
-				scope:leo_oae_mbge_actor = {
-					leo_oae_mbge_accum_bucket_effect = { B = t_all }
-				}
 				if = {
 					limit = { scope:leo_oae_mbge_eff < -40 }
 					scope:leo_oae_mbge_actor = { leo_oae_mbge_accum_bucket_effect = { B = t_m40 } }
@@ -342,9 +354,9 @@ leo_oae_mbge_toggle_exclude_effect = {
 # unpayable, so a level the player chose deliberately is left alone as long as
 # it still works.
 #
-# Everyone the game allows is the preferred landing place. Failing that, the
-# budget row, which is payable by construction because it only ever takes what
-# the treasury covers. If even that is empty there is nobody to bolster, and the
+# There is one landing place: the whole pool as far down as the money reaches,
+# which is payable by construction because it only ever commits what the
+# treasury covers. If even that is empty there is nobody to bolster, and the
 # button stays dark wherever the selection sits.
 #
 # An empty level is left alone. Affordability is written as zero both for a
@@ -360,13 +372,7 @@ leo_oae_mbge_fallback_effect = {
 			var:leo_oae_mbge_count > 0
 		}
 
-		if = {
-			limit = { var:leo_oae_mbge_afford_t_all = 1 }
-			set_variable = { name = leo_oae_mbge_thresh value = 9 }
-		}
-		else = {
-			set_variable = { name = leo_oae_mbge_thresh value = 10 }
-		}
+		set_variable = { name = leo_oae_mbge_thresh value = 10 }
 
 		leo_oae_mbge_select_bucket_effect = yes
 	}
@@ -481,7 +487,6 @@ leo_oae_mbge_afford_pass_effect = {
 	leo_oae_mbge_afford_bucket_effect = { B = t_10 }
 	leo_oae_mbge_afford_bucket_effect = { B = t_20 }
 	leo_oae_mbge_afford_bucket_effect = { B = t_30 }
-	leo_oae_mbge_afford_bucket_effect = { B = t_all }
 
 	if = {
 		limit = { var:leo_oae_mbge_count_t_bud > 0 }
@@ -532,8 +537,10 @@ leo_oae_mbge_select_bucket_effect = {
 	else_if = { limit = { var:leo_oae_mbge_thresh = 6 }  leo_oae_mbge_pick_bucket_effect = { B = t_10 } }
 	else_if = { limit = { var:leo_oae_mbge_thresh = 7 }  leo_oae_mbge_pick_bucket_effect = { B = t_20 } }
 	else_if = { limit = { var:leo_oae_mbge_thresh = 8 }  leo_oae_mbge_pick_bucket_effect = { B = t_30 } }
-	else_if = { limit = { var:leo_oae_mbge_thresh = 10 } leo_oae_mbge_pick_bucket_effect = { B = t_bud } }
-	else =    {                                          leo_oae_mbge_pick_bucket_effect = { B = t_all } }
+	# 10 is the whole pool, as far down it as the money reaches, and is where
+	# everything that is not a graduated level lands: the retired code 9 and the
+	# 0 an unset variable reads along with it.
+	else =    {                                          leo_oae_mbge_pick_bucket_effect = { B = t_bud } }
 }
 
 ### Applying.
@@ -691,10 +698,33 @@ leo_oae_mbge_try_bolster_in_bucket_effect = {
 # Open is a number rather than a bare flag because the panel's visibility reads
 # it straight from GUI, where a variable that might not exist has no defined
 # reading. It is set to zero, never removed.
+#
+# **The gate is what keeps this off the decision's tooltip.** The engine builds
+# a decision's tooltip by running its effect as a dry run, and in that pass no
+# variable on the character can be read at all: not one written a line earlier,
+# not one the player has held since the game started. Ungated, the whole
+# counting pass ran on every frame the decision was on screen and every read in
+# it failed, which was tens of thousands of log lines an hour and a full walk of
+# the realm behind each one. hidden_effect does not prevent this. It hides the
+# effect from the tooltip, it does not stop the engine evaluating it.
+#
+# Seeding first is what makes the gate safe rather than merely clever: on a real
+# execution the variable is there either way, so the gate is only ever false in
+# the dry run, where the seed cannot commit. Anything added here that reads a
+# variable must go inside the gate.
 leo_oae_mbge_open_effect = {
-	leo_oae_mbge_init_defaults_effect = yes
-	leo_oae_mbge_recount_effect = yes
-	set_variable = { name = leo_oae_mbge_open value = 1 }
+	if = {
+		limit = { NOT = { has_variable = leo_oae_mbge_open } }
+		set_variable = { name = leo_oae_mbge_open value = 0 }
+	}
+
+	if = {
+		limit = { has_variable = leo_oae_mbge_open }
+
+		leo_oae_mbge_init_defaults_effect = yes
+		leo_oae_mbge_recount_effect = yes
+		set_variable = { name = leo_oae_mbge_open value = 1 }
+	}
 }
 
 leo_oae_mbge_close_effect = {

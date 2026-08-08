@@ -33,7 +33,6 @@
  leo_oae_mbge_ui_heading_method:0 "方式"
  leo_oae_mbge_ui_heading_method_tt:0 "与单独提振一位[governor|E]时相同的五种方式，用于本次涉及的每一位总督。"
  leo_oae_mbge_ui_heading_targets_tt:0 "本次会涉及哪些[governors|E]。若没有符合的总督，或无力全额支付，该选项会被禁用。"
- leo_oae_mbge_ui_heading_order:0 "顺序"
  leo_oae_mbge_ui_heading_order_tt:0 "当资源不够所有人时，先花在谁身上。只有$gold_boost_desc$才有影响，因为它是唯一一种价格因[governor|E]而异的方式。"
  leo_oae_mbge_ui_heading_governors:0 "总督"
  leo_oae_mbge_ui_heading_summary:0 "概要"
@@ -61,8 +60,7 @@
  leo_oae_mbge_ui_t_10:0 "低于 10%"
  leo_oae_mbge_ui_t_20:0 "低于 20%"
  leo_oae_mbge_ui_t_30:0 "低于 30%"
- leo_oae_mbge_ui_t_all:0 "所有符合条件的总督"
- leo_oae_mbge_ui_t_bud:0 "力所能及的数量"
+ leo_oae_mbge_ui_t_bud:0 "所有符合条件的总督"
 
  leo_oae_mbge_ui_t_m40_tt:0 ""
  leo_oae_mbge_ui_t_m30_tt:0 ""
@@ -72,8 +70,7 @@
  leo_oae_mbge_ui_t_10_tt:0 ""
  leo_oae_mbge_ui_t_20_tt:0 ""
  leo_oae_mbge_ui_t_30_tt:0 ""
- leo_oae_mbge_ui_t_all_tt:0 ""
- leo_oae_mbge_ui_t_bud_tt:0 ""
+ leo_oae_mbge_ui_t_bud_tt:0 "游戏允许的每一位[governor|E]，直到国库耗尽为止。"
 
  leo_oae_mbge_ui_tc_0:0 "#weak 选择一个档位#!"
  leo_oae_mbge_ui_tc_1:0 "$leo_oae_mbge_ui_t_m40$"
@@ -84,7 +81,7 @@
  leo_oae_mbge_ui_tc_6:0 "$leo_oae_mbge_ui_t_10$"
  leo_oae_mbge_ui_tc_7:0 "$leo_oae_mbge_ui_t_20$"
  leo_oae_mbge_ui_tc_8:0 "$leo_oae_mbge_ui_t_30$"
- leo_oae_mbge_ui_tc_9:0 "$leo_oae_mbge_ui_t_all$"
+ leo_oae_mbge_ui_tc_9:0 "$leo_oae_mbge_ui_t_bud$"
  leo_oae_mbge_ui_tc_10:0 "$leo_oae_mbge_ui_t_bud$"
 
  leo_oae_mbge_ui_order_0:0 "#weak 选择一种顺序#!"

@@ -33,7 +33,6 @@
  leo_oae_mbge_ui_heading_method:0 "방식"
  leo_oae_mbge_ui_heading_method_tt:0 "[governor|E] 한 명에게 쓰는 것과 같은 다섯 가지 방식을, 대상이 되는 모든 총독에게 적용합니다."
  leo_oae_mbge_ui_heading_targets_tt:0 "어떤 [governors|E]이 대상이 되는지 정합니다. 해당하는 총독이 없거나 전부 지불할 수 없는 선택지는 비활성화됩니다."
- leo_oae_mbge_ui_heading_order:0 "순서"
  leo_oae_mbge_ui_heading_order_tt:0 "모두에게 돌아가지 않을 때 누구에게 먼저 쓸지 정합니다. [governor|E]마다 값이 다른 유일한 방식인 $gold_boost_desc$에서만 의미가 있습니다."
  leo_oae_mbge_ui_heading_governors:0 "총독"
  leo_oae_mbge_ui_heading_summary:0 "요약"
@@ -61,8 +60,7 @@
  leo_oae_mbge_ui_t_10:0 "10% 미만"
  leo_oae_mbge_ui_t_20:0 "20% 미만"
  leo_oae_mbge_ui_t_30:0 "30% 미만"
- leo_oae_mbge_ui_t_all:0 "가능한 모든 총독"
- leo_oae_mbge_ui_t_bud:0 "감당할 수 있는 만큼"
+ leo_oae_mbge_ui_t_bud:0 "가능한 모든 총독"
 
  leo_oae_mbge_ui_t_m40_tt:0 ""
  leo_oae_mbge_ui_t_m30_tt:0 ""
@@ -72,8 +70,7 @@
  leo_oae_mbge_ui_t_10_tt:0 ""
  leo_oae_mbge_ui_t_20_tt:0 ""
  leo_oae_mbge_ui_t_30_tt:0 ""
- leo_oae_mbge_ui_t_all_tt:0 ""
- leo_oae_mbge_ui_t_bud_tt:0 ""
+ leo_oae_mbge_ui_t_bud_tt:0 "게임이 허용하는 모든 [governor|E]에게, 국고가 닿는 데까지."
 
  leo_oae_mbge_ui_tc_0:0 "#weak 수치를 고르십시오#!"
  leo_oae_mbge_ui_tc_1:0 "$leo_oae_mbge_ui_t_m40$"
@@ -84,7 +81,7 @@
  leo_oae_mbge_ui_tc_6:0 "$leo_oae_mbge_ui_t_10$"
  leo_oae_mbge_ui_tc_7:0 "$leo_oae_mbge_ui_t_20$"
  leo_oae_mbge_ui_tc_8:0 "$leo_oae_mbge_ui_t_30$"
- leo_oae_mbge_ui_tc_9:0 "$leo_oae_mbge_ui_t_all$"
+ leo_oae_mbge_ui_tc_9:0 "$leo_oae_mbge_ui_t_bud$"
  leo_oae_mbge_ui_tc_10:0 "$leo_oae_mbge_ui_t_bud$"
 
  leo_oae_mbge_ui_order_0:0 "#weak 순서를 고르십시오#!"
