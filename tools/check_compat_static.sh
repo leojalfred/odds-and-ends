@@ -64,12 +64,6 @@ def  "admin_vassal_types_map map mode defined" \
 # "the same view" and the description is a lie.
 def  "administration panel still opens on it" \
      "gui/window_government_administration.gui" "SetMapMode\( *'admin_vassal_types_map' *\)"
-# Two loc keys the mod defines in vanilla's namespace, because the engine
-# derives a map mode's name and description keys from the map mode's name.
-# Harmless while vanilla leaves them undefined; a duplicate the moment it
-# does not.
-ndef "vanilla still leaves its loc keys undefined" \
-     "localization" "^ *admin_vassal_types_map(_desc)?:"
 
 echo
 echo "The gate (mirrors vanilla's own administration tab)"
@@ -83,14 +77,9 @@ def  "administration tab gated the same way"  "gui/hud.gui" \
      "Character.GetGovernment.HasRule\( *'noble_families' *\)"
 
 echo
-echo "What the button is built from"
-def  "icon_button_mapmode type"              "gui/shared/buttons.gui" "type icon_button_mapmode"
-def  "flowcontainer_additional_mapmodes type" "gui/shared/mapmodes.gui" "type flowcontainer_additional_mapmodes"
-def  "map_mode_government_button (our button follows it)" "gui/shared/mapmodes.gui" "map_mode_government_button"
-file "button icon"    "gfx/interface/icons/flat_icons/administrative.dds"
-file "texticon art"   "gfx/interface/icons/government_types/administrative_government.dds"
+echo "What the shortcut is built from"
+use  "SetMapMode"                            "SetMapMode\("
 use  "CanChangeMapMode"                      "CanChangeMapMode"
-use  "GetMapMode"                            "GetMapMode\("
 use  "GetPlayer.GetTopLiege"                 "GetPlayer.GetTopLiege"
 
 echo
@@ -111,47 +100,19 @@ def  "hotkeys_HUD (the pattern we copy)"     "gui/hud.gui" "type hotkeys_HUD"
 def  "scripted widget loader"                "gui/scripted_widgets" "widget"
 
 echo
-echo "The overridden file"
-# The mod ships a copy of vanilla's mapmodes.gui, edited. A patch that touches
-# that file leaves the copy stale, and anyone running the mod silently keeps the
-# old panel. The copy cannot be checked by diffing it against vanilla, because
-# the edit deliberately moves vanilla buttons between rows: a legitimate diff and
-# a patch's diff look alike. So pin the vanilla file this copy was made from
-# instead, and fail the moment the installed one stops matching.
-#
-# Re-copying, when this fails:
-#   1. cp "$GAME/gui/shared/mapmodes.gui" gui/shared/mapmodes.gui
-#   2. Re-apply the header comment, keeping the UTF-8 BOM first in the file.
-#   3. In flowcontainer_additional_mapmodes, re-apply the reflow: move
-#      map_mode_landless_rulers_button to the end of the first row, move
-#      map_mode_counties_button to the end of the second, and add the Governors
-#      button after map_mode_government_button in the third. That keeps reading
-#      order across the whole flyout identical to vanilla's while leaving every
-#      row four wide.
-#   4. Update VANILLA_SHA below to the new hash the failure prints.
-VANILLA_SHA="da8ba748c8d6e1ed05e0acfbc46f88963757291db8f2d37ed1fbd8b3802bcd40"
-VAN="$GAME/gui/shared/mapmodes.gui"
-OURS="$ROOT/gui/shared/mapmodes.gui"
-if [ ! -f "$VAN" ] || [ ! -f "$OURS" ]; then
-	printf '  FAIL  mapmodes.gui copy is checkable\n'; F=$((F+1))
-	FAILS="$FAILS\n  - mapmodes.gui copy is checkable"
+echo "No vanilla file is overridden"
+# The mod used to ship an edited copy of gui/shared/mapmodes.gui to put a
+# Governors button in the Additional Map Modes flyout, which meant a hash pin
+# here and a re-copy after every patch. It is gone, and this asserts it stays
+# gone: CK3 replaces an overridden GUI file wholesale, so the copy would have
+# deleted the buttons of any other mod that adds map modes whenever this one
+# loaded last. The shortcut reaches the same map mode and conflicts with
+# nothing. If a button is ever wanted again, read the note in CLAUDE.md first.
+if find "$ROOT/gui" "$ROOT/common" "$ROOT/localization" -type d -name shared 2>/dev/null | grep -q .; then
+	printf '  FAIL  a gui/shared directory is back - that is a vanilla override\n'
+	F=$((F+1)); FAILS="$FAILS\n  - a vanilla override has reappeared"
 else
-	GOT="$(sha256sum "$VAN" | cut -d' ' -f1)"
-	if [ "$GOT" = "$VANILLA_SHA" ]; then
-		printf '  ok    copy was made from the installed vanilla file\n'; P=$((P+1))
-	else
-		printf '  FAIL  vanilla mapmodes.gui has changed - re-copy and re-apply (new hash %s)\n' "$GOT"
-		F=$((F+1)); FAILS="$FAILS\n  - vanilla mapmodes.gui has changed since the copy was made"
-	fi
-	# Cheap proof the re-copy was actually finished, not just pasted over.
-	for want in leo_oae_map_mode_governors_button map_mode_landless_rulers_button map_mode_counties_button; do
-		if grep -q "$want" "$OURS"; then
-			printf '  ok    %s present in the copy\n' "$want"; P=$((P+1))
-		else
-			printf '  FAIL  %s missing from the copy\n' "$want"
-			F=$((F+1)); FAILS="$FAILS\n  - $want missing from the copy"
-		fi
-	done
+	printf '  ok    no gui/shared override present\n'; P=$((P+1))
 fi
 
 echo
