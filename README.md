@@ -12,30 +12,27 @@ The mod ships in every language Crusader Kings III supports. English is written 
 
 ### Governors
 
-Adds a **Governors** map mode to the map mode picker, under the `+` for additional map modes, right after Governments.
+Gives the game's Governors view a keyboard shortcut of its own: **ctrl+shift+G**.
 
-It is the view the game already switches to whenever you open your Administrative Government panel: your direct vassals painted by the role each of them holds. Until now that view came with the panel sitting on top of it, and the moment you closed the panel to see the map, the game put you back on Realms. This makes it a map mode like any other, so you can read it, keep it, and zoom around in it.
+It is the view the game already switches to whenever you open your Administrative Government panel: your direct vassals painted by the role each of them holds. Until now that view came with the panel sitting on top of it, and the moment you closed the panel to see the map, the game put you back on Realms. The shortcut reaches it on its own, so you can read it, keep it, and zoom around in it.
 
-It has a keyboard shortcut like the other map modes: **ctrl+shift+G**. G already carries two map modes, and this is the free combination nearest to it. Nothing in the game uses it, so no existing shortcut is taken away.
+G already carries two map modes, and this is the free combination nearest to it. Nothing in the game uses it, so no existing shortcut is taken away.
 
-The button appears only if you could open that panel in the first place. In practice that means your realm runs on administrative government, whether you rule it or serve in it, along with the Chinese and Japanese governments that have an administration panel of their own. Everyone else never sees it.
+The key works only if you could open that panel in the first place. In practice that means your realm runs on administrative government, whether you rule it or serve in it, along with the Chinese and Japanese governments that have an administration panel of their own. For anyone else it does nothing.
 
 Nothing else changes. The panel still selects the view when it opens and still drops back to Realms when it closes, exactly as it always did.
 
-Fitting a fifth button into the governments row would have widened the whole picker, so Landless Rulers and County Titles each shift up to the end of the row above. Every row stays four wide and the picker reads in the same order it always has.
+There is deliberately no button for it in the map mode picker. The game offers no way to add one without shipping a copy of its entire map mode interface file, and whichever mod loads last replaces that file outright, so a button here would delete the buttons of every other map mode mod you run. A keyboard shortcut takes nothing from anyone.
 
 #### Checking it still works
 
-The shortest run that exercises the gate and the happy path once. Steps 4 and 5 are the ones that catch a patch quietly moving something, since both depend on vanilla files this feature either copies or mirrors.
+The shortest run that exercises the gate and the happy path once. Step 2 is the one that catches a patch quietly moving something, since it depends on a vanilla behavior this feature mirrors rather than owns.
 
-1. As a **Byzantine** ruler, open the `+` flyout and confirm the Governors button sits directly after Governments. Click it and confirm the map paints your vassals by role, and that the mode's name and description read as words rather than as raw keys.
-2. Press **ctrl+shift+G** with the flyout closed and the map in view. It must switch modes. This is the half of the shortcut that only works because the key is declared a second time outside the flyout, so a failure here is silent and easy to miss.
-3. Hover the flyout button and confirm the tooltip names ctrl+shift+G.
-4. Open the Administrative Government panel and close it. The panel must still select this view on open and still drop back to Realms on close, exactly as it does without the mod.
-5. Confirm the flyout is still four buttons wide on every row, with Landless Rulers at the end of the first and County Titles at the end of the second.
-6. As a **feudal** ruler with no administration panel, confirm the Governors button is absent and ctrl+shift+G does nothing.
-7. As a **vassal governor** inside an administrative realm, confirm the button is present, since the gate follows your top liege rather than you.
-8. As a **Chinese or Japanese** ruler whose government carries an administration panel of its own, confirm the button is present.
+1. As a **Byzantine** ruler, press **ctrl+shift+G** with the map in view. It must switch to the Governors view, painting your vassals by the role each holds.
+2. Open the Administrative Government panel and close it. The panel must still select this view on open and still drop back to Realms on close, exactly as it does without the mod.
+3. As a **feudal** ruler with no administration panel, confirm ctrl+shift+G does nothing at all.
+4. As a **vassal governor** inside an administrative realm, confirm the key works, since the gate follows your top liege rather than you.
+5. As a **Chinese or Japanese** ruler whose government carries an administration panel of its own, confirm the key works.
 
 ### Mass Bolster Governance
 
@@ -86,8 +83,10 @@ Subscribe on the Workshop, or drop the folder into `Documents/Paradox Interactiv
 
 ## Compatibility
 
-The Governors map mode is drawn by replacing one game interface file, `gui/shared/mapmodes.gui`. Any other mod that rearranges the map mode picker will replace the same file, and whichever of the two loads last wins. If the Governors button is missing while you are running another interface mod, load this one after it.
+**This mod replaces no game file.** Everything it adds sits alongside the game's own interface rather than on top of it, so there is nothing here for another mod to lose a fight with, in either direction: load order does not matter, and no mod you run can have its features quietly removed by this one.
 
-Mass Bolster Governance replaces no game file at all. Its panel is added alongside the game's own interface, and it changes nothing about the Bolster Governance interaction itself, so a mod that rebalances what a bolster costs or who may receive one is followed rather than fought.
+That is why the Governors view is reached by a keyboard shortcut instead of a button. The button existed once and was taken out for exactly this reason.
+
+Mass Bolster Governance changes nothing about the Bolster Governance interaction itself, so a mod that rebalances what a bolster costs, or who may receive one, is followed rather than fought.
 
 Both features are safe to add to a game in progress, and neither costs you achievements: Crusader Kings III stopped disabling those for modded games in 1.9. Removing Mass Bolster Governance from a save leaves behind the handful of settings the panel remembered, which the game discards harmlessly. Nothing it did to a governor is undone, because everything it did was the game's own doing in the first place.

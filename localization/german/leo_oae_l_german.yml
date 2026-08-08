@@ -1,17 +1,5 @@
 ﻿l_german:
 
- ### Governors map mode.
- ###
- ### The engine builds a map mode's name and description keys out of the map
- ### mode's own name, so these two cannot carry the leo_oae_ prefix. They are
- ### aliases and nothing else: the prose lives under our own keys below, the way
- ### vanilla points its map mode names at MAPMODE_* keys.
- admin_vassal_types_map:0 "$leo_oae_govmap_name$"
- admin_vassal_types_map_desc:0 "$leo_oae_govmap_desc$"
-
- leo_oae_govmap_name:0 "@leo_oae_governor_icon! Statthalter"
- leo_oae_govmap_desc:0 "#T Statthalter#!\nZeigt Eure [direct_vassals|E] nach der Rolle, die sie im [realm|E] innehaben, also dieselbe Ansicht, die das Fenster der Verwaltungsregierung öffnet."
-
  ### Mass Bolster Governance.
  ###
  ### The five method names are vanilla's own send_option labels, pointed at
