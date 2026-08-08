@@ -65,6 +65,12 @@ types leo_oae_mbge_dropdown_types {
 
 	### One governor in the list.
 	###
+	### Laid out the way vanilla lays out a character row (shared/lists.gui): a
+	### portrait, then a block of text beside it, with an expand pushing
+	### everything left. Text widgets are left at their natural width and the
+	### expand does the aligning, rather than making each text expanding, which
+	### is what left the names floating in the middle of the row.
+	###
 	### Used twice, once per list, and the tick is a literal handed in by
 	### whichever list the row came from. Nothing here is evaluated while the
 	### panel sits open: GUI cannot ask whether a character is in a variable
@@ -77,39 +83,63 @@ types leo_oae_mbge_dropdown_types {
 	type leo_oae_mbge_governor_row = hbox {
 		datacontext = "[Scope.Char]"
 		layoutpolicy_horizontal = expanding
-		spacing = 6
-		margin = { 2 1 }
+		size = { 0 90 }
+		spacing = 8
+		margin_left = 2
+		margin_right = 8
 
 		button_checkbox = {
-			size = { 22 22 }
+			parentanchor = vcenter
+			size = { 24 24 }
 			tooltip = "leo_oae_mbge_ui_row_tt"
 			onclick = "[GetScriptedGui('leo_oae_mbge_toggle_exclude').Execute( GuiScope.SetRoot( GetPlayer.MakeScope ).AddScope( 'leo_oae_mbge_gov', Character.MakeScope ).End )]"
 			block "checked" {}
 		}
 
-		text_single = {
+		portrait_head_small = {}
+
+		vbox = {
+			parentanchor = vcenter
 			layoutpolicy_horizontal = expanding
-			align = left|nobaseline
-			max_width = 190
-			text = "[Character.GetShortUINameNoTooltip]"
-		}
+			spacing = 2
 
-		# Their governance now, which is what the thresholds are measured
-		# against. Written inline rather than through a loc key because the only
-		# words in it are a percent sign and an icon.
-		text_single = {
-			align = right|nobaseline
-			default_format = "#weak"
-			text = "[Character.MakeScope.ScriptValue('governor_efficiency_presented')|0]%"
-		}
+			hbox = {
+				layoutpolicy_horizontal = expanding
 
-		# Only Grease Palms charges gold, and only it charges a different amount
-		# per governor, so it is the one method where a per-row price says
-		# anything.
-		text_single = {
-			visible = "[EqualTo_CFixedPoint( GetPlayer.MakeScope.Var('leo_oae_mbge_opt').GetValue, '(CFixedPoint)2' )]"
-			align = right|nobaseline
-			text = "@gold_icon! [Character.MakeScope.ScriptValue('medium_gold_value')|0]"
+				text_single = {
+					text = "[Character.GetShortUINameNoTooltip]"
+					align = nobaseline
+					max_width = 250
+				}
+
+				expand = {}
+			}
+
+			hbox = {
+				layoutpolicy_horizontal = expanding
+				spacing = 12
+
+				# Their governance now, which is what the thresholds are
+				# measured against. Written inline rather than through a loc key
+				# because the only words in it are a percent sign and an icon.
+				text_single = {
+					text = "[Character.MakeScope.ScriptValue('governor_efficiency_presented')|0]%"
+					align = nobaseline
+					default_format = "#weak"
+				}
+
+				# Only Grease Palms charges gold, and only it charges a
+				# different amount per governor, so it is the one method where a
+				# per-row price says anything.
+				text_single = {
+					visible = "[EqualTo_CFixedPoint( GetPlayer.MakeScope.Var('leo_oae_mbge_opt').GetValue, '(CFixedPoint)2' )]"
+					text = "@gold_icon! [Character.MakeScope.ScriptValue('medium_gold_value')|0]"
+					align = nobaseline
+					default_format = "#weak"
+				}
+
+				expand = {}
+			}
 		}
 	}
 
@@ -145,7 +175,7 @@ window = {
 	# thresholds have somewhere to open and the governor list has room to grow,
 	# and everything scrolls rather than overflowing: a widget that overflows
 	# its window still draws but stops taking clicks, while a scrollbox clips.
-	size = { 480 720 }
+	size = { 540 760 }
 
 	parentanchor = center
 	using = Window_Background_Subwindow
@@ -392,7 +422,7 @@ window = {
 							text_multi = {
 								layoutpolicy_horizontal = expanding
 								autoresize = yes
-								max_width = 420
+								max_width = 440
 								align = left|nobaseline
 								text = "leo_oae_mbge_ui_summary"
 							}
@@ -404,7 +434,7 @@ window = {
 							text_multi = {
 								layoutpolicy_horizontal = expanding
 								autoresize = yes
-								max_width = 420
+								max_width = 440
 								align = left|nobaseline
 								text = "[SelectLocalization( EqualTo_CFixedPoint( GetPlayer.MakeScope.Var('leo_oae_mbge_opt').GetValue, '(CFixedPoint)2' ), 'leo_oae_mbge_ui_summary_cost_gold', 'leo_oae_mbge_ui_summary_cost' )]"
 							}

@@ -206,6 +206,24 @@ leo_oae_mbge_recount_effect = {
 	leo_oae_mbge_build_targets_effect = yes
 }
 
+# Current scope: the player. The efficiency a governor has to be under to count
+# as inside the selected threshold.
+#
+# Codes 9 and 10 are every eligible governor and the budget walk, neither of
+# which filters by efficiency, so they get a cutoff nothing can reach: vanilla
+# already refuses anyone above 40.
+leo_oae_mbge_set_cut_effect = {
+	if =      { limit = { var:leo_oae_mbge_thresh = 1 } set_variable = { name = leo_oae_mbge_cut value = -40 } }
+	else_if = { limit = { var:leo_oae_mbge_thresh = 2 } set_variable = { name = leo_oae_mbge_cut value = -30 } }
+	else_if = { limit = { var:leo_oae_mbge_thresh = 3 } set_variable = { name = leo_oae_mbge_cut value = -20 } }
+	else_if = { limit = { var:leo_oae_mbge_thresh = 4 } set_variable = { name = leo_oae_mbge_cut value = -10 } }
+	else_if = { limit = { var:leo_oae_mbge_thresh = 5 } set_variable = { name = leo_oae_mbge_cut value = 0 } }
+	else_if = { limit = { var:leo_oae_mbge_thresh = 6 } set_variable = { name = leo_oae_mbge_cut value = 10 } }
+	else_if = { limit = { var:leo_oae_mbge_thresh = 7 } set_variable = { name = leo_oae_mbge_cut value = 20 } }
+	else_if = { limit = { var:leo_oae_mbge_thresh = 8 } set_variable = { name = leo_oae_mbge_cut value = 30 } }
+	else =    {                                        set_variable = { name = leo_oae_mbge_cut value = 1000 } }
+}
+
 ### Who the run will actually visit.
 
 # Current scope: the player. Rebuilds the list the panel shows, last, once the
@@ -232,42 +250,48 @@ leo_oae_mbge_build_targets_effect = {
 	clear_variable_list = leo_oae_mbge_skipped
 	set_variable = { name = leo_oae_mbge_excluded_count value = 0 }
 
+	leo_oae_mbge_set_cut_effect = yes
+	save_temporary_scope_value_as = {
+		name = leo_oae_mbge_cut
+		value = var:leo_oae_mbge_cut
+	}
+
 	top_liege = {
 		ordered_vassal = {
 			order_by = leo_oae_mbge_worst_first_value
 			max = leo_oae_mbge_everyone_value
 			check_range_bounds = no
-			limit = {
-				leo_oae_mbge_target_trigger = yes
-				trigger_if = {
-					limit = {
-						scope:leo_oae_mbge_actor = {
-							NOT = { var:leo_oae_mbge_thresh = 10 }
-						}
-					}
-					leo_oae_mbge_in_bucket_trigger = yes
-				}
-			}
+			limit = { leo_oae_mbge_target_trigger = yes }
 
-			save_temporary_scope_as = leo_oae_mbge_gov
-			scope:leo_oae_mbge_actor = {
-				if = {
-					limit = {
-						is_target_in_variable_list = {
-							name = leo_oae_mbge_excluded
+			# The threshold is applied here rather than in the limit above,
+			# because comparing two staged values needs them staged first.
+			save_temporary_scope_value_as = {
+				name = leo_oae_mbge_eff
+				value = governor_efficiency_presented
+			}
+			if = {
+				limit = { scope:leo_oae_mbge_eff < scope:leo_oae_mbge_cut }
+
+				save_temporary_scope_as = leo_oae_mbge_gov
+				scope:leo_oae_mbge_actor = {
+					if = {
+						limit = {
+							is_target_in_variable_list = {
+								name = leo_oae_mbge_excluded
+								target = scope:leo_oae_mbge_gov
+							}
+						}
+						add_to_variable_list = {
+							name = leo_oae_mbge_skipped
 							target = scope:leo_oae_mbge_gov
 						}
+						change_variable = { name = leo_oae_mbge_excluded_count add = 1 }
 					}
-					add_to_variable_list = {
-						name = leo_oae_mbge_skipped
-						target = scope:leo_oae_mbge_gov
-					}
-					change_variable = { name = leo_oae_mbge_excluded_count add = 1 }
-				}
-				else = {
-					add_to_variable_list = {
-						name = leo_oae_mbge_targets
-						target = scope:leo_oae_mbge_gov
+					else = {
+						add_to_variable_list = {
+							name = leo_oae_mbge_targets
+							target = scope:leo_oae_mbge_gov
+						}
 					}
 				}
 			}
@@ -602,21 +626,42 @@ leo_oae_mbge_apply_effect = {
 	else = {
 		# Worst first here too, so a budget that runs short mid-run spends what
 		# is left on the governors who needed it most.
+		leo_oae_mbge_set_cut_effect = yes
+		save_temporary_scope_value_as = {
+			name = leo_oae_mbge_cut
+			value = var:leo_oae_mbge_cut
+		}
+
 		top_liege = {
 			ordered_vassal = {
 				order_by = leo_oae_mbge_worst_first_value
 				max = leo_oae_mbge_everyone_value
 				check_range_bounds = no
-				limit = {
-					leo_oae_mbge_included_trigger = yes
-					leo_oae_mbge_in_bucket_trigger = yes
-				}
-				leo_oae_mbge_try_bolster_effect = yes
+				limit = { leo_oae_mbge_included_trigger = yes }
+				leo_oae_mbge_try_bolster_in_bucket_effect = yes
 			}
 		}
 	}
 
 	leo_oae_mbge_recount_effect = yes
+}
+
+# Current scope: a governor. Requires scope:leo_oae_mbge_actor and
+# scope:leo_oae_mbge_cut.
+#
+# The threshold is applied here rather than in the iterator's limit, because
+# comparing the governor's efficiency against the cutoff needs both staged as
+# values first, and staging is an effect.
+leo_oae_mbge_try_bolster_in_bucket_effect = {
+	save_temporary_scope_value_as = {
+		name = leo_oae_mbge_eff
+		value = governor_efficiency_presented
+	}
+
+	if = {
+		limit = { scope:leo_oae_mbge_eff < scope:leo_oae_mbge_cut }
+		leo_oae_mbge_try_bolster_effect = yes
+	}
 }
 
 ### The window.
