@@ -77,7 +77,6 @@ The shortest run that exercises every gate and the happy path once. Start an adm
 12. As a vassal governor rather than the ruler at the top, confirm your peers appear in the pool.
 13. Save with the panel open, reload, and confirm it is shut and your settings survived.
 14. With `-debug_mode` on, open the decisions list and leave the cursor on Mass Bolster Governance for a few seconds. `error.log` must stay quiet. The game builds a decision's tooltip by running its effect as a dry run, and nothing this feature stores can be read in that pass, so any real work done there is both wasted and extremely loud.
-15. Load a save made before the two "everyone" settings became one and confirm the level picker reads Every Eligible Governor, rather than a blank or a label with nothing behind it.
 
 **The test that actually matters** is that a mass bolster is indistinguishable from a hand-sent one. Record your influence, your gold, a governor's efficiency, their modifier, their efficiency stack and their cooldown. Bolster that governor by hand with Divert Resources and record every delta. Reload, then mass-bolster that same governor alone with the same method. Every delta must match exactly. Repeat for Grease Palms, whose gold price is worked out per governor and is the likeliest place for a mismatch to hide.
 

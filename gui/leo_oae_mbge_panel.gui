@@ -373,7 +373,11 @@ window = {
 
 						vbox = {
 							layoutpolicy_horizontal = expanding
-							margin = { 0 4 }
+							# The bottom margin is the gap to the picker below, and
+							# is 2 to match the spacing between the governor rows
+							# further down. The top is the gap under the heading
+							# and is left alone.
+							margin = { 0 2 }
 							margin_top = 8
 							spacing = 0
 
@@ -442,7 +446,9 @@ window = {
 						vbox = {
 							layoutpolicy_horizontal = expanding
 							margin = { 0 0 }
-							margin_bottom = 4
+							# Matches the method picker above, so the gap to the
+							# level picker below is the same 2.
+							margin_bottom = 2
 							spacing = 0
 
 							leo_oae_mbge_button_drop = {

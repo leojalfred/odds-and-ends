@@ -16,9 +16,9 @@
 ### script variable name cannot be built at runtime. Codes 1-10 map to
 ### t_m40 t_m30 t_m20 t_m10 t_0 t_10 t_20 t_30 t_all t_bud, in that order, and
 ### are append-only: they live in saved variables, so renumbering would rewrite
-### the settings of everyone already playing. Code 9, t_all, is retired and its
-### bucket is gone, but the number stays reserved for exactly that reason. The
-### defaults move a save sitting on it to 10.
+### the settings of everyone already playing. Code 9, t_all, is gone along with
+### its bucket, and its number is left unused rather than handed to something
+### else.
 
 ### The dropdown contents.
 #
@@ -43,8 +43,9 @@ leo_oae_mbge_build_options_effect = {
 	# governor" demanded the whole pool be payable and was disabled otherwise,
 	# and "as many as I can afford" walked the same pool taking whoever still
 	# fit. The second is the first whenever the money stretches, so the first
-	# only ever added a disabled row saying no. Code 9 was its own and is
-	# retired rather than reused: saves hold these numbers.
+	# only ever added a disabled row saying no. Its code, 9, is left unused
+	# rather than handed to something else, which costs nothing now and keeps
+	# the numbering honest once these values start living in saves.
 	clear_variable_list = leo_oae_mbge_threshes
 	add_to_variable_list = { name = leo_oae_mbge_threshes target = flag:t_bud }
 	add_to_variable_list = { name = leo_oae_mbge_threshes target = flag:t_m40 }
@@ -63,7 +64,7 @@ leo_oae_mbge_build_options_effect = {
 	# Stamps what these lists were built from, so a save carrying an older set
 	# is rebuilt rather than trusted. Bump it whenever the entries or their
 	# order change, or a save keeps showing the old list.
-	set_variable = { name = leo_oae_mbge_opts_version value = 2 }
+	set_variable = { name = leo_oae_mbge_opts_version value = 1 }
 
 	# The branch never runs. See the trigger for why it has to be named.
 	if = { limit = { leo_oae_mbge_ack_trigger = yes } }
@@ -79,7 +80,7 @@ leo_oae_mbge_init_defaults_effect = {
 		limit = {
 			OR = {
 				NOT = { has_variable = leo_oae_mbge_opts_version }
-				NOT = { var:leo_oae_mbge_opts_version = 2 }
+				NOT = { var:leo_oae_mbge_opts_version = 1 }
 			}
 		}
 		leo_oae_mbge_build_options_effect = yes
@@ -97,14 +98,6 @@ leo_oae_mbge_init_defaults_effect = {
 	# feature is for and is payable by construction.
 	if = {
 		limit = { NOT = { has_variable = leo_oae_mbge_thresh } }
-		set_variable = { name = leo_oae_mbge_thresh value = 10 }
-	}
-	# Code 9 was the old "every eligible governor", which demanded the whole
-	# pool be payable and is now the same option as code 10. A save sitting on
-	# it is moved, rather than left pointing at an entry no list contains, which
-	# would leave the dropdown reading its label with nothing to select.
-	if = {
-		limit = { var:leo_oae_mbge_thresh = 9 }
 		set_variable = { name = leo_oae_mbge_thresh value = 10 }
 	}
 	if = {
