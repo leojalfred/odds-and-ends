@@ -1,0 +1,392 @@
+﻿### Leo VI's Odds and Ends - Mass Bolster Governance panel.
+###
+### Our own window, registered as a standalone widget through
+### gui/scripted_widgets/, so no vanilla file is overridden. Opened by the
+### decision or by the keyboard shortcut, both of which run script that sets
+### leo_oae_mbge_open.
+###
+### It is not built inside the decision's own window, which was tried and does
+### not work. A decision's custom widget is only shown at all if the decision
+### declares decision_to_second_step_button, and declaring that makes the
+### window draw its next-step button instead of its confirm button
+### (window_decisions_detail.gui:249-270, the two are mutually exclusive).
+### Stepping to the confirm button fires ToggleCustomWidgetState, which switches
+### the panel off and vanilla's raw effect tooltip on. So the game's own confirm
+### button can never sit on the same page as the panel, and the primary action
+### would always have been something other than Bolster Governance. Here it is
+### the only button there is.
+###
+### The window reads its state straight out of script variables rather than
+### through a scripted GUI's is_shown, so only clicking a control runs script
+### and the panel costs nothing per frame. Note that .GetValue yields a
+### CFixedPoint, so literals take the form '(CFixedPoint)1'.
+###
+### Every dropdown is a datamodel over a list script builds, with one item
+### template. An item's flag name is its whole identity: the flag t_all gives
+### the label key leo_oae_mbge_ui_t_all and the click target
+### leo_oae_mbge_set_t_all, both built with Concatenate. When a dropdown is shut
+### its datamodel points at leo_oae_mbge_none, a list nothing ever creates, so
+### the rows do not merely hide, they cease to exist.
+
+### The dropdown parts.
+###
+### Copies of vanilla's button_drop and button_dropdown (shared/buttons.gui),
+### minus one line each. Both vanilla types set button_trigger = none, because
+### they are only ever used inside a C++ dropDown that handles the click itself;
+### inheriting that would leave our own onclick never firing. Copies rather than
+### overrides, so no vanilla file is touched. Re-diff after a game patch.
+types leo_oae_mbge_dropdown_types {
+	type leo_oae_mbge_button_drop = button_normal {
+		size = { 100% 33 }
+		gfxtype = framedbuttongfx
+		effectname = "NoHighlight"
+		upframe = 1
+		overframe = 2
+		downframe = 3
+		disableframe = 4
+		texture = "gfx/interface/buttons/button_drop_down.dds"
+		framesize = { 225 33 }
+		spriteType = Corneredtiled
+		spriteborder = { 75 11 }
+		clicksound = "event:/SFX/UI/Generic/sfx_ui_generic_checkbox"
+
+		buttonText = {
+			text_single = {
+				size = { 100% 100% }
+				autoresize = no
+				margin = { 15 0 }
+				margin_right = 25
+				align = left|nobaseline
+				default_format = "#clickable"
+				alwaystransparent = yes
+			}
+		}
+	}
+
+	type leo_oae_mbge_button_dropdown = button_normal {
+		size = { 225 30 }
+		gfxtype = framedbuttongfx
+		effectname = "NoHighlight"
+		shaderfile = "gfx/FX/pdxgui_pushbutton.shader"
+		upframe = 1
+		overframe = 2
+		downframe = 3
+		disableframe = 1
+		texture = "gfx/interface/buttons/button_interaction_menu.dds"
+		framesize = { 317 30 }
+		clicksound = "event:/SFX/UI/Generic/sfx_ui_generic_checkbox"
+
+		buttonText = {
+			text_single = {
+				size = { 100% 100% }
+				autoresize = no
+				margin_left = 10
+				align = left|nobaseline
+				alwaystransparent = yes
+			}
+		}
+	}
+}
+
+window = {
+	name = "leo_oae_mbge_panel"
+
+	# Ours to size, unlike the decision window. Tall enough that the ten
+	# thresholds have somewhere to open and the governor list has room to grow,
+	# and everything scrolls rather than overflowing: a widget that overflows
+	# its window still draws but stops taking clicks, while a scrollbox clips.
+	size = { 480 720 }
+
+	parentanchor = center
+	using = Window_Background_Subwindow
+	layer = windows_layer
+	movable = yes
+
+	visible = "[EqualTo_CFixedPoint( GetPlayer.MakeScope.Var('leo_oae_mbge_open').GetValue, '(CFixedPoint)1' )]"
+
+	state = { name = _show  using = Animation_FadeIn_Quick }
+
+	# Closing the panel closes whatever dropdown was left open, so it does not
+	# reappear hanging open next time.
+	state = {
+		name = _hide
+		using = Animation_FadeOut_Quick
+		on_start = "[GetVariableSystem.Set( 'leo_oae_mbge_dd', 'none' )]"
+	}
+
+	vbox = {
+		layoutpolicy_horizontal = expanding
+		layoutpolicy_vertical = expanding
+
+		header_pattern = {
+			layoutpolicy_horizontal = expanding
+
+			blockoverride "header_text" {
+				text = "leo_oae_mbge_ui_title"
+			}
+
+			blockoverride "button_close" {
+				onclick = "[GetScriptedGui('leo_oae_mbge_close').Execute( GuiScope.SetRoot( GetPlayer.MakeScope ).End )]"
+			}
+		}
+
+		scrollbox = {
+			layoutpolicy_horizontal = expanding
+			layoutpolicy_vertical = expanding
+
+			blockoverride "scrollbox_content" {
+				vbox = {
+					layoutpolicy_horizontal = expanding
+					margin = { 12 0 }
+					spacing = 8
+
+					### Which of vanilla's five options to send.
+					vbox = {
+						layoutpolicy_horizontal = expanding
+
+						text_label_left = {
+							layoutpolicy_horizontal = expanding
+							text = "leo_oae_mbge_ui_heading_method"
+						}
+
+						vbox = {
+							layoutpolicy_horizontal = expanding
+							margin = { 6 4 }
+							margin_top = 8
+							spacing = 0
+
+							leo_oae_mbge_button_drop = {
+								layoutpolicy_horizontal = expanding
+								# Reprices before opening, so a window left
+								# sitting while influence accrued offers rows
+								# priced off what is in the treasury now.
+								onclick = "[GetScriptedGui('leo_oae_mbge_refresh').Execute( GuiScope.SetRoot( GetPlayer.MakeScope ).End )]"
+								onclick = "[GetVariableSystem.Set( 'leo_oae_mbge_dd', Select_CString( GetVariableSystem.HasValue( 'leo_oae_mbge_dd', 'opt' ), 'none', 'opt' ) )]"
+								tooltip = "leo_oae_mbge_ui_heading_method_tt"
+								text = "[Localize(Concatenate('leo_oae_mbge_ui_opt_', IntToString(FixedPointToInt(GetPlayer.MakeScope.Var('leo_oae_mbge_opt').GetValue))))]"
+							}
+
+							vbox = {
+								layoutpolicy_horizontal = expanding
+								margin = { 3 0 }
+
+								vbox = {
+									visible = "[GetVariableSystem.HasValue( 'leo_oae_mbge_dd', 'opt' )]"
+									layoutpolicy_horizontal = expanding
+									using = Background_DropDown
+									spacing = 0
+
+									datamodel = "[GetPlayer.MakeScope.GetList( Select_CString( GetVariableSystem.HasValue( 'leo_oae_mbge_dd', 'opt' ), 'leo_oae_mbge_opts', 'leo_oae_mbge_none' ) )]"
+
+									item = {
+										leo_oae_mbge_button_dropdown = {
+											layoutpolicy_horizontal = expanding
+											size = { -1 30 }
+											onclick = "[GetScriptedGui( Concatenate( 'leo_oae_mbge_set_', Scope.GetFlagName ) ).Execute( GuiScope.SetRoot( GetPlayer.MakeScope ).End )]"
+											onclick = "[GetVariableSystem.Set( 'leo_oae_mbge_dd', 'none' )]"
+											tooltip = "[Localize( Concatenate( Concatenate( 'leo_oae_mbge_ui_', Scope.GetFlagName ), '_tt' ) )]"
+											text = "[Localize( Concatenate( 'leo_oae_mbge_ui_', Scope.GetFlagName ) )]"
+										}
+									}
+								}
+							}
+
+							widget = {
+								visible = "[GetVariableSystem.HasValue( 'leo_oae_mbge_dd', 'opt' )]"
+								size = { 1 12 }
+							}
+						}
+					}
+
+					### How far down the pool to go.
+					vbox = {
+						layoutpolicy_horizontal = expanding
+
+						text_label_left = {
+							layoutpolicy_horizontal = expanding
+							text = "leo_oae_mbge_ui_heading_targets"
+						}
+
+						vbox = {
+							layoutpolicy_horizontal = expanding
+							margin = { 6 4 }
+							margin_top = 8
+							spacing = 0
+
+							leo_oae_mbge_button_drop = {
+								layoutpolicy_horizontal = expanding
+								onclick = "[GetScriptedGui('leo_oae_mbge_refresh').Execute( GuiScope.SetRoot( GetPlayer.MakeScope ).End )]"
+								onclick = "[GetVariableSystem.Set( 'leo_oae_mbge_dd', Select_CString( GetVariableSystem.HasValue( 'leo_oae_mbge_dd', 'thresh' ), 'none', 'thresh' ) )]"
+								tooltip = "leo_oae_mbge_ui_heading_targets_tt"
+								text = "[Localize(Concatenate('leo_oae_mbge_ui_tc_', IntToString(FixedPointToInt(GetPlayer.MakeScope.Var('leo_oae_mbge_thresh').GetValue))))]"
+							}
+
+							vbox = {
+								layoutpolicy_horizontal = expanding
+								margin = { 3 0 }
+
+								vbox = {
+									visible = "[GetVariableSystem.HasValue( 'leo_oae_mbge_dd', 'thresh' )]"
+									layoutpolicy_horizontal = expanding
+									using = Background_DropDown
+									spacing = 0
+
+									datamodel = "[GetPlayer.MakeScope.GetList( Select_CString( GetVariableSystem.HasValue( 'leo_oae_mbge_dd', 'thresh' ), 'leo_oae_mbge_threshes', 'leo_oae_mbge_none' ) )]"
+
+									item = {
+										leo_oae_mbge_button_dropdown = {
+											layoutpolicy_horizontal = expanding
+											size = { -1 30 }
+
+											# Grayed and unclickable when the
+											# treasury will not cover the whole
+											# row. GUI cannot compare a row's
+											# flag string against anything, so
+											# script keeps one affordability
+											# variable per row and the row reads
+											# its own by name.
+											enabled = "[GreaterThanOrEqualTo_CFixedPoint( GetPlayer.MakeScope.Var( Concatenate( 'leo_oae_mbge_afford_', Scope.GetFlagName ) ).GetValue, '(CFixedPoint)1' )]"
+
+											onclick = "[GetScriptedGui( Concatenate( 'leo_oae_mbge_set_', Scope.GetFlagName ) ).Execute( GuiScope.SetRoot( GetPlayer.MakeScope ).End )]"
+											onclick = "[GetVariableSystem.Set( 'leo_oae_mbge_dd', 'none' )]"
+											tooltip = "[Localize( Concatenate( Concatenate( 'leo_oae_mbge_ui_', Scope.GetFlagName ), '_tt' ) )]"
+											text = "[Localize( Concatenate( 'leo_oae_mbge_ui_', Scope.GetFlagName ) )]"
+										}
+									}
+								}
+							}
+
+							widget = {
+								visible = "[GetVariableSystem.HasValue( 'leo_oae_mbge_dd', 'thresh' )]"
+								size = { 1 12 }
+							}
+						}
+					}
+
+					### Who the budget reaches first.
+					###
+					### Only Grease Palms charges a different price per governor,
+					### so it is the only option under which the two orderings
+					### can give different answers. Hidden for the rest rather
+					### than disabled, because a control that never matters is
+					### better absent than gray.
+					vbox = {
+						visible = "[EqualTo_CFixedPoint( GetPlayer.MakeScope.Var('leo_oae_mbge_opt').GetValue, '(CFixedPoint)2' )]"
+						layoutpolicy_horizontal = expanding
+
+						text_label_left = {
+							layoutpolicy_horizontal = expanding
+							text = "leo_oae_mbge_ui_heading_order"
+						}
+
+						vbox = {
+							layoutpolicy_horizontal = expanding
+							margin = { 6 4 }
+							margin_top = 8
+							spacing = 0
+
+							leo_oae_mbge_button_drop = {
+								layoutpolicy_horizontal = expanding
+								onclick = "[GetVariableSystem.Set( 'leo_oae_mbge_dd', Select_CString( GetVariableSystem.HasValue( 'leo_oae_mbge_dd', 'order' ), 'none', 'order' ) )]"
+								tooltip = "leo_oae_mbge_ui_heading_order_tt"
+								text = "[Localize(Concatenate('leo_oae_mbge_ui_order_', IntToString(FixedPointToInt(GetPlayer.MakeScope.Var('leo_oae_mbge_order').GetValue))))]"
+							}
+
+							vbox = {
+								layoutpolicy_horizontal = expanding
+								margin = { 3 0 }
+
+								vbox = {
+									visible = "[GetVariableSystem.HasValue( 'leo_oae_mbge_dd', 'order' )]"
+									layoutpolicy_horizontal = expanding
+									using = Background_DropDown
+									spacing = 0
+
+									datamodel = "[GetPlayer.MakeScope.GetList( Select_CString( GetVariableSystem.HasValue( 'leo_oae_mbge_dd', 'order' ), 'leo_oae_mbge_orders', 'leo_oae_mbge_none' ) )]"
+
+									item = {
+										leo_oae_mbge_button_dropdown = {
+											layoutpolicy_horizontal = expanding
+											size = { -1 30 }
+											onclick = "[GetScriptedGui( Concatenate( 'leo_oae_mbge_set_', Scope.GetFlagName ) ).Execute( GuiScope.SetRoot( GetPlayer.MakeScope ).End )]"
+											onclick = "[GetVariableSystem.Set( 'leo_oae_mbge_dd', 'none' )]"
+											tooltip = "[Localize( Concatenate( Concatenate( 'leo_oae_mbge_ui_', Scope.GetFlagName ), '_tt' ) )]"
+											text = "[Localize( Concatenate( 'leo_oae_mbge_ui_', Scope.GetFlagName ) )]"
+										}
+									}
+								}
+							}
+
+							widget = {
+								visible = "[GetVariableSystem.HasValue( 'leo_oae_mbge_dd', 'order' )]"
+								size = { 1 12 }
+							}
+						}
+					}
+
+					### What it will do and what it will cost.
+					vbox = {
+						layoutpolicy_horizontal = expanding
+
+						text_label_left = {
+							layoutpolicy_horizontal = expanding
+							text = "leo_oae_mbge_ui_heading_summary"
+						}
+
+						vbox = {
+							layoutpolicy_horizontal = expanding
+							margin = { 6 4 }
+							margin_top = 12
+							spacing = 4
+
+							text_multi = {
+								layoutpolicy_horizontal = expanding
+								autoresize = yes
+								max_width = 420
+								align = left|nobaseline
+								text = "leo_oae_mbge_ui_summary"
+							}
+
+							# Grease Palms is the only method that charges gold,
+							# so the other four get a line that does not mention
+							# it. Every bucket carries a gold figure regardless,
+							# because it was counted before the method was known.
+							text_multi = {
+								layoutpolicy_horizontal = expanding
+								autoresize = yes
+								max_width = 420
+								align = left|nobaseline
+								text = "[SelectLocalization( EqualTo_CFixedPoint( GetPlayer.MakeScope.Var('leo_oae_mbge_opt').GetValue, '(CFixedPoint)2' ), 'leo_oae_mbge_ui_summary_cost_gold', 'leo_oae_mbge_ui_summary_cost' )]"
+							}
+						}
+					}
+
+					expand = {}
+				}
+			}
+		}
+
+		### The action, kept out of the scrollbox so it cannot scroll away.
+		hbox = {
+			layoutpolicy_horizontal = expanding
+			margin_top = 10
+			margin_right = 16
+			margin_bottom = 14
+			margin_left = 16
+
+			button_standard = {
+				layoutpolicy_horizontal = expanding
+				size = { -1 44 }
+
+				text = "leo_oae_mbge_ui_apply"
+				tooltip = "leo_oae_mbge_ui_note"
+
+				onclick = "[GetScriptedGui('leo_oae_mbge_apply').Execute( GuiScope.SetRoot( GetPlayer.MakeScope ).End )]"
+				# Asked every frame, unlike the figures above, which are only as
+				# fresh as the last recount. This is what actually stops the
+				# treasury going under.
+				enabled = "[GetScriptedGui('leo_oae_mbge_apply').IsValid( GuiScope.SetRoot( GetPlayer.MakeScope ).End )]"
+			}
+		}
+	}
+}

@@ -1,1 +1,2 @@
 ﻿gui/leo_oae_hotkeys.gui = leo_oae_hotkeys
+gui/leo_oae_mbge_panel.gui = leo_oae_mbge_panel

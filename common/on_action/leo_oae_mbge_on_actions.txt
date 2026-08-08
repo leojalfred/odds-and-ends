@@ -1,0 +1,28 @@
+﻿### Leo VI's Odds and Ends - Mass Bolster Governance, startup.
+###
+### An on_action's effect block is single-slot, so the last file loaded wins and
+### defining effect on a vanilla on_action would silently displace another mod's.
+### The on_actions list does merge across files, so this chains a child instead
+### and never writes to the vanilla entry itself.
+
+on_game_start_after_lobby = {
+	on_actions = { leo_oae_mbge_on_game_start }
+}
+
+leo_oae_mbge_on_game_start = {
+	effect = {
+		every_player = {
+			# The panel is shown by a script variable, and script variables live
+			# in the save. Without this, closing the game with the window open
+			# would reopen it on load, counting a pool that may have changed
+			# hands since.
+			leo_oae_mbge_close_effect = yes
+
+			# Seeds the settings and the option lists so the panel has something
+			# defined to read the first time it is opened, in a session where no
+			# script of ours has run yet. An undefined variable has no defined
+			# reading in GUI.
+			leo_oae_mbge_init_defaults_effect = yes
+		}
+	}
+}

@@ -1,0 +1,167 @@
+﻿### Leo VI's Odds and Ends - Mass Bolster Governance, eligibility.
+###
+### Who may be bolstered is vanilla's decision, not ours. The pool is whoever
+### boost_efficiency_interaction would let the player target right now, and the
+### mass action must never reach past that.
+
+# Current scope: a candidate governor. Requires scope:leo_oae_mbge_actor, the
+# player doing the bolstering.
+#
+# is_character_interaction_valid is the engine asking the interaction itself,
+# so a patch that regates Bolster Governance regates this for free. It is
+# evaluated on the actor with the target named as the recipient, which is why
+# the governor has to be staged into a scope first.
+#
+# The two conditions after it are the interaction's own can_send block
+# (06_ep3_interactions.txt:5711-5731), repeated because it is not certain the
+# engine trigger covers can_send as well as is_shown and is_valid. They are
+# cheap, and repeating a condition can only ever narrow the pool. Re-diff them
+# against vanilla after a game patch.
+#
+# governor_efficiency_presented is staged rather than compared in place: a
+# computed value on the left of a comparison is not reliable in every trigger
+# context, and staging it costs nothing here because the caller needs the
+# number anyway.
+leo_oae_mbge_target_trigger = {
+	save_temporary_scope_as = leo_oae_mbge_gov
+
+	scope:leo_oae_mbge_actor = {
+		is_character_interaction_valid = {
+			recipient = scope:leo_oae_mbge_gov
+			interaction = boost_efficiency_interaction
+		}
+	}
+
+	save_temporary_scope_value_as = {
+		name = leo_oae_mbge_eff
+		value = governor_efficiency_presented
+	}
+	scope:leo_oae_mbge_eff <= boost_efficiency_maximum_value
+
+	NOR = {
+		is_target_in_variable_list = {
+			name = efficiency_boosters
+			target = scope:leo_oae_mbge_actor
+		}
+		is_target_in_variable_list = {
+			name = efficiency_damagers
+			target = scope:leo_oae_mbge_actor
+		}
+	}
+}
+
+# Current scope: a candidate governor that already passed the trigger above.
+# Requires scope:leo_oae_mbge_actor.
+#
+# Whether this governor falls under the threshold the player picked. Written as
+# one chain driven by the stored code rather than one trigger per threshold,
+# because a trigger cannot be chosen at runtime.
+#
+# Code 9 is "every governor vanilla permits", which is why it is not written as
+# "below 40": vanilla's own limit is efficiency at most 40, so a governor
+# sitting exactly on 40 is eligible and would fall outside a strict "below".
+# Code 10 is the budget mode and never reaches here, since it picks its targets
+# by spending order instead.
+leo_oae_mbge_in_bucket_trigger = {
+	save_temporary_scope_value_as = {
+		name = leo_oae_mbge_eff
+		value = governor_efficiency_presented
+	}
+
+	trigger_if = {
+		limit = { scope:leo_oae_mbge_actor = { var:leo_oae_mbge_thresh = 1 } }
+		scope:leo_oae_mbge_eff < -40
+	}
+	trigger_else_if = {
+		limit = { scope:leo_oae_mbge_actor = { var:leo_oae_mbge_thresh = 2 } }
+		scope:leo_oae_mbge_eff < -30
+	}
+	trigger_else_if = {
+		limit = { scope:leo_oae_mbge_actor = { var:leo_oae_mbge_thresh = 3 } }
+		scope:leo_oae_mbge_eff < -20
+	}
+	trigger_else_if = {
+		limit = { scope:leo_oae_mbge_actor = { var:leo_oae_mbge_thresh = 4 } }
+		scope:leo_oae_mbge_eff < -10
+	}
+	trigger_else_if = {
+		limit = { scope:leo_oae_mbge_actor = { var:leo_oae_mbge_thresh = 5 } }
+		scope:leo_oae_mbge_eff < 0
+	}
+	trigger_else_if = {
+		limit = { scope:leo_oae_mbge_actor = { var:leo_oae_mbge_thresh = 6 } }
+		scope:leo_oae_mbge_eff < 10
+	}
+	trigger_else_if = {
+		limit = { scope:leo_oae_mbge_actor = { var:leo_oae_mbge_thresh = 7 } }
+		scope:leo_oae_mbge_eff < 20
+	}
+	trigger_else_if = {
+		limit = { scope:leo_oae_mbge_actor = { var:leo_oae_mbge_thresh = 8 } }
+		scope:leo_oae_mbge_eff < 30
+	}
+	trigger_else = { always = yes }
+}
+
+# Current scope: the player. Requires scope:leo_oae_mbge_actor and, when the
+# selected option is Grease Palms, scope:leo_oae_mbge_gold_cost.
+#
+# Can one more governor be paid for out of what is actually in the treasury
+# right now? Every place that spends checks this first, so a stale count on
+# screen can only ever bolster fewer governors than advertised, never overdraw.
+leo_oae_mbge_can_pay_one_trigger = {
+	influence >= leo_oae_mbge_unit_influence_value
+	trigger_if = {
+		limit = { var:leo_oae_mbge_opt = 2 }
+		gold >= scope:leo_oae_mbge_gold_cost
+	}
+}
+
+# Current scope: the player. Is there anything for the Bolster button to do?
+leo_oae_mbge_has_targets_trigger = {
+	has_variable = leo_oae_mbge_count
+	var:leo_oae_mbge_count > 0
+}
+
+# Current scope: the player. The feature's own gate, mirroring the actor half
+# of the interaction's is_shown (06_ep3_interactions.txt:5663-5671) plus the
+# adulthood its is_valid requires. Administrative government carries its own
+# DLC, so this gates on ownership without naming a DLC.
+leo_oae_mbge_available_trigger = {
+	is_ruler = yes
+	is_adult = yes
+	government_allows = administrative
+}
+
+# Never true, and never called for its answer. The panel's dropdowns and its
+# summary line read these variables straight out of GUI, and the script
+# validator does not count GUI use, so without naming them once in script every
+# one of them logs "set but is never used" under -debug_mode. Naming them here
+# is what keeps error.log clean.
+leo_oae_mbge_ack_trigger = {
+	always = no
+
+	var:leo_oae_mbge_open = 0
+	var:leo_oae_mbge_opt = 0
+	var:leo_oae_mbge_afford_sel = 0
+	var:leo_oae_mbge_thresh = 0
+	var:leo_oae_mbge_order = 0
+	var:leo_oae_mbge_count = 0
+	var:leo_oae_mbge_infl = 0
+	var:leo_oae_mbge_gold = 0
+
+	var:leo_oae_mbge_afford_t_m40 = 0
+	var:leo_oae_mbge_afford_t_m30 = 0
+	var:leo_oae_mbge_afford_t_m20 = 0
+	var:leo_oae_mbge_afford_t_m10 = 0
+	var:leo_oae_mbge_afford_t_0 = 0
+	var:leo_oae_mbge_afford_t_10 = 0
+	var:leo_oae_mbge_afford_t_20 = 0
+	var:leo_oae_mbge_afford_t_30 = 0
+	var:leo_oae_mbge_afford_t_all = 0
+	var:leo_oae_mbge_afford_t_bud = 0
+
+	is_target_in_variable_list = { name = leo_oae_mbge_opts target = flag:opt_1 }
+	is_target_in_variable_list = { name = leo_oae_mbge_threshes target = flag:t_all }
+	is_target_in_variable_list = { name = leo_oae_mbge_orders target = flag:order_1 }
+}

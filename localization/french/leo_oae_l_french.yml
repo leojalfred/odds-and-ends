@@ -11,3 +11,90 @@
 
  leo_oae_govmap_name:0 "@leo_oae_governor_icon! Gouverneurs"
  leo_oae_govmap_desc:0 "#T Gouverneurs#!\nAffiche vos [direct_vassals|E] selon le rôle qu'ils tiennent dans le [realm|E], la vue même qu'ouvre le panneau du gouvernement administratif."
+
+ ### Mass Bolster Governance.
+ ###
+ ### The five method names are vanilla's own send_option labels, pointed at
+ ### rather than rewritten, so the wording stays in step with the game and the
+ ### translation comes free. The same goes for the button that does the deed.
+ ###
+ ### Every key the panel builds at runtime has to exist for every value it can
+ ### be built from, including the 0 an unset variable reads, or the raw key
+ ### shows up on screen. That is what the _0 and _tc_ entries are for. The
+ ### threshold rows have deliberately empty tooltips: an empty value renders no
+ ### tooltip box at all, and the heading above them already says what graying
+ ### means.
+ leo_oae_mbge_decision:0 "Renforcer la gouvernance en masse"
+ leo_oae_mbge_decision_desc:0 "Renforcez l'[governor_efficiency|E] de nombreux [governor|E]s d'un seul coup, au lieu de les traiter un par un.\n\nOuvre un panneau où vous choisissez la méthode et jusqu'où descendre dans la liste. Rien n'est dépensé tant que vous ne l'avez pas confirmé là.\n\n#weak Vous pouvez aussi l'ouvrir à tout moment avec ctrl+maj+B.#!"
+ leo_oae_mbge_decision_tooltip:0 "Ouvrir le panneau de renforcement en masse"
+ leo_oae_mbge_decision_confirm:0 "Ouvrir le panneau"
+ leo_oae_mbge_decision_effect_tt:0 "Ouvre le panneau. Rien n'est dépensé tant que vous n'y avez pas lancé le renforcement."
+
+ leo_oae_mbge_ui_heading_method:0 "Méthode"
+ leo_oae_mbge_ui_heading_method_tt:0 "L'approche à employer sur chaque [governor|E] que la manœuvre atteint. Ce sont les cinq mêmes qui vous sont proposées quand vous renforcez un seul [governor|E] à la main, et elles se comportent de la même façon."
+ leo_oae_mbge_ui_heading_targets:0 "Cibles"
+ leo_oae_mbge_ui_heading_targets_tt:0 "Jusqu'où descendre dans la liste. Chaque [governor|E] sous le niveau choisi est renforcé.\n\n#weak Un niveau que vous ne pouvez pas payer entièrement est grisé. Choisissez #!#T Autant que je peux me permettre#!#weak  pour dépenser ce que vous avez et vous arrêter là.#!"
+ leo_oae_mbge_ui_heading_order:0 "Ordre"
+ leo_oae_mbge_ui_heading_order_tt:0 "Qui l'argent atteint en premier quand il ne suffit pas pour tout le monde.\n\n#weak Ne compte que pour #!#T $gold_boost_desc$#!#weak , la seule méthode dont le prix change d'un [governor|E] à l'autre.#!"
+ leo_oae_mbge_ui_heading_summary:0 "Récapitulatif"
+
+ leo_oae_mbge_ui_opt_0:0 "#weak Choisissez une méthode#!"
+ leo_oae_mbge_ui_opt_1:0 "$influence_boost_desc$"
+ leo_oae_mbge_ui_opt_2:0 "$gold_boost_desc$"
+ leo_oae_mbge_ui_opt_3:0 "$diplomacy_boost_desc$ #weak ([GetPlayer.MakeScope.ScriptValue('leo_oae_mbge_chance_diplomacy')|0]%)#!"
+ leo_oae_mbge_ui_opt_4:0 "$stewardship_boost_desc$ #weak ([GetPlayer.MakeScope.ScriptValue('leo_oae_mbge_chance_stewardship')|0]%)#!"
+ leo_oae_mbge_ui_opt_5:0 "$intrigue_boost_desc$ #weak ([GetPlayer.MakeScope.ScriptValue('leo_oae_mbge_chance_intrigue')|0]%)#!"
+
+ leo_oae_mbge_ui_opt_1_tt:0 "@influence_icon! [EmptyScope.ScriptValue('leo_oae_mbge_divert_influence_value')|0] par [governor|E]. Réussit toujours."
+ leo_oae_mbge_ui_opt_2_tt:0 "@influence_icon! [EmptyScope.ScriptValue('minor_influence_value')|0] par [governor|E], plus @gold_icon! de l'or proportionnel à ce que ce [governor|E] gagne : un gouverneur fortuné coûte donc plus cher. Réussit toujours."
+ leo_oae_mbge_ui_opt_3_tt:0 "@influence_icon! [EmptyScope.ScriptValue('minor_influence_value')|0] par [governor|E]. Met à l'épreuve votre [diplomacy|E] et peut échouer. Vous payez dans les deux cas."
+ leo_oae_mbge_ui_opt_4_tt:0 "@influence_icon! [EmptyScope.ScriptValue('minor_influence_value')|0] par [governor|E]. Met à l'épreuve votre [stewardship|E] et peut échouer. Vous payez dans les deux cas."
+ leo_oae_mbge_ui_opt_5_tt:0 "@influence_icon! [EmptyScope.ScriptValue('minor_influence_value')|0] par [governor|E]. Met à l'épreuve votre [intrigue|E] et peut échouer. Vous payez dans les deux cas."
+
+ leo_oae_mbge_ui_t_m40:0 "Sous -40 %"
+ leo_oae_mbge_ui_t_m30:0 "Sous -30 %"
+ leo_oae_mbge_ui_t_m20:0 "Sous -20 %"
+ leo_oae_mbge_ui_t_m10:0 "Sous -10 %"
+ leo_oae_mbge_ui_t_0:0 "Sous 0 %"
+ leo_oae_mbge_ui_t_10:0 "Sous 10 %"
+ leo_oae_mbge_ui_t_20:0 "Sous 20 %"
+ leo_oae_mbge_ui_t_30:0 "Sous 30 %"
+ leo_oae_mbge_ui_t_all:0 "Tous les gouverneurs éligibles"
+ leo_oae_mbge_ui_t_bud:0 "Autant que je peux me permettre"
+
+ leo_oae_mbge_ui_t_m40_tt:0 ""
+ leo_oae_mbge_ui_t_m30_tt:0 ""
+ leo_oae_mbge_ui_t_m20_tt:0 ""
+ leo_oae_mbge_ui_t_m10_tt:0 ""
+ leo_oae_mbge_ui_t_0_tt:0 ""
+ leo_oae_mbge_ui_t_10_tt:0 ""
+ leo_oae_mbge_ui_t_20_tt:0 ""
+ leo_oae_mbge_ui_t_30_tt:0 ""
+ leo_oae_mbge_ui_t_all_tt:0 ""
+ leo_oae_mbge_ui_t_bud_tt:0 ""
+
+ leo_oae_mbge_ui_tc_0:0 "#weak Choisissez un niveau#!"
+ leo_oae_mbge_ui_tc_1:0 "$leo_oae_mbge_ui_t_m40$"
+ leo_oae_mbge_ui_tc_2:0 "$leo_oae_mbge_ui_t_m30$"
+ leo_oae_mbge_ui_tc_3:0 "$leo_oae_mbge_ui_t_m20$"
+ leo_oae_mbge_ui_tc_4:0 "$leo_oae_mbge_ui_t_m10$"
+ leo_oae_mbge_ui_tc_5:0 "$leo_oae_mbge_ui_t_0$"
+ leo_oae_mbge_ui_tc_6:0 "$leo_oae_mbge_ui_t_10$"
+ leo_oae_mbge_ui_tc_7:0 "$leo_oae_mbge_ui_t_20$"
+ leo_oae_mbge_ui_tc_8:0 "$leo_oae_mbge_ui_t_30$"
+ leo_oae_mbge_ui_tc_9:0 "$leo_oae_mbge_ui_t_all$"
+ leo_oae_mbge_ui_tc_10:0 "$leo_oae_mbge_ui_t_bud$"
+
+ leo_oae_mbge_ui_order_0:0 "#weak Choisissez un ordre#!"
+ leo_oae_mbge_ui_order_1:0 "La pire gouvernance d'abord"
+ leo_oae_mbge_ui_order_2:0 "Les moins chers d'abord"
+ leo_oae_mbge_ui_order_1_tt:0 "Dépensez d'abord pour les [governor|E]s à la plus faible [governor_efficiency|E], afin que les pires soient aidés même si moins nombreux sont atteints."
+ leo_oae_mbge_ui_order_2_tt:0 "Dépensez d'abord pour les [governor|E]s les moins chers, afin d'en atteindre le plus possible avec la même somme."
+
+ leo_oae_mbge_ui_summary:0 "Gouverneurs à renforcer : #T [GetPlayer.MakeScope.Var('leo_oae_mbge_count').GetValue|0]#!"
+ leo_oae_mbge_ui_summary_cost:0 "Coût total : @influence_icon! [GetPlayer.MakeScope.Var('leo_oae_mbge_infl').GetValue|0]"
+ leo_oae_mbge_ui_summary_cost_gold:0 "Coût total : @influence_icon! [GetPlayer.MakeScope.Var('leo_oae_mbge_infl').GetValue|0]  @gold_icon! [GetPlayer.MakeScope.Var('leo_oae_mbge_gold').GetValue|0]"
+
+ leo_oae_mbge_ui_title:0 "$leo_oae_mbge_decision$"
+ leo_oae_mbge_ui_apply:0 "$boost_efficiency_interaction$"
+ leo_oae_mbge_ui_note:0 "Renforcez chaque [governor|E] listé ci-dessus, l'un après l'autre, exactement comme si vous étiez allé trouver chacun d'eux pour le faire à la main.\n\n#weak Les gouverneurs en temps de recharge, ou déjà trop bien gouvernés, sont écartés par les règles du jeu elles-mêmes.#!"

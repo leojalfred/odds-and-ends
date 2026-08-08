@@ -11,3 +11,90 @@
 
  leo_oae_govmap_name:0 "@leo_oae_governor_icon! 총독"
  leo_oae_govmap_desc:0 "#T 총독#!\n[realm|E]에서 맡은 역할에 따라 [direct_vassals|E]을 표시합니다. 행정 정부 창을 열 때와 같은 화면입니다."
+
+ ### Mass Bolster Governance.
+ ###
+ ### The five method names are vanilla's own send_option labels, pointed at
+ ### rather than rewritten, so the wording stays in step with the game and the
+ ### translation comes free. The same goes for the button that does the deed.
+ ###
+ ### Every key the panel builds at runtime has to exist for every value it can
+ ### be built from, including the 0 an unset variable reads, or the raw key
+ ### shows up on screen. That is what the _0 and _tc_ entries are for. The
+ ### threshold rows have deliberately empty tooltips: an empty value renders no
+ ### tooltip box at all, and the heading above them already says what graying
+ ### means.
+ leo_oae_mbge_decision:0 "통치력 일괄 강화"
+ leo_oae_mbge_decision_desc:0 "여러 [governor|E]의 [governor_efficiency|E]을 하나씩이 아니라 한 번에 강화합니다.\n\n방식과 목록을 어디까지 내려갈지 고르는 창을 엽니다. 그곳에서 확정하기 전까지는 아무것도 소모되지 않습니다.\n\n#weak ctrl+shift+B로 언제든지 열 수도 있습니다.#!"
+ leo_oae_mbge_decision_tooltip:0 "일괄 강화 창 열기"
+ leo_oae_mbge_decision_confirm:0 "창 열기"
+ leo_oae_mbge_decision_effect_tt:0 "창을 엽니다. 거기서 강화하기 전까지는 아무것도 소모되지 않습니다."
+
+ leo_oae_mbge_ui_heading_method:0 "방식"
+ leo_oae_mbge_ui_heading_method_tt:0 "대상이 되는 모든 [governor|E]에게 사용할 방식입니다. [governor|E] 한 명을 직접 강화할 때 제시되는 것과 같은 다섯 가지이며, 작동 방식도 같습니다."
+ leo_oae_mbge_ui_heading_targets:0 "대상"
+ leo_oae_mbge_ui_heading_targets_tt:0 "목록을 어디까지 내려갈지 정합니다. 고른 수치보다 낮은 [governor|E]이 모두 강화됩니다.\n\n#weak 전부 지불할 수 없는 수치는 흐리게 표시됩니다. 가진 만큼만 쓰고 멈추려면 #!#T 감당할 수 있는 만큼#!#weak 을 고르십시오.#!"
+ leo_oae_mbge_ui_heading_order:0 "순서"
+ leo_oae_mbge_ui_heading_order_tt:0 "모두에게 돌아가지 않을 때 누구에게 먼저 쓸지 정합니다.\n\n#weak [governor|E]마다 값이 다른 유일한 방식인 #!#T $gold_boost_desc$#!#weak 에서만 의미가 있습니다.#!"
+ leo_oae_mbge_ui_heading_summary:0 "요약"
+
+ leo_oae_mbge_ui_opt_0:0 "#weak 방식을 고르십시오#!"
+ leo_oae_mbge_ui_opt_1:0 "$influence_boost_desc$"
+ leo_oae_mbge_ui_opt_2:0 "$gold_boost_desc$"
+ leo_oae_mbge_ui_opt_3:0 "$diplomacy_boost_desc$ #weak ([GetPlayer.MakeScope.ScriptValue('leo_oae_mbge_chance_diplomacy')|0]%)#!"
+ leo_oae_mbge_ui_opt_4:0 "$stewardship_boost_desc$ #weak ([GetPlayer.MakeScope.ScriptValue('leo_oae_mbge_chance_stewardship')|0]%)#!"
+ leo_oae_mbge_ui_opt_5:0 "$intrigue_boost_desc$ #weak ([GetPlayer.MakeScope.ScriptValue('leo_oae_mbge_chance_intrigue')|0]%)#!"
+
+ leo_oae_mbge_ui_opt_1_tt:0 "[governor|E]당 @influence_icon! [EmptyScope.ScriptValue('leo_oae_mbge_divert_influence_value')|0]. 항상 성공합니다."
+ leo_oae_mbge_ui_opt_2_tt:0 "[governor|E]당 @influence_icon! [EmptyScope.ScriptValue('minor_influence_value')|0], 그리고 해당 [governor|E]의 수입에 비례하는 @gold_icon! 금화가 듭니다. 부유한 총독일수록 더 비쌉니다. 항상 성공합니다."
+ leo_oae_mbge_ui_opt_3_tt:0 "[governor|E]당 @influence_icon! [EmptyScope.ScriptValue('minor_influence_value')|0]. 당신의 [diplomacy|E]을 시험하며 실패할 수 있습니다. 어느 쪽이든 비용은 지불합니다."
+ leo_oae_mbge_ui_opt_4_tt:0 "[governor|E]당 @influence_icon! [EmptyScope.ScriptValue('minor_influence_value')|0]. 당신의 [stewardship|E]을 시험하며 실패할 수 있습니다. 어느 쪽이든 비용은 지불합니다."
+ leo_oae_mbge_ui_opt_5_tt:0 "[governor|E]당 @influence_icon! [EmptyScope.ScriptValue('minor_influence_value')|0]. 당신의 [intrigue|E]를 시험하며 실패할 수 있습니다. 어느 쪽이든 비용은 지불합니다."
+
+ leo_oae_mbge_ui_t_m40:0 "-40% 미만"
+ leo_oae_mbge_ui_t_m30:0 "-30% 미만"
+ leo_oae_mbge_ui_t_m20:0 "-20% 미만"
+ leo_oae_mbge_ui_t_m10:0 "-10% 미만"
+ leo_oae_mbge_ui_t_0:0 "0% 미만"
+ leo_oae_mbge_ui_t_10:0 "10% 미만"
+ leo_oae_mbge_ui_t_20:0 "20% 미만"
+ leo_oae_mbge_ui_t_30:0 "30% 미만"
+ leo_oae_mbge_ui_t_all:0 "가능한 모든 총독"
+ leo_oae_mbge_ui_t_bud:0 "감당할 수 있는 만큼"
+
+ leo_oae_mbge_ui_t_m40_tt:0 ""
+ leo_oae_mbge_ui_t_m30_tt:0 ""
+ leo_oae_mbge_ui_t_m20_tt:0 ""
+ leo_oae_mbge_ui_t_m10_tt:0 ""
+ leo_oae_mbge_ui_t_0_tt:0 ""
+ leo_oae_mbge_ui_t_10_tt:0 ""
+ leo_oae_mbge_ui_t_20_tt:0 ""
+ leo_oae_mbge_ui_t_30_tt:0 ""
+ leo_oae_mbge_ui_t_all_tt:0 ""
+ leo_oae_mbge_ui_t_bud_tt:0 ""
+
+ leo_oae_mbge_ui_tc_0:0 "#weak 수치를 고르십시오#!"
+ leo_oae_mbge_ui_tc_1:0 "$leo_oae_mbge_ui_t_m40$"
+ leo_oae_mbge_ui_tc_2:0 "$leo_oae_mbge_ui_t_m30$"
+ leo_oae_mbge_ui_tc_3:0 "$leo_oae_mbge_ui_t_m20$"
+ leo_oae_mbge_ui_tc_4:0 "$leo_oae_mbge_ui_t_m10$"
+ leo_oae_mbge_ui_tc_5:0 "$leo_oae_mbge_ui_t_0$"
+ leo_oae_mbge_ui_tc_6:0 "$leo_oae_mbge_ui_t_10$"
+ leo_oae_mbge_ui_tc_7:0 "$leo_oae_mbge_ui_t_20$"
+ leo_oae_mbge_ui_tc_8:0 "$leo_oae_mbge_ui_t_30$"
+ leo_oae_mbge_ui_tc_9:0 "$leo_oae_mbge_ui_t_all$"
+ leo_oae_mbge_ui_tc_10:0 "$leo_oae_mbge_ui_t_bud$"
+
+ leo_oae_mbge_ui_order_0:0 "#weak 순서를 고르십시오#!"
+ leo_oae_mbge_ui_order_1:0 "통치력이 낮은 순"
+ leo_oae_mbge_ui_order_2:0 "값이 싼 순"
+ leo_oae_mbge_ui_order_1_tt:0 "[governor_efficiency|E]이 가장 낮은 [governor|E]부터 씁니다. 닿는 수가 적어지더라도 가장 나쁜 쪽이 도움을 받습니다."
+ leo_oae_mbge_ui_order_2_tt:0 "가장 값이 싼 [governor|E]부터 씁니다. 같은 돈으로 최대한 많은 수에 닿습니다."
+
+ leo_oae_mbge_ui_summary:0 "강화할 총독: #T [GetPlayer.MakeScope.Var('leo_oae_mbge_count').GetValue|0]#!"
+ leo_oae_mbge_ui_summary_cost:0 "총 비용: @influence_icon! [GetPlayer.MakeScope.Var('leo_oae_mbge_infl').GetValue|0]"
+ leo_oae_mbge_ui_summary_cost_gold:0 "총 비용: @influence_icon! [GetPlayer.MakeScope.Var('leo_oae_mbge_infl').GetValue|0]  @gold_icon! [GetPlayer.MakeScope.Var('leo_oae_mbge_gold').GetValue|0]"
+
+ leo_oae_mbge_ui_title:0 "$leo_oae_mbge_decision$"
+ leo_oae_mbge_ui_apply:0 "$boost_efficiency_interaction$"
+ leo_oae_mbge_ui_note:0 "위에 표시된 모든 [governor|E]을 하나씩 차례로 강화합니다. 직접 한 명씩 찾아가 손수 처리한 것과 똑같습니다.\n\n#weak 재사용 대기 중이거나 이미 통치가 충분히 좋은 총독은 게임 자체의 규칙에 따라 제외됩니다.#!"
