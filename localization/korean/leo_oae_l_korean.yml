@@ -1,17 +1,5 @@
 ﻿l_korean:
 
- ### Governors map mode.
- ###
- ### The engine builds a map mode's name and description keys out of the map
- ### mode's own name, so these two cannot carry the leo_oae_ prefix. They are
- ### aliases and nothing else: the prose lives under our own keys below, the way
- ### vanilla points its map mode names at MAPMODE_* keys.
- admin_vassal_types_map:0 "$leo_oae_govmap_name$"
- admin_vassal_types_map_desc:0 "$leo_oae_govmap_desc$"
-
- leo_oae_govmap_name:0 "@leo_oae_governor_icon! 총독"
- leo_oae_govmap_desc:0 "#T 총독#!\n[realm|E]에서 맡은 역할에 따라 [direct_vassals|E]을 표시합니다. 행정 정부 창을 열 때와 같은 화면입니다."
-
  ### Mass Bolster Governance.
  ###
  ### The five method names are vanilla's own send_option labels, pointed at
