@@ -343,7 +343,7 @@ window = {
 			blockoverride "scrollbox_content" {
 				vbox = {
 					layoutpolicy_horizontal = expanding
-					margin = { 12 0 }
+					margin = { 0 0 }
 					spacing = 8
 
 					### Which of vanilla's five options to send.
@@ -352,6 +352,7 @@ window = {
 
 						text_label_left = {
 							layoutpolicy_horizontal = expanding
+							margin_left = 12
 							text = "leo_oae_mbge_ui_heading_method"
 						}
 
@@ -484,6 +485,7 @@ window = {
 
 						text_label_left = {
 							layoutpolicy_horizontal = expanding
+							margin_left = 12
 							text = "leo_oae_mbge_ui_heading_order"
 						}
 
@@ -538,33 +540,52 @@ window = {
 
 						text_label_left = {
 							layoutpolicy_horizontal = expanding
+							margin_left = 12
 							text = "leo_oae_mbge_ui_heading_summary"
 						}
 
+						### Each line is a text sized to its own content, pushed
+						### left by an expand beside it. Making the text itself
+						### expanding while it also autoresizes leaves the two
+						### fighting: the widget takes its content's width but is
+						### placed inside the full one, so each line lands at a
+						### different offset depending on how long it happens to
+						### be. Same reason the governor rows are built this way.
 						vbox = {
 							layoutpolicy_horizontal = expanding
 							margin = { 0 4 }
+							margin_left = 12
 							margin_top = 8
 							spacing = 4
 
-							text_multi = {
+							hbox = {
 								layoutpolicy_horizontal = expanding
-								autoresize = yes
-								max_width = 440
-								align = left|nobaseline
-								text = "leo_oae_mbge_ui_summary"
+
+								text_multi = {
+									autoresize = yes
+									max_width = 440
+									align = left
+									text = "leo_oae_mbge_ui_summary"
+								}
+
+								expand = {}
 							}
 
 							# Grease Palms is the only method that charges gold,
 							# so the other four get a line that does not mention
 							# it. Every bucket carries a gold figure regardless,
 							# because it was counted before the method was known.
-							text_multi = {
+							hbox = {
 								layoutpolicy_horizontal = expanding
-								autoresize = yes
-								max_width = 440
-								align = left|nobaseline
-								text = "[SelectLocalization( EqualTo_CFixedPoint( GetPlayer.MakeScope.Var('leo_oae_mbge_opt').GetValue, '(CFixedPoint)2' ), 'leo_oae_mbge_ui_summary_cost_gold', 'leo_oae_mbge_ui_summary_cost' )]"
+
+								text_multi = {
+									autoresize = yes
+									max_width = 440
+									align = left
+									text = "[SelectLocalization( EqualTo_CFixedPoint( GetPlayer.MakeScope.Var('leo_oae_mbge_opt').GetValue, '(CFixedPoint)2' ), 'leo_oae_mbge_ui_summary_cost_gold', 'leo_oae_mbge_ui_summary_cost' )]"
+								}
+
+								expand = {}
 							}
 						}
 					}
@@ -592,6 +613,7 @@ window = {
 
 						text_label_left = {
 							layoutpolicy_horizontal = expanding
+							margin_left = 12
 							text = "leo_oae_mbge_ui_heading_governors"
 						}
 
