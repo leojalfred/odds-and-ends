@@ -212,10 +212,11 @@ types leo_oae_mbge_dropdown_types {
 						max_width = 28
 						tooltip = "CHARACTER_VIEW_AGE_TT"
 
-						# The gap before the health icon. A text widget takes a
-						# margin and an icon does not, so the space goes after
-						# the age rather than before the icon.
-						margin_right = 3
+						# The gap before the health icon, on top of the row's own
+						# spacing of 2. A text widget takes a margin and an icon
+						# does not, so the space goes after the age rather than
+						# before the icon.
+						margin_right = 1
 					}
 
 					icon = {
