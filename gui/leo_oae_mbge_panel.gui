@@ -79,15 +79,17 @@ types leo_oae_mbge_dropdown_types {
 	### used directly. Its two loc keys are reused as they are, so the name and
 	### age still read and translate exactly as the character sheet writes them.
 	###
-	### Used twice, once per list, and the tick is a literal handed in by
-	### whichever list the row came from. Nothing here is evaluated while the
-	### panel sits open: GUI cannot ask whether a character is in a variable
-	### list, so the alternative was a scripted GUI per row per frame, and
-	### script sorting the pool into two lists costs nothing instead.
+	### The tick reads leo_oae_mbge_excl off the governor, which is a plain
+	### variable read rather than a scripted GUI, so nothing here runs script
+	### while the panel sits open. Clicking does, which is fine because a click
+	### is not a frame: the row hands its own character over as
+	### scope:leo_oae_mbge_gov, and that is what lets one template serve every
+	### row.
 	###
-	### Clicking still runs script, which is fine because a click is not a
-	### frame. The row hands its own character over as scope:leo_oae_mbge_gov,
-	### which is what lets one template serve every row.
+	### Nothing inside carries parentanchor. On a text widget in an hbox it takes
+	### the widget out of flow, so the row allocates it no width and the text
+	### collapses to an ellipsis. An hbox already centers its children against
+	### each other, which is why vanilla's own row sets none either.
 	type leo_oae_mbge_governor_row = widget {
 		datacontext = "[Scope.Char]"
 		layoutpolicy_horizontal = expanding
@@ -141,7 +143,12 @@ types leo_oae_mbge_dropdown_types {
 						tooltip = "ADMIN_WINDOW_THEME_GOVERNOR_EFFICIENCY_TT"
 						using = tooltip_ne
 
+						# The icon art carries its own transparent padding, so
+						# at its left edge it reads as indented against the
+						# lines above and below. The negative margin pulls the
+						# ink back to where their text starts.
 						icon_governor_efficiency = {
+							margin_left = -4
 							size = { 20 20 }
 						}
 
@@ -214,6 +221,7 @@ types leo_oae_mbge_dropdown_types {
 				### Whose house they belong to.
 				hbox = {
 					layoutpolicy_horizontal = expanding
+					margin_top = 3
 
 					# coa_house_tiny is 48 square, which is heavy beside a line
 					# of text, and shrinking it by overriding the instance size
@@ -226,6 +234,9 @@ types leo_oae_mbge_dropdown_types {
 						datacontext = "[Character.GetHouse]"
 					}
 
+					# The arms are the taller of the two, so the name is
+					# centered against them rather than sitting on their top
+					# edge, which is where an hbox would otherwise leave it.
 					text_single = {
 						datacontext = "[Character.GetHouse]"
 						margin_left = 5
