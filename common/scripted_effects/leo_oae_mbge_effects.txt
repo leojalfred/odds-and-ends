@@ -32,7 +32,13 @@ leo_oae_mbge_build_options_effect = {
 	add_to_variable_list = { name = leo_oae_mbge_opts target = flag:opt_4 }
 	add_to_variable_list = { name = leo_oae_mbge_opts target = flag:opt_5 }
 
+	# The two that need no thinking about come first: everyone the game allows,
+	# then everyone the treasury allows. The graduated levels follow for when a
+	# run wants aiming. Display order is not code order, and deliberately so:
+	# the codes are append-only because they persist in saves.
 	clear_variable_list = leo_oae_mbge_threshes
+	add_to_variable_list = { name = leo_oae_mbge_threshes target = flag:t_all }
+	add_to_variable_list = { name = leo_oae_mbge_threshes target = flag:t_bud }
 	add_to_variable_list = { name = leo_oae_mbge_threshes target = flag:t_m40 }
 	add_to_variable_list = { name = leo_oae_mbge_threshes target = flag:t_m30 }
 	add_to_variable_list = { name = leo_oae_mbge_threshes target = flag:t_m20 }
@@ -41,15 +47,14 @@ leo_oae_mbge_build_options_effect = {
 	add_to_variable_list = { name = leo_oae_mbge_threshes target = flag:t_10 }
 	add_to_variable_list = { name = leo_oae_mbge_threshes target = flag:t_20 }
 	add_to_variable_list = { name = leo_oae_mbge_threshes target = flag:t_30 }
-	add_to_variable_list = { name = leo_oae_mbge_threshes target = flag:t_all }
-	add_to_variable_list = { name = leo_oae_mbge_threshes target = flag:t_bud }
 
 	clear_variable_list = leo_oae_mbge_orders
 	add_to_variable_list = { name = leo_oae_mbge_orders target = flag:order_1 }
 	add_to_variable_list = { name = leo_oae_mbge_orders target = flag:order_2 }
 
 	# Stamps what these lists were built from, so a save carrying an older set
-	# is rebuilt rather than trusted.
+	# is rebuilt rather than trusted. Bump it whenever the entries or their
+	# order change, or a save keeps showing the old list.
 	set_variable = { name = leo_oae_mbge_opts_version value = 1 }
 
 	# The branch never runs. See the trigger for why it has to be named.
@@ -80,9 +85,11 @@ leo_oae_mbge_init_defaults_effect = {
 		limit = { NOT = { has_variable = leo_oae_mbge_opt } }
 		set_variable = { name = leo_oae_mbge_opt value = 1 }
 	}
+	# Every eligible governor, which the recount downgrades on the spot if it
+	# turns out not to be payable.
 	if = {
 		limit = { NOT = { has_variable = leo_oae_mbge_thresh } }
-		set_variable = { name = leo_oae_mbge_thresh value = 5 }
+		set_variable = { name = leo_oae_mbge_thresh value = 9 }
 	}
 	if = {
 		limit = { NOT = { has_variable = leo_oae_mbge_order } }
@@ -191,6 +198,36 @@ leo_oae_mbge_recount_effect = {
 	leo_oae_mbge_budget_pass_effect = yes
 	leo_oae_mbge_afford_pass_effect = yes
 	leo_oae_mbge_select_bucket_effect = yes
+	leo_oae_mbge_fallback_effect = yes
+}
+
+# Current scope: the player. Keeps the selection on something payable.
+#
+# Which levels are affordable depends on what is in the treasury right now, so
+# the default cannot simply be written once at startup: a save opened with less
+# influence than last time would come up on a level the Bolster button refuses.
+# This runs after every recount and only ever moves a selection that has become
+# unpayable, so a level the player chose deliberately is left alone as long as
+# it still works.
+#
+# Everyone the game allows is the preferred landing place. Failing that, the
+# budget row, which is payable by construction because it only ever takes what
+# the treasury covers. If even that is empty there is nobody to bolster, and the
+# button stays dark wherever the selection sits.
+leo_oae_mbge_fallback_effect = {
+	if = {
+		limit = { var:leo_oae_mbge_afford_sel = 0 }
+
+		if = {
+			limit = { var:leo_oae_mbge_afford_t_all = 1 }
+			set_variable = { name = leo_oae_mbge_thresh value = 9 }
+		}
+		else = {
+			set_variable = { name = leo_oae_mbge_thresh value = 10 }
+		}
+
+		leo_oae_mbge_select_bucket_effect = yes
+	}
 }
 
 # Current scope: a governor. Requires scope:leo_oae_mbge_actor.
