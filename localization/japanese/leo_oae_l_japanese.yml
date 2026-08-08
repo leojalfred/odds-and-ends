@@ -36,7 +36,11 @@
  leo_oae_mbge_ui_heading_targets_tt:0 "名簿をどこまで下るかを決める。選んだ値を下回る[governor|E]が全て強化される。\n\n#weak 全額を支払えない段階は灰色で表示される。手持ちを使い切って止めるなら#!#T 賄える限り#!#weak を選ぶとよい。#!"
  leo_oae_mbge_ui_heading_order:0 "順序"
  leo_oae_mbge_ui_heading_order_tt:0 "全員には足りないとき、誰に先に充てるかを決める。\n\n#weak 影響するのは#!#T $gold_boost_desc$#!#weak だけだ。[governor|E]ごとに値段が変わる唯一の方法だからである。#!"
+ leo_oae_mbge_ui_heading_governors:0 "総督"
  leo_oae_mbge_ui_heading_summary:0 "概要"
+ leo_oae_mbge_ui_row_tt:0 "チェックを外すと、この[governor|E]は対象から外れる。上の合計からも費用が消える。"
+ leo_oae_mbge_ui_clear_exclusions:0 "全員を戻す"
+ leo_oae_mbge_ui_clear_exclusions_tt:0 "外しておいた[governor|E]を全て対象に戻す。"
 
  leo_oae_mbge_ui_opt_0:0 "#weak 方法を選べ#!"
  leo_oae_mbge_ui_opt_1:0 "$influence_boost_desc$"

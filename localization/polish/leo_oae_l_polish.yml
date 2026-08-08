@@ -36,7 +36,11 @@
  leo_oae_mbge_ui_heading_targets_tt:0 "Jak daleko zejść po liście. Wzmocniony zostaje każdy [governor|E] poniżej wybranego poziomu.\n\n#weak Poziom, którego nie stać cię opłacić w całości, jest wyszarzony. Wybierz #!#T Tylu, na ilu mnie stać#!#weak , aby wydać to, co masz, i na tym poprzestać.#!"
  leo_oae_mbge_ui_heading_order:0 "Kolejność"
  leo_oae_mbge_ui_heading_order_tt:0 "Do kogo pieniądze trafią najpierw, gdy nie starczy ich dla wszystkich.\n\n#weak Ma znaczenie tylko przy #!#T $gold_boost_desc$#!#weak , jedynym sposobie, którego cena różni się dla każdego [governor|E]a.#!"
+ leo_oae_mbge_ui_heading_governors:0 "Gubernatorzy"
  leo_oae_mbge_ui_heading_summary:0 "Podsumowanie"
+ leo_oae_mbge_ui_row_tt:0 "Bez zaznaczenia ten [governor|E] zostaje pominięty. Jego koszt znika z sumy powyżej."
+ leo_oae_mbge_ui_clear_exclusions:0 "Uwzględnij znów wszystkich"
+ leo_oae_mbge_ui_clear_exclusions_tt:0 "Przywraca do działania wszystkich [governor|E]ów, których pominąłeś."
 
  leo_oae_mbge_ui_opt_0:0 "#weak Wybierz sposób#!"
  leo_oae_mbge_ui_opt_1:0 "$influence_boost_desc$"

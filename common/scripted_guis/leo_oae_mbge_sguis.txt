@@ -206,6 +206,35 @@ leo_oae_mbge_set_order_2 = {
 	}
 }
 
+### Setting a governor aside.
+#
+# The panel hands the row's character over as scope:leo_oae_mbge_gov, which is
+# what saved_scopes declares. is_shown is the checkbox's own tick, and it reads
+# the opposite of excluded: a checked row is one the run will visit.
+leo_oae_mbge_toggle_exclude = {
+	scope = character
+	saved_scopes = { leo_oae_mbge_gov }
+
+	is_shown = {
+		NOT = {
+			is_target_in_variable_list = {
+				name = leo_oae_mbge_excluded
+				target = scope:leo_oae_mbge_gov
+			}
+		}
+	}
+
+	effect = { leo_oae_mbge_toggle_exclude_effect = yes }
+}
+
+# Only offered when something is actually set aside, so the panel does not carry
+# a button that would do nothing.
+leo_oae_mbge_clear_exclusions = {
+	scope = character
+	is_valid = { var:leo_oae_mbge_excluded_count > 0 }
+	effect = { leo_oae_mbge_clear_exclusions_effect = yes }
+}
+
 ### Doing it.
 #
 # The panel carries its own Bolster button rather than leaning on the window's.

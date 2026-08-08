@@ -36,7 +36,11 @@
  leo_oae_mbge_ui_heading_targets_tt:0 "Jusqu'où descendre dans la liste. Chaque [governor|E] sous le niveau choisi est renforcé.\n\n#weak Un niveau que vous ne pouvez pas payer entièrement est grisé. Choisissez #!#T Autant que je peux me permettre#!#weak  pour dépenser ce que vous avez et vous arrêter là.#!"
  leo_oae_mbge_ui_heading_order:0 "Ordre"
  leo_oae_mbge_ui_heading_order_tt:0 "Qui l'argent atteint en premier quand il ne suffit pas pour tout le monde.\n\n#weak Ne compte que pour #!#T $gold_boost_desc$#!#weak , la seule méthode dont le prix change d'un [governor|E] à l'autre.#!"
+ leo_oae_mbge_ui_heading_governors:0 "Gouverneurs"
  leo_oae_mbge_ui_heading_summary:0 "Récapitulatif"
+ leo_oae_mbge_ui_row_tt:0 "Décoché, ce [governor|E] est écarté de la manœuvre. Son coût disparaît du total ci-dessus."
+ leo_oae_mbge_ui_clear_exclusions:0 "Tout réinclure"
+ leo_oae_mbge_ui_clear_exclusions_tt:0 "Remet dans la manœuvre tous les [governor|E]s que vous aviez écartés."
 
  leo_oae_mbge_ui_opt_0:0 "#weak Choisissez une méthode#!"
  leo_oae_mbge_ui_opt_1:0 "$influence_boost_desc$"

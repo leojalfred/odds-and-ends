@@ -36,7 +36,11 @@
  leo_oae_mbge_ui_heading_targets_tt:0 "在名单上向下延伸到何处。低于所选数值的每一位[governor|E]都会被提振。\n\n#weak 无力全额支付的档位会显示为灰色。选择#!#T 力所能及的数量#!#weak 可以把手头的资源用完即止。#!"
  leo_oae_mbge_ui_heading_order:0 "顺序"
  leo_oae_mbge_ui_heading_order_tt:0 "当资源不够所有人时，先花在谁身上。\n\n#weak 只有#!#T $gold_boost_desc$#!#weak 才有影响，因为它是唯一一种价格因[governor|E]而异的方式。#!"
+ leo_oae_mbge_ui_heading_governors:0 "总督"
  leo_oae_mbge_ui_heading_summary:0 "概要"
+ leo_oae_mbge_ui_row_tt:0 "取消勾选后，这位[governor|E]将被排除在外，其花费也会从上面的总计中扣除。"
+ leo_oae_mbge_ui_clear_exclusions:0 "重新纳入所有人"
+ leo_oae_mbge_ui_clear_exclusions_tt:0 "把你排除掉的所有[governor|E]重新纳入。"
 
  leo_oae_mbge_ui_opt_0:0 "#weak 选择一种方式#!"
  leo_oae_mbge_ui_opt_1:0 "$influence_boost_desc$"

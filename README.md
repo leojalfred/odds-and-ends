@@ -47,6 +47,8 @@ In it you pick two things. First the method: the same five the game offers you w
 
 There is also an **As Many As I Can Afford** setting, which works down the list spending what you have and stopping when it runs out. It starts with the governors who need it most. Grease Palms is the one method that charges a different price for each governor, since the bribe is scaled to what they earn, so when it is selected you also get to choose whether to spend on the worst governed first or on the cheapest first.
 
+Below that is the list of governors the run will actually visit, worst governed first, each with their current efficiency and, under Grease Palms, what they will cost. Untick any of them to leave them out, and the count and the bill above drop to match. They stay in the list while unticked so you can put them back, and **Include Everyone Again** clears the lot. Setting a governor aside is a note about this run, not a standing opinion: your heir starts with a clean list.
+
 Nothing here reaches past what you could already do by hand. Each bolster is the game's own, at the game's own price, with the game's own odds, so the three skill methods can still fail and still charge you when they do. Governors the game would refuse are refused here too: any already above 40% efficiency, and any you have bolstered or undermined within the last two years. Each one reports its result exactly as it would have if you had visited them yourself.
 
 If you are a governor rather than the ruler at the top, your fellow governors are on the list, because those are the ones the game already lets you bolster.
@@ -66,8 +68,9 @@ The shortest run that exercises every gate and the happy path once. Start an adm
 7. Open a governor's own Bolster Governance window, read the success chance it shows for Burnish Reputation, and confirm the panel's Method list quotes the same number. The panel repeats the game's arithmetic rather than reading it, so this is the step that catches a drift.
 8. Run **As Many As I Can Afford** with enough on hand for everyone and confirm it reaches all of them, not one. Then run it with enough for only two or three and confirm influence lands at or above zero, never below.
 9. Click **Bolster Governance** at the bottom of the panel once, and confirm the whole selection is bolstered in that single click without leaving the page. The count and cost above should drop to reflect what is left.
-10. As a vassal governor rather than the ruler at the top, confirm your peers appear in the pool.
-11. Save with the panel open, reload, and confirm it is shut and your settings survived.
+10. Untick a governor in the list and confirm the count and the total both drop, that they stay visible so you can re-tick them, and that **Include Everyone Again** appears and restores them. Then untick one and bolster, and confirm they were left alone.
+11. As a vassal governor rather than the ruler at the top, confirm your peers appear in the pool.
+12. Save with the panel open, reload, and confirm it is shut and your settings survived.
 
 **The test that actually matters** is that a mass bolster is indistinguishable from a hand-sent one. Record your influence, your gold, a governor's efficiency, their modifier, their efficiency stack and their cooldown. Bolster that governor by hand with Divert Resources and record every delta. Reload, then mass-bolster that same governor alone with the same method. Every delta must match exactly. Repeat for Grease Palms, whose gold price is worked out per governor and is the likeliest place for a mismatch to hide.
 

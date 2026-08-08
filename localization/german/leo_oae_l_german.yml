@@ -36,7 +36,11 @@
  leo_oae_mbge_ui_heading_targets_tt:0 "Wie weit die Liste hinab gegangen wird. Jeder [governor|E] unterhalb der gewählten Marke wird gestärkt.\n\n#weak Eine Marke, die Ihr nicht vollständig bezahlen könnt, ist ausgegraut. Wählt #!#T So viele, wie ich mir leisten kann#!#weak , um auszugeben, was Ihr habt, und dann aufzuhören.#!"
  leo_oae_mbge_ui_heading_order:0 "Reihenfolge"
  leo_oae_mbge_ui_heading_order_tt:0 "Wen das Geld zuerst erreicht, wenn es nicht für alle reicht.\n\n#weak Zählt nur bei #!#T $gold_boost_desc$#!#weak , der einzigen Vorgehensweise, deren Preis sich von [governor|E] zu [governor|E] unterscheidet.#!"
+ leo_oae_mbge_ui_heading_governors:0 "Statthalter"
  leo_oae_mbge_ui_heading_summary:0 "Übersicht"
+ leo_oae_mbge_ui_row_tt:0 "Ohne Haken bleibt dieser [governor|E] außen vor. Seine Kosten fallen aus der Summe oben heraus."
+ leo_oae_mbge_ui_clear_exclusions:0 "Wieder alle einbeziehen"
+ leo_oae_mbge_ui_clear_exclusions_tt:0 "Nimmt jeden beiseitegelegten [governor|E] wieder in den Durchlauf auf."
 
  leo_oae_mbge_ui_opt_0:0 "#weak Wählt eine Vorgehensweise#!"
  leo_oae_mbge_ui_opt_1:0 "$influence_boost_desc$"

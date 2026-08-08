@@ -102,6 +102,10 @@ leo_oae_mbge_init_defaults_effect = {
 		set_variable = { name = leo_oae_mbge_gold value = 0 }
 		set_variable = { name = leo_oae_mbge_afford_sel value = 0 }
 	}
+	if = {
+		limit = { NOT = { has_variable = leo_oae_mbge_excluded_count } }
+		set_variable = { name = leo_oae_mbge_excluded_count value = 0 }
+	}
 }
 
 ### Counting and pricing.
@@ -146,7 +150,7 @@ leo_oae_mbge_recount_effect = {
 
 	top_liege = {
 		every_vassal = {
-			limit = { leo_oae_mbge_target_trigger = yes }
+			limit = { leo_oae_mbge_included_trigger = yes }
 
 			save_temporary_scope_value_as = {
 				name = leo_oae_mbge_gold_cost
@@ -199,6 +203,98 @@ leo_oae_mbge_recount_effect = {
 	leo_oae_mbge_afford_pass_effect = yes
 	leo_oae_mbge_select_bucket_effect = yes
 	leo_oae_mbge_fallback_effect = yes
+	leo_oae_mbge_build_targets_effect = yes
+}
+
+### Who the run will actually visit.
+
+# Current scope: the player. Rebuilds the list the panel shows, last, once the
+# selection has settled.
+#
+# This is the one place that asks the plain eligibility trigger rather than the
+# one that honors exclusions: a governor the player has set aside still has to
+# appear, or there would be no way to put them back. The row's own checkbox is
+# what says which is which.
+#
+# Worst governed first, so the list reads in the order the budget would spend
+# in. Under the budget row there is no threshold to filter by, so it shows
+# everyone eligible and the summary says how many of them the money reaches.
+leo_oae_mbge_build_targets_effect = {
+	save_scope_as = leo_oae_mbge_actor
+	clear_variable_list = leo_oae_mbge_targets
+	set_variable = { name = leo_oae_mbge_excluded_count value = 0 }
+
+	top_liege = {
+		ordered_vassal = {
+			order_by = leo_oae_mbge_worst_first_value
+			max = leo_oae_mbge_everyone_value
+			check_range_bounds = no
+			limit = {
+				leo_oae_mbge_target_trigger = yes
+				trigger_if = {
+					limit = {
+						scope:leo_oae_mbge_actor = {
+							NOT = { var:leo_oae_mbge_thresh = 10 }
+						}
+					}
+					leo_oae_mbge_in_bucket_trigger = yes
+				}
+			}
+
+			save_temporary_scope_as = leo_oae_mbge_gov
+			scope:leo_oae_mbge_actor = {
+				add_to_variable_list = {
+					name = leo_oae_mbge_targets
+					target = scope:leo_oae_mbge_gov
+				}
+				if = {
+					limit = {
+						is_target_in_variable_list = {
+							name = leo_oae_mbge_excluded
+							target = scope:leo_oae_mbge_gov
+						}
+					}
+					change_variable = { name = leo_oae_mbge_excluded_count add = 1 }
+				}
+			}
+		}
+	}
+}
+
+### Setting one aside.
+
+# Current scope: the player. Requires scope:leo_oae_mbge_gov.
+#
+# Exclusions live on the player, so an heir starts with none: they are a working
+# note about this run, not a standing opinion about the governor.
+leo_oae_mbge_toggle_exclude_effect = {
+	if = {
+		limit = {
+			is_target_in_variable_list = {
+				name = leo_oae_mbge_excluded
+				target = scope:leo_oae_mbge_gov
+			}
+		}
+		remove_list_variable = {
+			name = leo_oae_mbge_excluded
+			target = scope:leo_oae_mbge_gov
+		}
+	}
+	else = {
+		add_to_variable_list = {
+			name = leo_oae_mbge_excluded
+			target = scope:leo_oae_mbge_gov
+		}
+	}
+
+	# The count and the bill both move when one is set aside, so they are worked
+	# out again rather than left to the next dropdown.
+	leo_oae_mbge_recount_effect = yes
+}
+
+leo_oae_mbge_clear_exclusions_effect = {
+	clear_variable_list = leo_oae_mbge_excluded
+	leo_oae_mbge_recount_effect = yes
 }
 
 # Current scope: the player. Keeps the selection on something payable.
@@ -277,7 +373,7 @@ leo_oae_mbge_budget_pass_effect = {
 				order_by = leo_oae_mbge_cheapest_first_value
 				max = leo_oae_mbge_everyone_value
 				check_range_bounds = no
-				limit = { leo_oae_mbge_target_trigger = yes }
+				limit = { leo_oae_mbge_included_trigger = yes }
 				leo_oae_mbge_budget_try_effect = yes
 			}
 		}
@@ -288,7 +384,7 @@ leo_oae_mbge_budget_pass_effect = {
 				order_by = leo_oae_mbge_worst_first_value
 				max = leo_oae_mbge_everyone_value
 				check_range_bounds = no
-				limit = { leo_oae_mbge_target_trigger = yes }
+				limit = { leo_oae_mbge_included_trigger = yes }
 				leo_oae_mbge_budget_try_effect = yes
 			}
 		}
@@ -472,7 +568,7 @@ leo_oae_mbge_apply_effect = {
 					order_by = leo_oae_mbge_cheapest_first_value
 					max = leo_oae_mbge_everyone_value
 					check_range_bounds = no
-					limit = { leo_oae_mbge_target_trigger = yes }
+					limit = { leo_oae_mbge_included_trigger = yes }
 					leo_oae_mbge_try_bolster_effect = yes
 				}
 			}
@@ -483,7 +579,7 @@ leo_oae_mbge_apply_effect = {
 					order_by = leo_oae_mbge_worst_first_value
 					max = leo_oae_mbge_everyone_value
 					check_range_bounds = no
-					limit = { leo_oae_mbge_target_trigger = yes }
+					limit = { leo_oae_mbge_included_trigger = yes }
 					leo_oae_mbge_try_bolster_effect = yes
 				}
 			}
@@ -498,7 +594,7 @@ leo_oae_mbge_apply_effect = {
 				max = leo_oae_mbge_everyone_value
 				check_range_bounds = no
 				limit = {
-					leo_oae_mbge_target_trigger = yes
+					leo_oae_mbge_included_trigger = yes
 					leo_oae_mbge_in_bucket_trigger = yes
 				}
 				leo_oae_mbge_try_bolster_effect = yes

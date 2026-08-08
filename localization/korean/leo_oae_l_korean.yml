@@ -36,7 +36,11 @@
  leo_oae_mbge_ui_heading_targets_tt:0 "목록을 어디까지 내려갈지 정합니다. 고른 수치보다 낮은 [governor|E]이 모두 강화됩니다.\n\n#weak 전부 지불할 수 없는 수치는 흐리게 표시됩니다. 가진 만큼만 쓰고 멈추려면 #!#T 감당할 수 있는 만큼#!#weak 을 고르십시오.#!"
  leo_oae_mbge_ui_heading_order:0 "순서"
  leo_oae_mbge_ui_heading_order_tt:0 "모두에게 돌아가지 않을 때 누구에게 먼저 쓸지 정합니다.\n\n#weak [governor|E]마다 값이 다른 유일한 방식인 #!#T $gold_boost_desc$#!#weak 에서만 의미가 있습니다.#!"
+ leo_oae_mbge_ui_heading_governors:0 "총독"
  leo_oae_mbge_ui_heading_summary:0 "요약"
+ leo_oae_mbge_ui_row_tt:0 "체크를 해제하면 이 [governor|E]은 대상에서 빠집니다. 위의 합계에서도 비용이 사라집니다."
+ leo_oae_mbge_ui_clear_exclusions:0 "모두 다시 포함"
+ leo_oae_mbge_ui_clear_exclusions_tt:0 "제외해 둔 모든 [governor|E]을 다시 대상에 넣습니다."
 
  leo_oae_mbge_ui_opt_0:0 "#weak 방식을 고르십시오#!"
  leo_oae_mbge_ui_opt_1:0 "$influence_boost_desc$"

@@ -242,6 +242,15 @@ use  "Background_DropDown"   "template Background_DropDown"
 use  "text_label_left"       "type text_label_left = "
 use  "scrollbox_content block"        "block \"scrollbox_content\""
 use  "scrollbox_background_fade block" "block \"scrollbox_background_fade\""
+# The governor list. A datamodel over a variable list of characters yields
+# scopes, and Scope.Char is what turns each row back into a character; the row's
+# checkbox hands that character to script through AddScope, which the scripted
+# GUI receives because it declares saved_scopes.
+def  "button_checkbox type"  "gui/shared/buttons.gui" "type button_checkbox = "
+use  "Scope.Char"            "Scope\.Char"
+use  "AddScope with a character" "AddScope\( *'[a-z_]+', *Character\.MakeScope *\)"
+def  "saved_scopes on scripted guis" "common/scripted_guis" "saved_scopes = [{]"
+suse "remove_list_variable"  "remove_list_variable = [{]"
 def  "on_game_start_after_lobby" "common/on_action" "^on_game_start_after_lobby = [{]"
 # The shortcut. Same arrangement as the map mode's: vanilla pre-binds the
 # combination, the mod only names it.

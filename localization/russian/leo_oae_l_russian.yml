@@ -36,7 +36,11 @@
  leo_oae_mbge_ui_heading_targets_tt:0 "Как далеко спускаться по списку. Укрепляется каждый [governor|E] ниже выбранного уровня.\n\n#weak Уровень, который вы не можете оплатить полностью, затенён. Выберите #!#T Сколько смогу себе позволить#!#weak , чтобы потратить всё, что есть, и остановиться.#!"
  leo_oae_mbge_ui_heading_order:0 "Порядок"
  leo_oae_mbge_ui_heading_order_tt:0 "До кого деньги дойдут первыми, когда их не хватает на всех.\n\n#weak Имеет значение только для #!#T $gold_boost_desc$#!#weak , единственного способа, цена которого различается от [governor|E] к [governor|E].#!"
+ leo_oae_mbge_ui_heading_governors:0 "Губернаторы"
  leo_oae_mbge_ui_heading_summary:0 "Сводка"
+ leo_oae_mbge_ui_row_tt:0 "Без галочки этот [governor|E] в дело не попадёт. Его стоимость уйдёт из общей суммы выше."
+ leo_oae_mbge_ui_clear_exclusions:0 "Вернуть всех"
+ leo_oae_mbge_ui_clear_exclusions_tt:0 "Возвращает в дело всех [governor|E], которых вы отложили."
 
  leo_oae_mbge_ui_opt_0:0 "#weak Выберите способ#!"
  leo_oae_mbge_ui_opt_1:0 "$influence_boost_desc$"

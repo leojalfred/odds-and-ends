@@ -50,6 +50,26 @@ leo_oae_mbge_target_trigger = {
 	}
 }
 
+# Current scope: a candidate governor. Requires scope:leo_oae_mbge_actor.
+#
+# Vanilla allows it and the player has not set this one aside. Everything that
+# counts, prices or spends asks this; only the list on screen asks the trigger
+# above, because a governor who has been set aside still has to be shown, or
+# there would be no way to put them back.
+leo_oae_mbge_included_trigger = {
+	leo_oae_mbge_target_trigger = yes
+
+	save_temporary_scope_as = leo_oae_mbge_gov
+	scope:leo_oae_mbge_actor = {
+		NOT = {
+			is_target_in_variable_list = {
+				name = leo_oae_mbge_excluded
+				target = scope:leo_oae_mbge_gov
+			}
+		}
+	}
+}
+
 # Current scope: a candidate governor that already passed the trigger above.
 # Requires scope:leo_oae_mbge_actor.
 #
@@ -161,7 +181,11 @@ leo_oae_mbge_ack_trigger = {
 	var:leo_oae_mbge_afford_t_all = 0
 	var:leo_oae_mbge_afford_t_bud = 0
 
+	var:leo_oae_mbge_excluded_count = 0
+
 	is_target_in_variable_list = { name = leo_oae_mbge_opts target = flag:opt_1 }
 	is_target_in_variable_list = { name = leo_oae_mbge_threshes target = flag:t_all }
 	is_target_in_variable_list = { name = leo_oae_mbge_orders target = flag:order_1 }
+	is_target_in_variable_list = { name = leo_oae_mbge_targets target = this }
+	is_target_in_variable_list = { name = leo_oae_mbge_excluded target = this }
 }
