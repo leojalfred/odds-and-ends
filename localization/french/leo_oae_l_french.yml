@@ -49,7 +49,7 @@
  leo_oae_mbge_ui_t_20:0 "Sous 20 %"
  leo_oae_mbge_ui_t_30:0 "Sous 30 %"
  leo_oae_mbge_ui_t_bud:0 "Tous les gouverneurs éligibles"
- leo_oae_mbge_ui_t_op:0 "Opinion avec de la marge"
+ leo_oae_mbge_ui_t_nf:0 "Tous sauf les futurs amis"
 
  leo_oae_mbge_ui_t_m40_tt:0 ""
  leo_oae_mbge_ui_t_m30_tt:0 ""
@@ -60,7 +60,7 @@
  leo_oae_mbge_ui_t_20_tt:0 ""
  leo_oae_mbge_ui_t_30_tt:0 ""
  leo_oae_mbge_ui_t_bud_tt:0 "Chaque [governor|E] que le jeu autorise, aussi loin dans la liste que le trésor le permet."
- leo_oae_mbge_ui_t_op_tt:0 "Chaque [governor|E] que le jeu autorise dont l'opinion à votre égard reste assez basse pour que la bienveillance gagnée par un renforcement compte en entier, au lieu de déborder du plafond de 100. Aussi loin dans la liste que le trésor le permet."
+ leo_oae_mbge_ui_t_nf_tt:0 "Chaque [governor|E] que le jeu autorise, sauf ceux qu'un renforcement ferait devenir vos amis, aussi loin dans la liste que le trésor le permet."
 
  leo_oae_mbge_ui_tc_0:0 "#weak Choisissez un niveau#!"
  leo_oae_mbge_ui_tc_1:0 "$leo_oae_mbge_ui_t_m40$"
@@ -73,7 +73,7 @@
  leo_oae_mbge_ui_tc_8:0 "$leo_oae_mbge_ui_t_30$"
  leo_oae_mbge_ui_tc_9:0 "$leo_oae_mbge_ui_t_bud$"
  leo_oae_mbge_ui_tc_10:0 "$leo_oae_mbge_ui_t_bud$"
- leo_oae_mbge_ui_tc_11:0 "$leo_oae_mbge_ui_t_op$"
+ leo_oae_mbge_ui_tc_11:0 "$leo_oae_mbge_ui_t_nf$"
 
  leo_oae_mbge_ui_order_0:0 "#weak Choisissez un ordre#!"
  leo_oae_mbge_ui_order_1:0 "La pire gouvernance d'abord"

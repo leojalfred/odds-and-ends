@@ -185,10 +185,9 @@ leo_oae_mbge_set_t_bud = {
 	}
 }
 
-# The same walk as t_bud, narrowed to the governors whose opinion of the player
-# still has room for the goodwill a bolster earns, so none of it is thrown away
-# against the ceiling.
-leo_oae_mbge_set_t_op = {
+# The same walk as t_bud, minus the governors a bolster would turn into the
+# player's friend.
+leo_oae_mbge_set_t_nf = {
 	scope = character
 	effect = {
 		set_variable = { name = leo_oae_mbge_thresh value = 11 }

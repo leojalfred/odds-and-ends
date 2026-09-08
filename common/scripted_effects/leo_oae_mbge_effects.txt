@@ -14,16 +14,18 @@
 ###
 ### Threshold buckets are addressed by a suffix rather than a number, because a
 ### script variable name cannot be built at runtime. Codes 1-11 map to
-### t_m40 t_m30 t_m20 t_m10 t_0 t_10 t_20 t_30 t_all t_bud t_op, in that order,
+### t_m40 t_m30 t_m20 t_m10 t_0 t_10 t_20 t_30 t_all t_bud t_nf, in that order,
 ### and are append-only: they live in saved variables, so renumbering would
 ### rewrite the settings of everyone already playing. Code 9, t_all, is gone
 ### along with its bucket, and its number is left unused rather than handed to
 ### something else.
 ###
-### Two of the buckets, t_bud and t_op, are priced against the treasury rather
+### Two of the buckets, t_bud and t_nf, are priced against the treasury rather
 ### than filled outright: they take whoever still fits and stop when the money
 ### runs out, so they are never grayed for being unaffordable. The other eight
-### are graduated levels that have to be payable in full.
+### are graduated levels that have to be payable in full. t_nf is t_bud minus
+### the governors a bolster would make friends of, which is the one outcome of a
+### bolster a player may not want handed to them in bulk.
 
 ### The dropdown contents.
 #
@@ -41,9 +43,10 @@ leo_oae_mbge_build_options_effect = {
 
 	# The one that needs no thinking about comes first: everyone the game allows,
 	# as far down as the treasury reaches. The graduated levels follow for when a
-	# run wants aiming, and the opinion row comes last because it cuts across a
-	# different axis from all of them. Display order is not code order, and
-	# deliberately so: the codes are append-only because they persist in saves.
+	# run wants aiming, and the row that holds friendships back comes last
+	# because it cuts across a different axis from all of them. Display order is
+	# not code order, and deliberately so: the codes are append-only because they
+	# persist in saves.
 	#
 	# There used to be two entries at the top rather than one. "Every eligible
 	# governor" demanded the whole pool be payable and was disabled otherwise,
@@ -62,7 +65,7 @@ leo_oae_mbge_build_options_effect = {
 	add_to_variable_list = { name = leo_oae_mbge_threshes target = flag:t_10 }
 	add_to_variable_list = { name = leo_oae_mbge_threshes target = flag:t_20 }
 	add_to_variable_list = { name = leo_oae_mbge_threshes target = flag:t_30 }
-	add_to_variable_list = { name = leo_oae_mbge_threshes target = flag:t_op }
+	add_to_variable_list = { name = leo_oae_mbge_threshes target = flag:t_nf }
 
 	clear_variable_list = leo_oae_mbge_orders
 	add_to_variable_list = { name = leo_oae_mbge_orders target = flag:order_1 }
@@ -71,7 +74,7 @@ leo_oae_mbge_build_options_effect = {
 	# Stamps what these lists were built from, so a save carrying an older set
 	# is rebuilt rather than trusted. Bump it whenever the entries or their
 	# order change, or a save keeps showing the old list.
-	set_variable = { name = leo_oae_mbge_opts_version value = 2 }
+	set_variable = { name = leo_oae_mbge_opts_version value = 3 }
 
 	# The branch never runs. See the trigger for why it has to be named.
 	if = { limit = { leo_oae_mbge_ack_trigger = yes } }
@@ -87,7 +90,7 @@ leo_oae_mbge_init_defaults_effect = {
 		limit = {
 			OR = {
 				NOT = { has_variable = leo_oae_mbge_opts_version }
-				NOT = { var:leo_oae_mbge_opts_version = 2 }
+				NOT = { var:leo_oae_mbge_opts_version = 3 }
 			}
 		}
 		leo_oae_mbge_build_options_effect = yes
@@ -143,14 +146,18 @@ leo_oae_mbge_accum_bucket_effect = {
 # staged together even though no single threshold reads both: which one matters
 # is decided by a variable, and a trigger cannot be chosen at runtime, so the
 # chain that picks between them has to find either one already there.
+#
+# Neither is expensive next to what the recount already pays. Vanilla's
+# eligibility question hands the engine a whole interaction to evaluate per
+# vassal; a skill lookup and two relation checks are noise beside it.
 leo_oae_mbge_stage_governor_effect = {
 	save_temporary_scope_value_as = {
 		name = leo_oae_mbge_eff
 		value = governor_efficiency_presented
 	}
 	save_temporary_scope_value_as = {
-		name = leo_oae_mbge_room
-		value = leo_oae_mbge_opinion_room_value
+		name = leo_oae_mbge_befriend
+		value = leo_oae_mbge_would_befriend_value
 	}
 }
 
@@ -193,7 +200,7 @@ leo_oae_mbge_recount_effect = {
 	leo_oae_mbge_zero_bucket_effect = { B = t_20 }
 	leo_oae_mbge_zero_bucket_effect = { B = t_30 }
 	leo_oae_mbge_zero_bucket_effect = { B = t_bud }
-	leo_oae_mbge_zero_bucket_effect = { B = t_op }
+	leo_oae_mbge_zero_bucket_effect = { B = t_nf }
 
 	clear_variable_list = leo_oae_mbge_pool
 
@@ -443,15 +450,14 @@ leo_oae_mbge_budget_step_t_bud_effect = {
 }
 
 # Current scope: a governor. Requires scope:leo_oae_mbge_actor. The same row,
-# narrowed to the governors whose opinion of the player still has room for the
-# goodwill a bolster earns.
-leo_oae_mbge_budget_step_t_op_effect = {
+# minus the governors a bolster would turn into the player's friend.
+leo_oae_mbge_budget_step_t_nf_effect = {
 	save_temporary_scope_as = leo_oae_mbge_cand
 	leo_oae_mbge_stage_governor_effect = yes
 
 	if = {
-		limit = { scope:leo_oae_mbge_room >= 0 }
-		leo_oae_mbge_budget_try_effect = { B = t_op }
+		limit = { scope:leo_oae_mbge_befriend = 0 }
+		leo_oae_mbge_budget_try_effect = { B = t_nf }
 	}
 }
 
@@ -498,7 +504,7 @@ leo_oae_mbge_budget_walk_effect = {
 leo_oae_mbge_budget_pass_effect = {
 	save_scope_as = leo_oae_mbge_actor
 	set_variable = { name = leo_oae_mbge_bud_infl_t_bud value = 0 }
-	set_variable = { name = leo_oae_mbge_bud_infl_t_op value = 0 }
+	set_variable = { name = leo_oae_mbge_bud_infl_t_nf value = 0 }
 
 	# Nothing to walk if the realm turned up nobody. See the list build for why
 	# the pool's existence has to be asked rather than assumed.
@@ -506,7 +512,7 @@ leo_oae_mbge_budget_pass_effect = {
 		limit = { has_variable_list = leo_oae_mbge_pool }
 
 		leo_oae_mbge_budget_walk_effect = { B = t_bud }
-		leo_oae_mbge_budget_walk_effect = { B = t_op }
+		leo_oae_mbge_budget_walk_effect = { B = t_nf }
 	}
 }
 
@@ -547,7 +553,7 @@ leo_oae_mbge_afford_pass_effect = {
 	leo_oae_mbge_afford_bucket_effect = { B = t_30 }
 
 	leo_oae_mbge_afford_budget_row_effect = { B = t_bud }
-	leo_oae_mbge_afford_budget_row_effect = { B = t_op }
+	leo_oae_mbge_afford_budget_row_effect = { B = t_nf }
 }
 
 # Current scope: the player.
@@ -601,7 +607,7 @@ leo_oae_mbge_select_bucket_effect = {
 	else_if = { limit = { var:leo_oae_mbge_thresh = 6 }  leo_oae_mbge_pick_bucket_effect = { B = t_10 } }
 	else_if = { limit = { var:leo_oae_mbge_thresh = 7 }  leo_oae_mbge_pick_bucket_effect = { B = t_20 } }
 	else_if = { limit = { var:leo_oae_mbge_thresh = 8 }  leo_oae_mbge_pick_bucket_effect = { B = t_30 } }
-	else_if = { limit = { var:leo_oae_mbge_thresh = 11 } leo_oae_mbge_pick_bucket_effect = { B = t_op } }
+	else_if = { limit = { var:leo_oae_mbge_thresh = 11 } leo_oae_mbge_pick_bucket_effect = { B = t_nf } }
 	# 10 is the whole pool, as far down it as the money reaches, and is where
 	# everything that is not a level of its own lands: the retired code 9 and the
 	# 0 an unset variable reads along with it.

@@ -176,52 +176,36 @@ def  "cost is still minor influence plus medium gold" \
      "common/character_interactions" "value = scope:recipient\.medium_gold_value"
 
 echo
-echo "Mass Bolster Governance - the opinion a bolster is worth"
-# The row that catches the governors whose opinion of the player still has room
-# for a bolster's goodwill has to know how much goodwill that is, and vanilla
-# hands it out in one of three ways depending on where the opinion already
-# stands. These pin all three branches, and the four numbers behind them.
+echo "Mass Bolster Governance - the friendship a bolster can make"
+# The row that holds friendships back has to know when a bolster would make one.
+# Vanilla's answer is two conditions deep: the success effect runs its own
+# friendship progression once the recipient's opinion is high enough, and that
+# progression upgrades a standing potential friendship into a real one.
 #
-# The branch gate. Vanilla writes it as a bare literal, so it is read back as
-# one rather than by name.
+# The threshold it tests. Vanilla writes it as a bare literal inside the effect,
+# where script cannot reach it, so the figure itself is read back rather than a
+# name around it.
 num  "the friend branch's floor" "common/scripted_effects/07_dlc_ep3_scripted_effects.txt" \
      '/^boost_governor_efficiency_success_effect = \{/,/^\}/{ s/^[[:space:]]*value >= ([0-9]+).*/\1/p }' 15
-# Above the floor, vanilla runs its own friendship progression and hands it
-# default_friend_opinion. That value is a real script value and is read as one,
-# so only its existence and the call site need pinning.
 def  "progress_towards_friend_effect" \
      "common/scripted_effects" "^progress_towards_friend_effect = [{]"
 def  "the bolster still routes through it" \
      "common/scripted_effects" "OPINION = default_friend_opinion"
-def  "default_friend_opinion"    "common/script_values" "^default_friend_opinion = "
-def  "friendliness_opinion (what it hands over)" \
-     "common/opinion_modifiers" "^friendliness_opinion = [{]"
-# Unless that progression upgrades a standing potential friendship instead, in
-# which case the friend relation's own opinion is the gain. Vanilla's trigger is
-# called rather than restated, so a change to who may become a friend is
-# followed for free; the relation's opinion is a number script cannot read.
+# The upgrade's own two conditions. The trigger is called rather than restated,
+# so a change to who may become a friend is followed for free, but it still has
+# to exist under this name.
 def  "can_set_relation_friend_trigger" \
      "common/scripted_triggers" "^can_set_relation_friend_trigger = [{]"
 suse "has_relation_potential_friend"  "has_relation_potential_friend = "
-num  "the friend relation's opinion" "common/scripted_relations/00_scripted_relations.txt" \
-     '/^friend = \{/,/^\}/{ s/^[[:space:]]*opinion = (-?[0-9]+).*/\1/p }' 60
-# Below the floor an AI governor gets the Bolstered My Governance modifier
-# instead. Its value is priced in full even though the modifier does not stack,
-# because that branch cannot reach the ceiling either way. If this number ever
-# grows past the difference between the floor and the cap, the decay a
-# re-bolster does not repeat starts to matter and the row needs rethinking.
-def  "boosted_efficiency_opinion is still what it adds" \
-     "common/scripted_effects" "modifier = boosted_efficiency_opinion"
-num  "boosted_efficiency_opinion" "common/opinion_modifiers/06_dlc_ep3_opinions.txt" \
-     '/^boosted_efficiency_opinion = \{/,/^\}/{ s/^[[:space:]]*opinion = (-?[0-9]+).*/\1/p }' 25
-# The ceiling the whole row is measured against. There is no way to read a
-# define from script, so it is copied and pinned here.
-num  "MAX_OPINION" "common/defines/00_defines.txt" \
-     's/^[[:space:]]*MAX_OPINION = ([0-9]+).*/\1/p' 100
-# Opinion as a number rather than as a comparison, which is what the subtraction
-# needs. It is script math with no definition file, so vanilla's own use of it
-# is the only thing a file scan can confirm.
-suse "the opinion() script math function"  "\.opinion\("
+def  "the potential_friend relation" \
+     "common/scripted_relations" "^potential_friend = [{]"
+# What the progression does when it does not upgrade: an opinion gift and
+# nothing more. That branch is deliberately let through, so if a patch ever gave
+# it a relation of its own, this row would start letting past exactly what it
+# exists to hold back. Nothing a file scan can see would say so, which is what
+# the smoke test step is for.
+def  "friendliness_opinion (the branch that is let through)" \
+     "common/opinion_modifiers" "^friendliness_opinion = [{]"
 
 echo
 echo "Mass Bolster Governance - script built-ins it leans on"

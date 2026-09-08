@@ -49,7 +49,7 @@
  leo_oae_mbge_ui_t_20:0 "Por debajo del 20 %"
  leo_oae_mbge_ui_t_30:0 "Por debajo del 30 %"
  leo_oae_mbge_ui_t_bud:0 "Todos los gobernadores elegibles"
- leo_oae_mbge_ui_t_op:0 "Opinión con margen"
+ leo_oae_mbge_ui_t_nf:0 "Todos menos los futuros amigos"
 
  leo_oae_mbge_ui_t_m40_tt:0 ""
  leo_oae_mbge_ui_t_m30_tt:0 ""
@@ -60,7 +60,7 @@
  leo_oae_mbge_ui_t_20_tt:0 ""
  leo_oae_mbge_ui_t_30_tt:0 ""
  leo_oae_mbge_ui_t_bud_tt:0 "Cada [governor|E] que el juego permite, hasta donde alcance el tesoro."
- leo_oae_mbge_ui_t_op_tt:0 "Cada [governor|E] que el juego permite cuya opinión de ti siga siendo lo bastante baja para que la buena voluntad de un refuerzo cuente por entero, en lugar de rebasar el techo de 100. Hasta donde alcance el tesoro."
+ leo_oae_mbge_ui_t_nf_tt:0 "Cada [governor|E] que el juego permite, salvo aquellos a los que un refuerzo convertiría en tus amigos, hasta donde alcance el tesoro."
 
  leo_oae_mbge_ui_tc_0:0 "#weak Elige un nivel#!"
  leo_oae_mbge_ui_tc_1:0 "$leo_oae_mbge_ui_t_m40$"
@@ -73,7 +73,7 @@
  leo_oae_mbge_ui_tc_8:0 "$leo_oae_mbge_ui_t_30$"
  leo_oae_mbge_ui_tc_9:0 "$leo_oae_mbge_ui_t_bud$"
  leo_oae_mbge_ui_tc_10:0 "$leo_oae_mbge_ui_t_bud$"
- leo_oae_mbge_ui_tc_11:0 "$leo_oae_mbge_ui_t_op$"
+ leo_oae_mbge_ui_tc_11:0 "$leo_oae_mbge_ui_t_nf$"
 
  leo_oae_mbge_ui_order_0:0 "#weak Elige un orden#!"
  leo_oae_mbge_ui_order_1:0 "Peor gobernanza primero"
