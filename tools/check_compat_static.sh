@@ -50,6 +50,18 @@ file() { # <label> <path under GAME>              strong, FAIL if missing
 	if [ -f "$GAME/$2" ]; then printf '  ok    %s\n' "$1"; P=$((P+1))
 	else printf '  FAIL  %s\n' "$1"; F=$((F+1)); FAILS="$FAILS\n  - $1"; fi
 }
+num()  { # <label> <path under GAME> <sed -nE program> <expected>
+	# For the handful of vanilla numbers the mod copies because script cannot
+	# read them: a define, a relation's opinion, an opinion modifier's value. A
+	# name check would pass while the number underneath moved, so these compare
+	# the figure itself. The leading sed drops a UTF-8 BOM, which would
+	# otherwise stop the first line of a file from anchoring.
+	local got
+	got=$(sed '1s/^\xef\xbb\xbf//' "$GAME/$2" 2>/dev/null | sed -nE "$3" | head -1)
+	if [ "$got" = "$4" ]; then printf '  ok    %s is still %s\n' "$1" "$4"; P=$((P+1))
+	else printf '  FAIL  %s should be %s, reads %s\n' "$1" "$4" "${got:-nothing}"
+		F=$((F+1)); FAILS="$FAILS\n  - $1 has moved"; fi
+}
 
 echo "Checking against: $GAME"
 [ -d "$GAME" ] || { echo "  game directory not found - set GAME_DIR"; exit 2; }
@@ -162,6 +174,54 @@ def  "medium_gold_value"                  "common/script_values" "^medium_gold_v
 # or drops the per-recipient gold, is caught rather than silently mispriced.
 def  "cost is still minor influence plus medium gold" \
      "common/character_interactions" "value = scope:recipient\.medium_gold_value"
+
+echo
+echo "Mass Bolster Governance - the opinion a bolster is worth"
+# The row that catches the governors whose opinion of the player still has room
+# for a bolster's goodwill has to know how much goodwill that is, and vanilla
+# hands it out in one of three ways depending on where the opinion already
+# stands. These pin all three branches, and the four numbers behind them.
+#
+# The branch gate. Vanilla writes it as a bare literal, so it is read back as
+# one rather than by name.
+num  "the friend branch's floor" "common/scripted_effects/07_dlc_ep3_scripted_effects.txt" \
+     '/^boost_governor_efficiency_success_effect = \{/,/^\}/{ s/^[[:space:]]*value >= ([0-9]+).*/\1/p }' 15
+# Above the floor, vanilla runs its own friendship progression and hands it
+# default_friend_opinion. That value is a real script value and is read as one,
+# so only its existence and the call site need pinning.
+def  "progress_towards_friend_effect" \
+     "common/scripted_effects" "^progress_towards_friend_effect = [{]"
+def  "the bolster still routes through it" \
+     "common/scripted_effects" "OPINION = default_friend_opinion"
+def  "default_friend_opinion"    "common/script_values" "^default_friend_opinion = "
+def  "friendliness_opinion (what it hands over)" \
+     "common/opinion_modifiers" "^friendliness_opinion = [{]"
+# Unless that progression upgrades a standing potential friendship instead, in
+# which case the friend relation's own opinion is the gain. Vanilla's trigger is
+# called rather than restated, so a change to who may become a friend is
+# followed for free; the relation's opinion is a number script cannot read.
+def  "can_set_relation_friend_trigger" \
+     "common/scripted_triggers" "^can_set_relation_friend_trigger = [{]"
+suse "has_relation_potential_friend"  "has_relation_potential_friend = "
+num  "the friend relation's opinion" "common/scripted_relations/00_scripted_relations.txt" \
+     '/^friend = \{/,/^\}/{ s/^[[:space:]]*opinion = (-?[0-9]+).*/\1/p }' 60
+# Below the floor an AI governor gets the Bolstered My Governance modifier
+# instead. Its value is priced in full even though the modifier does not stack,
+# because that branch cannot reach the ceiling either way. If this number ever
+# grows past the difference between the floor and the cap, the decay a
+# re-bolster does not repeat starts to matter and the row needs rethinking.
+def  "boosted_efficiency_opinion is still what it adds" \
+     "common/scripted_effects" "modifier = boosted_efficiency_opinion"
+num  "boosted_efficiency_opinion" "common/opinion_modifiers/06_dlc_ep3_opinions.txt" \
+     '/^boosted_efficiency_opinion = \{/,/^\}/{ s/^[[:space:]]*opinion = (-?[0-9]+).*/\1/p }' 25
+# The ceiling the whole row is measured against. There is no way to read a
+# define from script, so it is copied and pinned here.
+num  "MAX_OPINION" "common/defines/00_defines.txt" \
+     's/^[[:space:]]*MAX_OPINION = ([0-9]+).*/\1/p' 100
+# Opinion as a number rather than as a comparison, which is what the subtraction
+# needs. It is script math with no definition file, so vanilla's own use of it
+# is the only thing a file scan can confirm.
+suse "the opinion() script math function"  "\.opinion\("
 
 echo
 echo "Mass Bolster Governance - script built-ins it leans on"

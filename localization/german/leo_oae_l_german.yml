@@ -49,6 +49,7 @@
  leo_oae_mbge_ui_t_20:0 "Unter 20 %"
  leo_oae_mbge_ui_t_30:0 "Unter 30 %"
  leo_oae_mbge_ui_t_bud:0 "Alle infrage kommenden Statthalter"
+ leo_oae_mbge_ui_t_op:0 "Meinung mit Luft nach oben"
 
  leo_oae_mbge_ui_t_m40_tt:0 ""
  leo_oae_mbge_ui_t_m30_tt:0 ""
@@ -59,6 +60,7 @@
  leo_oae_mbge_ui_t_20_tt:0 ""
  leo_oae_mbge_ui_t_30_tt:0 ""
  leo_oae_mbge_ui_t_bud_tt:0 "Jeder [governor|E], den das Spiel zulässt, so weit die Schatzkammer reicht."
+ leo_oae_mbge_ui_t_op_tt:0 "Jeder [governor|E], den das Spiel zulässt und dessen Meinung von Euch noch niedrig genug ist, dass das Wohlwollen einer Stärkung vollständig ankommt, statt über die Obergrenze von 100 hinauszugehen. So weit die Schatzkammer reicht."
 
  leo_oae_mbge_ui_tc_0:0 "#weak Wählt eine Marke#!"
  leo_oae_mbge_ui_tc_1:0 "$leo_oae_mbge_ui_t_m40$"
@@ -71,6 +73,7 @@
  leo_oae_mbge_ui_tc_8:0 "$leo_oae_mbge_ui_t_30$"
  leo_oae_mbge_ui_tc_9:0 "$leo_oae_mbge_ui_t_bud$"
  leo_oae_mbge_ui_tc_10:0 "$leo_oae_mbge_ui_t_bud$"
+ leo_oae_mbge_ui_tc_11:0 "$leo_oae_mbge_ui_t_op$"
 
  leo_oae_mbge_ui_order_0:0 "#weak Wählt eine Reihenfolge#!"
  leo_oae_mbge_ui_order_1:0 "Schlechteste Verwaltung zuerst"

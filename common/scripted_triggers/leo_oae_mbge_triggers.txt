@@ -88,12 +88,13 @@ leo_oae_mbge_included_trigger = {
 	}
 }
 
-# Current scope: the player. Requires scope:leo_oae_mbge_eff, the efficiency of
-# the governor being considered.
+# Current scope: the player. Requires scope:leo_oae_mbge_eff and
+# scope:leo_oae_mbge_room, the two figures leo_oae_mbge_stage_governor_effect
+# works out for the governor being considered.
 #
 # Whether that governor falls under the threshold currently selected. The
-# governor's efficiency is the governor's; the only thing the player holds is
-# which threshold was picked, which is why this is asked here.
+# figures are the governor's; the only thing the player holds is which threshold
+# was picked, which is why this is asked here.
 #
 # Every comparison is a staged value against a literal, which is the shape the
 # counting pass uses and the only shape proven to work. Two earlier versions
@@ -110,8 +111,14 @@ leo_oae_mbge_row_shown_trigger = {
 	trigger_else_if = { limit = { var:leo_oae_mbge_thresh = 6 } scope:leo_oae_mbge_eff < 10 }
 	trigger_else_if = { limit = { var:leo_oae_mbge_thresh = 7 } scope:leo_oae_mbge_eff < 20 }
 	trigger_else_if = { limit = { var:leo_oae_mbge_thresh = 8 } scope:leo_oae_mbge_eff < 30 }
-	# 10 is the whole pool, as far down it as the money reaches, and it does not
-	# filter by efficiency. Nor does the retired 9, which a save may still hold
+	# 11 asks nothing about efficiency. It catches the governors whose opinion of
+	# the player still has room for the goodwill a bolster earns, which is what
+	# the staged room figure is: the ceiling, less where they stand, less what
+	# the bolster would add. Zero means it lands exactly on the ceiling and
+	# nothing is thrown away, so zero is in.
+	trigger_else_if = { limit = { var:leo_oae_mbge_thresh = 11 } scope:leo_oae_mbge_room >= 0 }
+	# 10 is the whole pool, as far down it as the money reaches, and it filters
+	# by nothing at all. Nor does the retired 9, which a save may still hold
 	# until the defaults run and move it.
 	trigger_else = { always = yes }
 }
@@ -172,6 +179,7 @@ leo_oae_mbge_ack_trigger = {
 	var:leo_oae_mbge_afford_t_20 = 0
 	var:leo_oae_mbge_afford_t_30 = 0
 	var:leo_oae_mbge_afford_t_bud = 0
+	var:leo_oae_mbge_afford_t_op = 0
 
 	is_target_in_variable_list = { name = leo_oae_mbge_opts target = flag:opt_1 }
 	is_target_in_variable_list = { name = leo_oae_mbge_threshes target = flag:t_bud }

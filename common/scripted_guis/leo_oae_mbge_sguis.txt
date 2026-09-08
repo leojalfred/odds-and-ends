@@ -185,6 +185,17 @@ leo_oae_mbge_set_t_bud = {
 	}
 }
 
+# The same walk as t_bud, narrowed to the governors whose opinion of the player
+# still has room for the goodwill a bolster earns, so none of it is thrown away
+# against the ceiling.
+leo_oae_mbge_set_t_op = {
+	scope = character
+	effect = {
+		set_variable = { name = leo_oae_mbge_thresh value = 11 }
+		leo_oae_mbge_reselect_effect = yes
+	}
+}
+
 ### Who the budget is spent on first.
 #
 # Only Grease Palms charges a different price per governor, so this only ever

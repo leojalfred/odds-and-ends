@@ -49,6 +49,7 @@
  leo_oae_mbge_ui_t_20:0 "低于 20%"
  leo_oae_mbge_ui_t_30:0 "低于 30%"
  leo_oae_mbge_ui_t_bud:0 "所有符合条件的总督"
+ leo_oae_mbge_ui_t_op:0 "好感度尚有余量"
 
  leo_oae_mbge_ui_t_m40_tt:0 ""
  leo_oae_mbge_ui_t_m30_tt:0 ""
@@ -59,6 +60,7 @@
  leo_oae_mbge_ui_t_20_tt:0 ""
  leo_oae_mbge_ui_t_30_tt:0 ""
  leo_oae_mbge_ui_t_bud_tt:0 "游戏允许的每一位[governor|E]，直到国库耗尽为止。"
+ leo_oae_mbge_ui_t_op_tt:0 "游戏允许的[governor|E]中，对你的好感度仍足够低、使得强化治理所得的好感能够完整生效而不会溢出100上限的那些。直到国库耗尽为止。"
 
  leo_oae_mbge_ui_tc_0:0 "#weak 选择一个档位#!"
  leo_oae_mbge_ui_tc_1:0 "$leo_oae_mbge_ui_t_m40$"
@@ -71,6 +73,7 @@
  leo_oae_mbge_ui_tc_8:0 "$leo_oae_mbge_ui_t_30$"
  leo_oae_mbge_ui_tc_9:0 "$leo_oae_mbge_ui_t_bud$"
  leo_oae_mbge_ui_tc_10:0 "$leo_oae_mbge_ui_t_bud$"
+ leo_oae_mbge_ui_tc_11:0 "$leo_oae_mbge_ui_t_op$"
 
  leo_oae_mbge_ui_order_0:0 "#weak 选择一种顺序#!"
  leo_oae_mbge_ui_order_1:0 "治理最差者优先"

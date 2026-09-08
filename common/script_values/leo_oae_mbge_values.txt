@@ -41,17 +41,31 @@ leo_oae_mbge_bucket_influence_value = {
 	multiply = leo_oae_mbge_unit_influence_value
 }
 
-# Current scope: the player. What the budget pass would have spent in influence
+# Current scope: the player. What a budget row would have spent in influence
 # once one more governor is added to it.
-leo_oae_mbge_next_influence_value = {
-	value = var:leo_oae_mbge_bud_infl
+#
+# There are two budget rows now, and each keeps its own running total, so this
+# is written out once per row. A script value takes no arguments and the
+# variable it reads has to be named literally, so a macro cannot stand in.
+leo_oae_mbge_next_influence_t_bud_value = {
+	value = var:leo_oae_mbge_bud_infl_t_bud
+	add = leo_oae_mbge_unit_influence_value
+}
+
+leo_oae_mbge_next_influence_t_op_value = {
+	value = var:leo_oae_mbge_bud_infl_t_op
 	add = leo_oae_mbge_unit_influence_value
 }
 
 # Current scope: the player. Requires scope:leo_oae_mbge_gold_cost.
 # The same for gold, which unlike influence differs per governor.
-leo_oae_mbge_next_gold_value = {
+leo_oae_mbge_next_gold_t_bud_value = {
 	value = var:leo_oae_mbge_gold_t_bud
+	add = scope:leo_oae_mbge_gold_cost
+}
+
+leo_oae_mbge_next_gold_t_op_value = {
+	value = var:leo_oae_mbge_gold_t_op
 	add = scope:leo_oae_mbge_gold_cost
 }
 
@@ -184,4 +198,103 @@ leo_oae_mbge_worst_first_value = {
 leo_oae_mbge_cheapest_first_value = {
 	value = medium_gold_value
 	multiply = -1
+}
+
+### How much of a bolster's goodwill would actually land.
+#
+# A successful bolster changes the governor's opinion of the player in exactly
+# one of three ways, and which one it is depends on where that opinion already
+# stands (boost_governor_efficiency_success_effect,
+# 07_dlc_ep3_scripted_effects.txt:10623):
+#
+#   at or above 15    progress_towards_friend_effect, which either upgrades a
+#                     standing potential friendship into a friendship, worth the
+#                     friend relation's own opinion, or hands over
+#                     default_friend_opinion as friendliness_opinion
+#   below 15, AI      boosted_efficiency_opinion, the "Bolstered My Governance"
+#                     modifier
+#   below 15, player  nothing at all
+#
+# Opinion is clamped to MAX_OPINION, so whatever the gain would push past 100 is
+# thrown away. These values work out how much of it fits.
+#
+# **All four numbers below are mirrors rather than reads.** An opinion
+# modifier's value, a relation's opinion, a define and a literal written into an
+# effect are none of them reachable from script, so they are copied here and
+# pinned by the compat check, which compares the figures themselves rather than
+# the names around them. A patch that rebalances any of them leaves this row
+# quietly wrong until they are re-diffed.
+#
+# default_friend_opinion is the one figure in the model that is a real vanilla
+# script value, and it is read as one below. Note that it is not the same thing
+# as the bare 15 vanilla tests against, which is why the floor gets a mirror of
+# its own even though the two currently agree.
+leo_oae_mbge_opinion_cap_value = 100
+leo_oae_mbge_friend_relation_opinion_value = 60
+leo_oae_mbge_boost_opinion_value = 25
+leo_oae_mbge_friend_branch_floor_value = 15
+
+# Current scope: a governor. Requires scope:leo_oae_mbge_actor and
+# scope:leo_oae_mbge_cand, which is this same governor staged by name.
+#
+# The boost branch is priced at the modifier's whole value even though
+# "Bolstered My Governance" does not stack: a governor still carrying a
+# part-decayed one only gains the difference, so the real gain there is smaller
+# than this. That cannot change the answer. The branch is reached only below 15,
+# so even the full 25 lands at under 40 and the ceiling is nowhere near. The
+# engine can read a modifier's decayed value, through has_opinion_modifier's
+# optional value comparison, and it is not asked because the arithmetic makes it
+# unable to matter. It would start to matter only if a patch moved these two
+# numbers so far apart that 15 plus the boost passed 100, at which point pricing
+# the full value is the cautious way to be wrong.
+leo_oae_mbge_opinion_gain_value = {
+	value = 0
+
+	if = {
+		limit = {
+			opinion = {
+				target = scope:leo_oae_mbge_actor
+				value >= leo_oae_mbge_friend_branch_floor_value
+			}
+		}
+
+		# Vanilla runs progress_towards_friend_effect on the actor with the
+		# governor as its CHARACTER, so its condition is asked from the same
+		# side here rather than from the governor's, and its own trigger is
+		# called rather than restated.
+		if = {
+			limit = {
+				scope:leo_oae_mbge_actor = {
+					has_relation_potential_friend = scope:leo_oae_mbge_cand
+					can_set_relation_friend_trigger = { CHARACTER = scope:leo_oae_mbge_cand }
+				}
+			}
+			add = leo_oae_mbge_friend_relation_opinion_value
+		}
+		else = {
+			add = default_friend_opinion
+		}
+	}
+	else_if = {
+		limit = { is_ai = yes }
+		add = leo_oae_mbge_boost_opinion_value
+	}
+}
+
+# Requires scope:leo_oae_mbge_cand and scope:leo_oae_mbge_actor. The governor's
+# opinion of the player as a number rather than as a comparison, which is what
+# the subtraction below needs. Vanilla reaches for the same script math where it
+# needs the figure itself (10_tgp_dynastic_cycle_values.txt:904).
+leo_oae_mbge_opinion_of_actor_value = {
+	value = "scope:leo_oae_mbge_cand.opinion(scope:leo_oae_mbge_actor)"
+}
+
+# Current scope: a governor. Requires scope:leo_oae_mbge_actor and
+# scope:leo_oae_mbge_cand. What is left of the ceiling once the goodwill has
+# landed. Zero or more means none of it was thrown away, which is the whole
+# question the opinion row asks.
+leo_oae_mbge_opinion_room_value = {
+	value = leo_oae_mbge_opinion_cap_value
+	subtract = leo_oae_mbge_opinion_of_actor_value
+	subtract = leo_oae_mbge_opinion_gain_value
 }
