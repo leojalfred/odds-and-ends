@@ -1,0 +1,57 @@
+﻿### Leo VI's Odds and Ends - Roman Restoration, eligibility.
+###
+### Who is owed the Restoring Rome story back. The answer mirrors vanilla's own
+### on_owner_death (common/story_cycles/ep3_story_cycle_restoring_rome.txt): the
+### story is meant to follow the Roman title to a player heir, and the three
+### titles it names are exactly the three is_roman_emperor_trigger names.
+
+# Current scope: a character. True if the Roman Restoration has begun anywhere in
+# this world, which is the only surviving evidence that the story ever existed.
+#
+# ep3_emperor_yearly.2000 is the one thing in the game that creates the story. It
+# sets one of these globals in its immediate and creates the story in its after,
+# both unconditionally and whichever option is picked, so the two always happen
+# together. A world with none of them set is a world where the story was never
+# created, and granting one there would hand out a casus belli nobody earned.
+#
+# The list is vanilla's own switch, county for county
+# (events/dlc/ep3/ep3_emperor_yearly_2.txt). A patch that adds a reconquest
+# target adds a line here.
+leo_oae_paxrome_begun_trigger = {
+	OR = {
+		exists = global_var:ep3_reconquered_antiocheia
+		exists = global_var:ep3_reconquered_jerusalem
+		exists = global_var:ep3_reconquered_alexandria
+		exists = global_var:ep3_reconquered_abbadan
+		exists = global_var:ep3_reconquered_edessa
+		exists = global_var:ep3_reconquered_bari
+		exists = global_var:ep3_reconquered_siracusa
+		exists = global_var:ep3_reconquered_roma
+		exists = global_var:ep3_reconquered_ravenna
+		exists = global_var:ep3_reconquered_tunis
+		exists = global_var:ep3_reconquered_tangiers
+		exists = global_var:ep3_reconquered_murcia
+		exists = global_var:ep3_reconquered_lombardia
+		exists = global_var:ep3_reconquered_trier
+		exists = global_var:ep3_reconquered_hadrian
+		exists = global_var:ep3_reconquered_chandax
+		exists = global_var:ep3_reconquered_tourraine
+	}
+}
+
+# Current scope: a character. True if this character is one of the three Roman
+# emperors vanilla passes the story between and is not holding it.
+#
+# is_roman_emperor_trigger is vanilla's own, and it is the same set of titles
+# on_owner_death walks: h_roman_empire, h_eastern_roman_empire, e_byzantium. So a
+# patch that changes who counts as a Roman emperor changes this for free.
+#
+# The DLC gate is here rather than at the call site because everything this
+# feature touches is EP3's: without Roads to Power the story is never created,
+# the casus belli is never available, and the whole trigger is dead weight.
+leo_oae_paxrome_lost_trigger = {
+	has_ep3_dlc_trigger = yes
+	is_roman_emperor_trigger = yes
+	NOT = { any_owned_story = { type = ep3_story_cycle_restoring_rome } }
+	leo_oae_paxrome_begun_trigger = yes
+}

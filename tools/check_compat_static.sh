@@ -285,5 +285,61 @@ def  "governors concept alias"      "common/game_concepts" "alias = [{] governor
 def  "skill concept aliases"        "common/game_concepts" "alias = [{] diplomacy_i diplomacy [}]"
 
 echo
+echo "Roman Restoration - what the repair is for"
+# The casus belli the whole feature exists to keep. It asks for the story by
+# name; if that clause goes, so does the reason to put the story back.
+def  "pax_romana_invasion_war defined" \
+     "common/casus_belli_types/00_invasion_war.txt" "^pax_romana_invasion_war = [{]"
+def  "it still asks for the story" \
+     "common/casus_belli_types/00_invasion_war.txt" \
+     "any_owned_story = [{] type = ep3_story_cycle_restoring_rome [}]"
+def  "the story cycle itself"  "common/story_cycles" "^ep3_story_cycle_restoring_rome = [{]"
+# The bug. Vanilla's on_owner_death hands the story to the Roman title's heir
+# only if that heir reads as a player, which it does not during a succession, so
+# the story is destroyed instead. This is a warn rather than a fail on purpose:
+# if Paradox ever fixes it, the repair below becomes a no-op that costs a trigger
+# per quarter, and the feature can be retired rather than being broken.
+suse "the succession bug is still there"  "current_heir = [{] is_ai = no [}]"
+def  "hard mode is still a story variable"  "common/story_cycles" "has_variable = roman_empire_hard_mode"
+
+echo
+echo "Roman Restoration - who gets it back"
+# The three titles vanilla passes the story between. Mirrored rather than
+# rewritten, so a patch that changes who counts as a Roman emperor changes this.
+def  "is_roman_emperor_trigger"   "common/scripted_triggers" "^is_roman_emperor_trigger = [{]"
+def  "has_ep3_dlc_trigger"        "common/scripted_triggers" "^has_ep3_dlc_trigger = [{]"
+# The one place in the game that creates the story, and the globals it sets in
+# the same pass. Those globals are the only surviving evidence that a
+# restoration ever began, which is what stops the repair handing the casus belli
+# to someone who never earned it.
+def  "the story is still created there" \
+     "events/dlc/ep3/ep3_emperor_yearly_2.txt" "create_story = ep3_story_cycle_restoring_rome"
+def  "and the globals still go with it" \
+     "events/dlc/ep3/ep3_emperor_yearly_2.txt" "set_global_variable = ep3_reconquered_roma"
+# Copied county for county into leo_oae_paxrome_begun_trigger. A patch that adds
+# a reconquest target would leave a real restoration unrecognized, and nothing
+# else would say so.
+VGLOB=$(grep -rhoE "ep3_reconquered_[a-z]+" "$GAME/events/dlc/ep3" 2>/dev/null | sort -u | wc -l)
+MGLOB=$(grep -rhoE "ep3_reconquered_[a-z]+" \
+        "$ROOT/common/scripted_triggers/leo_oae_paxrome_triggers.txt" 2>/dev/null | sort -u | wc -l)
+if [ "$VGLOB" -gt 0 ] && [ "$VGLOB" -eq "$MGLOB" ]; then
+	printf '  ok    all %s reconquest globals are mirrored\n' "$VGLOB"; P=$((P+1))
+else
+	printf '  FAIL  reconquest globals: vanilla has %s, the trigger lists %s\n' "$VGLOB" "$MGLOB"
+	F=$((F+1)); FAILS="$FAILS\n  - the reconquest global list has drifted"
+fi
+# The invitation the recreated story sends itself. It checks this global, which
+# is what keeps the repair silent for an heir who inherits an already-restored
+# Rome instead of popping a decision window at them.
+def  "the intro event still checks flag_restored_roman_empire" \
+     "events/dlc/ep3/ep3_roman_restoration_events.txt" \
+     "NOT = [{] has_global_variable = flag_restored_roman_empire [}]"
+
+echo
+echo "Roman Restoration - when the repair runs"
+def  "on_title_gain_inheritance"  "common/on_action" "^on_title_gain_inheritance = [{]"
+def  "quarterly_playable_pulse"   "common/on_action" "^quarterly_playable_pulse = [{]"
+
+echo
 printf '%s ok, %s failed, %s warned\n' "$P" "$F" "$W"
 if [ "$F" -gt 0 ]; then printf 'Failures:%b\n' "$FAILS"; exit 1; fi

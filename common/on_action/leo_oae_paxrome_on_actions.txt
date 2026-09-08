@@ -1,0 +1,62 @@
+﻿### Leo VI's Odds and Ends - Roman Restoration, when the repair runs.
+###
+### An on_action's effect block is single-slot, so the last file loaded wins and
+### defining effect on a vanilla on_action would silently displace another mod's.
+### The on_actions list does merge across files, so this chains a child instead
+### and never writes to the vanilla entry itself.
+
+### After a succession.
+#
+# Root is the new holder, so this is the one hook that can put the story back the
+# moment it is lost rather than at the next pulse. It fires for every inherited
+# title of every character in the world, and the trigger is what keeps that
+# cheap: is_ai = no goes first and rejects all but one character in a
+# single-player game.
+#
+# The day's delay lets the succession settle before the state is judged, and
+# matches what vanilla does in this same on_action for diarchy.0113. It is not
+# what makes the hook work, though. The engine evaluates the trigger both when
+# the on_action fires and again when the delay is up, so if the player has not
+# yet been handed their heir at the moment of inheritance, this hook is skipped
+# and the quarterly pulse below is what repairs it. That is the reason the pulse
+# exists at all, and the reason the README test asks how fast the casus belli
+# comes back rather than only whether it does.
+on_title_gain_inheritance = {
+	on_actions = {
+		delay = { days = 1 }
+		leo_oae_paxrome_check
+	}
+}
+
+### Every quarter.
+#
+# The reliable net, and the only thing that can repair a game where the story was
+# already lost before this mod was installed: there is no on_action for loading a
+# save, and on_game_start_after_lobby is a new-game hook. Worst case the casus
+# belli is back within three months of game time.
+#
+# It is also what keeps the hard mode reading current, since that has to be taken
+# while the story is still alive.
+quarterly_playable_pulse = {
+	on_actions = { leo_oae_paxrome_check }
+}
+
+# Root is a character.
+leo_oae_paxrome_check = {
+	trigger = {
+		is_ai = no
+		has_ep3_dlc_trigger = yes
+		is_roman_emperor_trigger = yes
+	}
+
+	effect = {
+		if = {
+			limit = { any_owned_story = { type = ep3_story_cycle_restoring_rome } }
+			leo_oae_paxrome_track_hard_mode_effect = yes
+		}
+		else_if = {
+			limit = { leo_oae_paxrome_lost_trigger = yes }
+			leo_oae_paxrome_restore_effect = yes
+		}
+	}
+}
