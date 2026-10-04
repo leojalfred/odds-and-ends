@@ -43,7 +43,7 @@ window = {
 		# button is hidden from. Vanilla gates its own map mode hotkeys this
 		# way too (hud.gui's players entry uses enabled, not visible), because
 		# the widget has to stay alive to be listening at all.
-		enabled = "[And( CanChangeMapMode, Or( GetPlayer.GetTopLiege.GetGovernment.HasRule( 'noble_families' ), Or( GetPlayer.GetGovernment.IsType( 'japan_feudal_government' ), Or( GetPlayer.GetGovernment.IsType( 'japan_administrative_government' ), GetPlayer.GetGovernment.IsType( 'celestial_government' ) ) ) ) )]"
+		enabled = "[And( CanChangeMapMode, Or( Or( GetPlayer.GetTopLiege.GetGovernment.HasMechanic( 'administrative' ), GetPlayer.GetTopLiege.GetGovernment.HasRule( 'noble_families' ) ), Or( GetPlayer.GetGovernment.IsType( 'japan_feudal_government' ), Or( GetPlayer.GetGovernment.IsType( 'japan_administrative_government' ), GetPlayer.GetGovernment.IsType( 'celestial_government' ) ) ) ) )]"
 	}
 
 	### Mass Bolster Governance.
@@ -71,6 +71,6 @@ window = {
 		# script call every frame from the main menu onwards, which is the one
 		# place in the mod where that would genuinely cost something. Keep it in
 		# step with leo_oae_mbge_available_trigger by hand.
-		enabled = "[And( GetPlayer.IsRuler, And( GetPlayer.IsAdult, GetPlayer.GetGovernment.HasRule( 'administrative' ) ) )]"
+		enabled = "[And( GetPlayer.IsRuler, And( GetPlayer.IsAdult, GetPlayer.GetGovernment.HasMechanic( 'administrative' ) ) )]"
 	}
 }

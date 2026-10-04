@@ -1,8 +1,8 @@
 version="1.0.0"
 tags={
-	"1.19 'Scribe'"
+	"1.20 'Crozier'"
 	"Gameplay"
 	"Utilities"
 }
 name="Leo VI's Odds and Ends"
-supported_version="1.19.0.6"
+supported_version="1.20.*"

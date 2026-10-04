@@ -1,0 +1,58 @@
+﻿### Leo VI's Odds and Ends - Roman Restoration, the repair.
+###
+### Vanilla means the Restoring Rome story to follow the Roman title to a player
+### heir and fails to hand it over, so the story is destroyed with its owner and
+### the Pax Romana invasion casus belli, which asks for that story by name, goes
+### with it. These two put it back.
+
+# Current scope: a player Roman emperor who still holds the story.
+#
+# Hard mode is a variable on the story object, so it dies with the story and
+# cannot be read back afterwards. Mirroring it into a global while the story is
+# still alive is what lets the repair below restore the difficulty the player
+# actually chose instead of quietly dropping everyone to the easy path.
+#
+# It is a mirror and not a memory: vanilla has a decision that ends the trials
+# (ep3_decisions.txt), so the global has to be cleared as well as set, or a
+# succession after that decision would put hard mode back on.
+leo_oae_paxrome_track_hard_mode_effect = {
+	if = {
+		limit = {
+			any_owned_story = {
+				type = ep3_story_cycle_restoring_rome
+				has_variable = roman_empire_hard_mode
+			}
+		}
+		set_global_variable = leo_oae_paxrome_hard
+	}
+	else_if = {
+		limit = { has_global_variable = leo_oae_paxrome_hard }
+		remove_global_variable = leo_oae_paxrome_hard
+	}
+}
+
+# Current scope: a player Roman emperor who has lost the story.
+#
+# create_story runs the story's own on_setup, which sends
+# ep3_roman_restoration.0001, the invitation to take the Restore the Roman Empire
+# decision. That event checks for flag_restored_roman_empire itself, so an heir
+# who inherits an already-restored Rome is never shown it. An heir who inherits a
+# restoration still in progress is, which is the same event vanilla shows anyone
+# the story is created for.
+#
+# Hard mode is only restored from a reading this mod took while the story was
+# still alive. A story lost before the mod was installed comes back on the easy
+# path, because there is nothing left in the save that says otherwise.
+leo_oae_paxrome_restore_effect = {
+	create_story = {
+		type = ep3_story_cycle_restoring_rome
+		save_scope_as = leo_oae_paxrome_story
+	}
+
+	if = {
+		limit = { has_global_variable = leo_oae_paxrome_hard }
+		scope:leo_oae_paxrome_story = { set_variable = roman_empire_hard_mode }
+	}
+
+	debug_log = "leo_oae_paxrome: Restoring Rome story returned to the player"
+}

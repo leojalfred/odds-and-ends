@@ -1,8 +1,8 @@
 # Leo VI's Odds and Ends
 
-A collection of small quality-of-life fixes for **Crusader Kings III (1.19.x)**. Each one is independent: they share nothing, and any of them would be worth having on its own.
+A collection of small quality-of-life fixes for **Crusader Kings III (1.20.x)**. Each one is independent: they share nothing, and any of them would be worth having on its own.
 
-Nothing here changes what your character is allowed to do. Every feature is a shortcut to something the game already lets you reach, gated by the game's own rules about who may reach it.
+Nothing here changes what your character is allowed to do. Every feature is either a shortcut to something the game already lets you reach or a repair to something the game meant you to have, gated in both cases by the game's own rules about who may reach it.
 
 It requires **no DLC**. Features that only make sense alongside one check for it themselves and stay out of the way otherwise.
 
@@ -40,13 +40,17 @@ Bolsters the government efficiency of many governors in one action, instead of o
 
 Once your realm is settled, Bolstering Governance is where most of your influence goes, and spending it means clicking through governors one at a time. This adds a **Mass Bolster Governance** decision, and the keyboard shortcut **ctrl+shift+B**, either of which opens a panel. The shortcut goes straight there; the decision explains what it does first and then opens the same panel. Everything is chosen in that one scrolling window, and the **Bolster Governance** button at the bottom of it does the whole run in a single click.
 
-In it you pick two things. First the method: the same five the game offers you when you bolster a single governor, Divert Resources, Grease Palms, and the three that test your diplomacy, stewardship or intrigue. Those three carry their success chance next to the name, the same figure the game shows in its own Possible Outcomes panel, so you can weigh a cheap gamble against a certainty without opening a governor to look. Second how far down the list to go, from the governors below -40% efficiency up to **Every Eligible Governor**. The panel then tells you how many governors that comes to and what it will cost, and a graduated level you cannot pay for in full is grayed out. Gold is only ever quoted for Grease Palms, since it is the only method that charges any.
+In it you pick two things. First the method: the same five the game offers you when you bolster a single governor, Divert Resources, Grease Palms, and the three that test your diplomacy, stewardship or intrigue. Those three carry their success chance next to the name, the same figure the game shows in its own Possible Outcomes panel, so you can weigh a cheap gamble against a certainty without opening a governor to look. Second which governors to reach, from the ones below -40% efficiency up to **Every Eligible Governor**, with **Everyone but Would-Be Friends** at the end of the same list. The panel then tells you how many governors that comes to and what it will cost, and a graduated level you cannot pay for in full is grayed out. Gold is only ever quoted for Grease Palms, since it is the only method that charges any.
 
 Every Eligible Governor works down the whole pool spending what you have, starting with the governors who need it most and stopping when the money runs out. So it is never grayed out: if you cannot reach all of them, it reaches as many as you can afford and says how many that is.
 
+Everyone but Would-Be Friends is that same run with one exception carved out of it: the governors a bolster would turn into your friend. A bolster is generous with more than efficiency, and one of the things it can hand you is a friendship, which a mass bolster can hand you a dozen of at once. Friends are people, people die, and a friend dying costs you stress. This option spends on everybody else and leaves those few for you to decide about one at a time. Opinion itself is not filtered at all: a governor whose opinion of you is already at the ceiling is still bolstered, because the efficiency is what you were buying.
+
+The game only makes the friendship under three conditions at once. The governor's opinion of you has to be at least 15, they have to already be marked as a potential friend of yours, and nothing must stand in the way of the two of you being friends, which is the game's own test and not one of ours. Miss any of those and a bolster gives ordinary goodwill instead, and that is let through. The three skill methods can also fail their roll, in which case nothing happens at all, so a governor held back here is one who *may* become your friend rather than one who certainly would. Erring that way is deliberate: skipping a governor costs you a bolster, and not skipping them costs you a friend.
+
 Grease Palms is the one method that charges a different price for each governor, since the bribe is scaled to what they earn. When it is selected, a third picker appears under the method to choose whether to spend on the worst governed first or on the cheapest first.
 
-Below that is the list of governors the level you picked catches, worst governed first. Under Every Eligible Governor that is the whole pool, which the money may not reach the end of, so the count above is the one that says how far it goes. Each row names the theme they hold and gives their portrait, name, age and current governance, colored and broken down on hover exactly as the character sheet does it, along with who they are to you and their house. Under Grease Palms it also shows what that governor will cost.
+Below that is the list of governors the level you picked catches, worst governed first. Under Every Eligible Governor that is the whole pool, and under Everyone but Would-Be Friends it is the same pool with those few left out. Neither list is one the money necessarily reaches the end of, so under both the count above is what says how far it goes. Each row names the theme they hold and gives their portrait, name, age and current governance, colored and broken down on hover exactly as the character sheet does it, along with who they are to you and their house. Under Grease Palms it also shows what that governor will cost.
 
 Untick any of them to exclude them, and the count and the bill above drop to match. The row keeps its place, so nothing jumps around under the cursor. Excluding a governor sticks with that governor, including across a succession.
 
@@ -68,14 +72,40 @@ The shortest run that exercises every gate and the happy path once. Start an adm
 6. Select Grease Palms and confirm the Order picker appears directly under the Method picker, evenly spaced with the level picker below it and carrying no heading of its own. Confirm the total starts quoting gold. Select any other method and confirm both go away and the spacing closes up.
 7. Open a governor's own Bolster Governance window, read the success chance it shows for Burnish Reputation, and confirm the panel's Method list quotes the same number. The panel repeats the game's arithmetic rather than reading it, so this is the step that catches a drift.
 8. Run **Every Eligible Governor** with enough on hand for everyone and confirm it reaches all of them, not one. Then run it with enough for only two or three and confirm it bolsters that many, says so beforehand, and leaves influence at or above zero, never below.
-9. Click **Bolster Governance** at the bottom of the panel once, and confirm the whole selection is bolstered in that single click without leaving the page. The count and cost above should drop to reflect what is left.
-10. Untick a governor and confirm the count and the total both drop, that the row stays exactly where it was, and that re-ticking restores both. Then untick one and bolster, and confirm they were left alone.
-11. Pick a threshold that catches only one or two governors and untick all of them. The count must fall to zero and the dropdown must go on reading the threshold you chose. If it jumps to Every Eligible Governor, an empty level is being mistaken for one you cannot pay for, and the next click would spend on governors you never selected.
-12. As a vassal governor rather than the ruler at the top, confirm your peers appear in the pool.
-13. Save with the panel open, reload, and confirm it is shut and your settings survived.
-14. With `-debug_mode` on, open the decisions list and leave the cursor on Mass Bolster Governance for a few seconds. `error.log` must stay quiet. The game builds a decision's tooltip by running its effect as a dry run, and nothing this feature stores can be read in that pass, so any real work done there is both wasted and extremely loud.
+9. Pick **Everyone but Would-Be Friends**. Find a governor who is a potential friend of yours and whose opinion of you is 15 or more, and confirm they are missing from this list while still appearing under Every Eligible Governor. A governor at maximum opinion who is not a potential friend must still be present, since opinion alone excludes nobody. Like Every Eligible Governor it must never be grayed. Run it and confirm you gained no new friends, then bolster the held-back governor by hand and confirm the game does make you friends, which is what the option was avoiding.
+10. Click **Bolster Governance** at the bottom of the panel once, and confirm the whole selection is bolstered in that single click without leaving the page. The count and cost above should drop to reflect what is left.
+11. Untick a governor and confirm the count and the total both drop, that the row stays exactly where it was, and that re-ticking restores both. Then untick one and bolster, and confirm they were left alone.
+12. Pick a threshold that catches only one or two governors and untick all of them. The count must fall to zero and the dropdown must go on reading the threshold you chose. If it jumps to Every Eligible Governor, an empty level is being mistaken for one you cannot pay for, and the next click would spend on governors you never selected.
+13. As a vassal governor rather than the ruler at the top, confirm your peers appear in the pool.
+14. Save with the panel open, reload, and confirm it is shut and your settings survived.
+15. With `-debug_mode` on, open the decisions list and leave the cursor on Mass Bolster Governance for a few seconds. `error.log` must stay quiet. The game builds a decision's tooltip by running its effect as a dry run, and nothing this feature stores can be read in that pass, so any real work done there is both wasted and extremely loud.
 
 **The test that actually matters** is that a mass bolster is indistinguishable from a hand-sent one. Record your influence, your gold, a governor's efficiency, their modifier, their efficiency stack and their cooldown. Bolster that governor by hand with Divert Resources and record every delta. Reload, then mass-bolster that same governor alone with the same method. Every delta must match exactly. Repeat for Grease Palms, whose gold price is worked out per governor and is the likeliest place for a mismatch to hide.
+
+### Roman Restoration
+
+Keeps the Restoring Rome story, and the invasion casus belli that comes with it, across a succession.
+
+Reconquer one of the long-lost Roman cities as the Byzantine emperor and the game starts a story for you: the Roman Restoration. Restore the Empire on top of that and you get the **Pax Romana** casus belli, the one that takes an entire empire at once, which asks for that story by name before it will let you declare. The game means the story to pass to your heir when you die, and it checks whether that heir is the player before handing it over. During a succession the answer is no, so the story is destroyed instead, and the casus belli is gone for good on the very first inheritance.
+
+This puts it back. When the Roman title passes to you, the story comes with it, and the casus belli is there the next day. It costs nothing and asks for nothing: the story is the game's own, granted only to a player who holds one of the three titles the game itself would have passed it to, and only in a game where a restoration actually began.
+
+**It repairs a game already in progress.** If the story was lost several rulers ago, add the mod, load the save and let it run: the next quarter puts the story back where it belongs. Nothing else is touched, and no earlier decision is undone.
+
+The one thing it cannot recover is the difficulty you chose, if you lost the story before adding the mod. Whether the Roman Restoration is run on the hard path lives on the story object and dies with it, and a save that has already lost it has nothing left to read. From then on the choice is carried across successions along with everything else, including the decision to end the trials.
+
+It needs **Roads to Power**, since the story and the casus belli are both from it. Without it nothing here ever runs.
+
+#### Checking it still works
+
+The shortest run that exercises the gate and the happy path once. It needs a restored Rome, so the quickest way in is a Byzantine emperor with the counties already in hand.
+
+1. As the **Byzantine emperor**, reconquer one of the lost cities and confirm the Roman Restoration story begins. Restore the Roman Empire, then confirm **Pax Romana** is offered against a neighboring empire.
+2. Die and inherit. The casus belli must be there again the day after your heir takes the throne. If it only returns at the next quarter, the repair is running on the pulse rather than on the succession, which still works but is worth knowing.
+3. Confirm the succession is otherwise unchanged, and in particular that no event window opens inviting you to restore an already-restored Rome.
+4. In the same save, as a ruler who is **not** a Roman or Byzantine emperor, confirm nothing happens at all.
+5. In a game where no Roman city has ever been reconquered, hold one of the Roman titles and confirm no story appears and no casus belli is offered. The repair returns what was lost, never what was never there.
+6. Choose the hard path, then die and inherit, and confirm the trials go on. Then take the decision that ends them, die and inherit again, and confirm they stay ended.
 
 ## Installing
 
@@ -89,4 +119,6 @@ That is why the Governors view is reached by a keyboard shortcut instead of a bu
 
 Mass Bolster Governance changes nothing about the Bolster Governance interaction itself, so a mod that rebalances what a bolster costs, or who may receive one, is followed rather than fought.
 
-Both features are safe to add to a game in progress, and neither costs you achievements: Crusader Kings III stopped disabling those for modded games in 1.9. Removing Mass Bolster Governance from a save leaves behind the handful of settings the panel remembered, which the game discards harmlessly. Nothing it did to a governor is undone, because everything it did was the game's own doing in the first place.
+Roman Restoration leaves the game's own story cycle alone as well. Other fixes for this bug ship an edited copy of the story file, which means whichever of them loads last wins and any other change to that file is lost. This one adds a rule of its own beside it instead, so it can sit alongside them without either being displaced.
+
+All three features are safe to add to a game in progress, and none of them costs you achievements: Crusader Kings III stopped disabling those for modded games in 1.9. Removing Mass Bolster Governance from a save leaves behind the handful of settings the panel remembered, which the game discards harmlessly. Nothing it did to a governor is undone, because everything it did was the game's own doing in the first place. Removing Roman Restoration leaves your current story where it is and stops carrying it across the next succession.

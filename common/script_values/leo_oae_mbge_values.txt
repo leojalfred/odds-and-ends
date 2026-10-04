@@ -1,7 +1,7 @@
 ﻿### Leo VI's Odds and Ends - Mass Bolster Governance, costs and orderings.
 ###
 ### Every price here is read out of the same vanilla constants the interaction's
-### own cost block uses (06_ep3_interactions.txt:5733-5757), so a patch that
+### own cost block uses (06_ep3_interactions.txt:5759-5783), so a patch that
 ### rebalances Bolster Governance rebalances this with it. Nothing is hardcoded
 ### to a number vanilla could move.
 
@@ -41,17 +41,31 @@ leo_oae_mbge_bucket_influence_value = {
 	multiply = leo_oae_mbge_unit_influence_value
 }
 
-# Current scope: the player. What the budget pass would have spent in influence
+# Current scope: the player. What a budget row would have spent in influence
 # once one more governor is added to it.
-leo_oae_mbge_next_influence_value = {
-	value = var:leo_oae_mbge_bud_infl
+#
+# There are two budget rows now, and each keeps its own running total, so this
+# is written out once per row. A script value takes no arguments and the
+# variable it reads has to be named literally, so a macro cannot stand in.
+leo_oae_mbge_next_influence_t_bud_value = {
+	value = var:leo_oae_mbge_bud_infl_t_bud
+	add = leo_oae_mbge_unit_influence_value
+}
+
+leo_oae_mbge_next_influence_t_nf_value = {
+	value = var:leo_oae_mbge_bud_infl_t_nf
 	add = leo_oae_mbge_unit_influence_value
 }
 
 # Current scope: the player. Requires scope:leo_oae_mbge_gold_cost.
 # The same for gold, which unlike influence differs per governor.
-leo_oae_mbge_next_gold_value = {
+leo_oae_mbge_next_gold_t_bud_value = {
 	value = var:leo_oae_mbge_gold_t_bud
+	add = scope:leo_oae_mbge_gold_cost
+}
+
+leo_oae_mbge_next_gold_t_nf_value = {
+	value = var:leo_oae_mbge_gold_t_nf
 	add = scope:leo_oae_mbge_gold_cost
 }
 
@@ -60,7 +74,7 @@ leo_oae_mbge_next_gold_value = {
 # An ordered_* iterator visits exactly one item unless it is given a range, so
 # every walk in this feature has to say "all of them" out loud. Vanilla writes
 # the same thing as a big literal next to check_range_bounds = no
-# (00_fp1_wars.txt: "max = 100 # Basically, all of them."). This is set well
+# (01_fp1_wars.txt:1054, "max = 100 # Basically, all of them."). This is set well
 # past any plausible number of governors under one top liege; without the
 # companion check_range_bounds = no it would complain whenever there are fewer.
 leo_oae_mbge_everyone_value = 500
@@ -90,7 +104,7 @@ leo_oae_mbge_gold_cost_value = {
 # recipient is not part of it.
 #
 # The arithmetic mirrors boost_governor_efficiency_duel_effect
-# (07_dlc_ep3_scripted_effects.txt:10709). Each outcome starts at weight 10 and
+# (07_dlc_ep3_scripted_effects.txt:10635). Each outcome starts at weight 10 and
 # is moved by 1.5 per point of skill above or below the target rating, with the
 # modifier floored at -49 and the resulting weight floored at 2. Re-diff these
 # against that effect after a game patch: a rebalance there silently makes every
@@ -184,4 +198,68 @@ leo_oae_mbge_worst_first_value = {
 leo_oae_mbge_cheapest_first_value = {
 	value = medium_gold_value
 	multiply = -1
+}
+
+### Whether a bolster would make this governor a friend.
+#
+# A successful bolster does one of three things to the recipient's opinion, and
+# which one depends on where that opinion already stands
+# (boost_governor_efficiency_success_effect,
+# 07_dlc_ep3_scripted_effects.txt:10549):
+#
+#   at or above 15    progress_towards_friend_effect, which either upgrades a
+#                     standing potential friendship into a friendship or hands
+#                     over default_friend_opinion as friendliness_opinion
+#   below 15, AI      boosted_efficiency_opinion, "Bolstered My Governance"
+#   below 15, player  nothing at all
+#
+# Only the upgrade is worth avoiding. Opinion is a good thing to be handed and
+# costs nothing to hold, even when it is already at the ceiling and the gift is
+# wasted, but a friend is a standing tie to a mortal character, and every one of
+# them dies eventually and charges stress for it. So this asks the single
+# question the t_nf row is built on: would this bolster end in a friendship?
+#
+# **The 15 is a mirror rather than a read.** Vanilla writes it as a bare literal
+# inside its own effect, where script cannot reach it, so it is copied here and
+# the compat check compares the figure itself rather than the name around it.
+# Note it is not the same thing as default_friend_opinion, which is a real
+# script value and happens to hold the same number.
+leo_oae_mbge_friend_branch_floor_value = 15
+
+# Current scope: a governor. Requires scope:leo_oae_mbge_actor and
+# scope:leo_oae_mbge_cand, which is this same governor staged by name.
+#
+# One if the bolster would end in a friendship, zero otherwise, staged as a
+# number so leo_oae_mbge_row_shown_trigger can compare it against a literal the
+# way it compares every other threshold.
+#
+# It answers for a bolster that lands. The three skill methods roll a duel and
+# can miss, in which case nothing at all happens and no friendship is made, so a
+# governor caught here is one who *may* become a friend rather than one who
+# certainly will. Erring that way is the point: the row exists to keep
+# friendships from arriving unasked, and a run that skips a governor who would
+# have missed the roll costs a bolster, while the other way round costs a friend.
+#
+# Vanilla runs progress_towards_friend_effect on the actor with the governor as
+# its CHARACTER, so its condition is asked from the same side here rather than
+# from the governor's, and its own trigger is called rather than restated: a
+# patch that changes who may become a friend changes this for free.
+leo_oae_mbge_would_befriend_value = {
+	value = 0
+
+	if = {
+		limit = {
+			opinion = {
+				target = scope:leo_oae_mbge_actor
+				value >= leo_oae_mbge_friend_branch_floor_value
+			}
+			scope:leo_oae_mbge_actor = {
+				has_relation_potential_friend = scope:leo_oae_mbge_cand
+				can_set_relation_friend_trigger = { CHARACTER = scope:leo_oae_mbge_cand }
+			}
+		}
+		# add rather than value, since only the operations vanilla itself uses
+		# inside an if are worth relying on, and this one starts from zero.
+		add = 1
+	}
 }

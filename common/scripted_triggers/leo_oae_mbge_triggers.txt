@@ -13,7 +13,7 @@
 # the governor has to be staged into a scope first.
 #
 # The two conditions after it are the interaction's own can_send block
-# (06_ep3_interactions.txt:5711-5731), repeated because it is not certain the
+# (06_ep3_interactions.txt:5737-5757), repeated because it is not certain the
 # engine trigger covers can_send as well as is_shown and is_valid. They are
 # cheap, and repeating a condition can only ever narrow the pool. Re-diff them
 # against vanilla after a game patch.
@@ -88,12 +88,14 @@ leo_oae_mbge_included_trigger = {
 	}
 }
 
-# Current scope: the player. Requires scope:leo_oae_mbge_eff, the efficiency of
-# the governor being considered.
+# Current scope: the player. Requires scope:leo_oae_mbge_eff and
+# scope:leo_oae_mbge_befriend, the two figures
+# leo_oae_mbge_stage_governor_effect works out for the governor being
+# considered.
 #
 # Whether that governor falls under the threshold currently selected. The
-# governor's efficiency is the governor's; the only thing the player holds is
-# which threshold was picked, which is why this is asked here.
+# figures are the governor's; the only thing the player holds is which threshold
+# was picked, which is why this is asked here.
 #
 # Every comparison is a staged value against a literal, which is the shape the
 # counting pass uses and the only shape proven to work. Two earlier versions
@@ -110,8 +112,12 @@ leo_oae_mbge_row_shown_trigger = {
 	trigger_else_if = { limit = { var:leo_oae_mbge_thresh = 6 } scope:leo_oae_mbge_eff < 10 }
 	trigger_else_if = { limit = { var:leo_oae_mbge_thresh = 7 } scope:leo_oae_mbge_eff < 20 }
 	trigger_else_if = { limit = { var:leo_oae_mbge_thresh = 8 } scope:leo_oae_mbge_eff < 30 }
-	# 10 is the whole pool, as far down it as the money reaches, and it does not
-	# filter by efficiency. Nor does the retired 9, which a save may still hold
+	# 11 asks nothing about efficiency either. It is the whole pool minus the
+	# governors a bolster would turn into the player's friend, which the staged
+	# figure answers with a one or a zero.
+	trigger_else_if = { limit = { var:leo_oae_mbge_thresh = 11 } scope:leo_oae_mbge_befriend = 0 }
+	# 10 is the whole pool, as far down it as the money reaches, and it filters
+	# by nothing at all. Nor does the retired 9, which a save may still hold
 	# until the defaults run and move it.
 	trigger_else = { always = yes }
 }
@@ -137,13 +143,19 @@ leo_oae_mbge_has_targets_trigger = {
 }
 
 # Current scope: the player. The feature's own gate, mirroring the actor half
-# of the interaction's is_shown (06_ep3_interactions.txt:5663-5671) plus the
+# of the interaction's is_shown (06_ep3_interactions.txt:5689-5697) plus the
 # adulthood its is_valid requires. Administrative government carries its own
 # DLC, so this gates on ownership without naming a DLC.
+#
+# Administrative is a government mechanic_type, not a government rule, so it is
+# asked with government_has_mechanic exactly as the interaction asks it.
+# government_allows names rules only, and no government lists administrative
+# among its rules, so asking it that way would hide the feature from the very
+# realms it is for.
 leo_oae_mbge_available_trigger = {
 	is_ruler = yes
 	is_adult = yes
-	government_allows = administrative
+	government_has_mechanic = administrative
 }
 
 # Never true, and never called for its answer. The panel's dropdowns and its
@@ -172,6 +184,7 @@ leo_oae_mbge_ack_trigger = {
 	var:leo_oae_mbge_afford_t_20 = 0
 	var:leo_oae_mbge_afford_t_30 = 0
 	var:leo_oae_mbge_afford_t_bud = 0
+	var:leo_oae_mbge_afford_t_nf = 0
 
 	is_target_in_variable_list = { name = leo_oae_mbge_opts target = flag:opt_1 }
 	is_target_in_variable_list = { name = leo_oae_mbge_threshes target = flag:t_bud }

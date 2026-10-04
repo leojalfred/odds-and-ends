@@ -13,12 +13,19 @@
 ### is what keeps the odds and the bill honest.
 ###
 ### Threshold buckets are addressed by a suffix rather than a number, because a
-### script variable name cannot be built at runtime. Codes 1-10 map to
-### t_m40 t_m30 t_m20 t_m10 t_0 t_10 t_20 t_30 t_all t_bud, in that order, and
-### are append-only: they live in saved variables, so renumbering would rewrite
-### the settings of everyone already playing. Code 9, t_all, is gone along with
-### its bucket, and its number is left unused rather than handed to something
-### else.
+### script variable name cannot be built at runtime. Codes 1-11 map to
+### t_m40 t_m30 t_m20 t_m10 t_0 t_10 t_20 t_30 t_all t_bud t_nf, in that order,
+### and are append-only: they live in saved variables, so renumbering would
+### rewrite the settings of everyone already playing. Code 9, t_all, is gone
+### along with its bucket, and its number is left unused rather than handed to
+### something else.
+###
+### Two of the buckets, t_bud and t_nf, are priced against the treasury rather
+### than filled outright: they take whoever still fits and stop when the money
+### runs out, so they are never grayed for being unaffordable. The other eight
+### are graduated levels that have to be payable in full. t_nf is t_bud minus
+### the governors a bolster would make friends of, which is the one outcome of a
+### bolster a player may not want handed to them in bulk.
 
 ### The dropdown contents.
 #
@@ -36,10 +43,12 @@ leo_oae_mbge_build_options_effect = {
 
 	# The one that needs no thinking about comes first: everyone the game allows,
 	# as far down as the treasury reaches. The graduated levels follow for when a
-	# run wants aiming. Display order is not code order, and deliberately so:
-	# the codes are append-only because they persist in saves.
+	# run wants aiming, and the row that holds friendships back comes last
+	# because it cuts across a different axis from all of them. Display order is
+	# not code order, and deliberately so: the codes are append-only because they
+	# persist in saves.
 	#
-	# There used to be two entries here rather than one. "Every eligible
+	# There used to be two entries at the top rather than one. "Every eligible
 	# governor" demanded the whole pool be payable and was disabled otherwise,
 	# and "as many as I can afford" walked the same pool taking whoever still
 	# fit. The second is the first whenever the money stretches, so the first
@@ -56,6 +65,7 @@ leo_oae_mbge_build_options_effect = {
 	add_to_variable_list = { name = leo_oae_mbge_threshes target = flag:t_10 }
 	add_to_variable_list = { name = leo_oae_mbge_threshes target = flag:t_20 }
 	add_to_variable_list = { name = leo_oae_mbge_threshes target = flag:t_30 }
+	add_to_variable_list = { name = leo_oae_mbge_threshes target = flag:t_nf }
 
 	clear_variable_list = leo_oae_mbge_orders
 	add_to_variable_list = { name = leo_oae_mbge_orders target = flag:order_1 }
@@ -64,7 +74,7 @@ leo_oae_mbge_build_options_effect = {
 	# Stamps what these lists were built from, so a save carrying an older set
 	# is rebuilt rather than trusted. Bump it whenever the entries or their
 	# order change, or a save keeps showing the old list.
-	set_variable = { name = leo_oae_mbge_opts_version value = 1 }
+	set_variable = { name = leo_oae_mbge_opts_version value = 3 }
 
 	# The branch never runs. See the trigger for why it has to be named.
 	if = { limit = { leo_oae_mbge_ack_trigger = yes } }
@@ -80,7 +90,7 @@ leo_oae_mbge_init_defaults_effect = {
 		limit = {
 			OR = {
 				NOT = { has_variable = leo_oae_mbge_opts_version }
-				NOT = { var:leo_oae_mbge_opts_version = 1 }
+				NOT = { var:leo_oae_mbge_opts_version = 3 }
 			}
 		}
 		leo_oae_mbge_build_options_effect = yes
@@ -128,11 +138,34 @@ leo_oae_mbge_accum_bucket_effect = {
 	change_variable = { name = leo_oae_mbge_gold_$B$ add = scope:leo_oae_mbge_gold_cost }
 }
 
+# Current scope: a governor. Requires scope:leo_oae_mbge_actor and
+# scope:leo_oae_mbge_cand, this same governor staged by name.
+#
+# The two figures a threshold can be asked about, staged where the governor is
+# so that leo_oae_mbge_row_shown_trigger can be asked on the player. Both are
+# staged together even though no single threshold reads both: which one matters
+# is decided by a variable, and a trigger cannot be chosen at runtime, so the
+# chain that picks between them has to find either one already there.
+#
+# Neither is expensive next to what the recount already pays. Vanilla's
+# eligibility question hands the engine a whole interaction to evaluate per
+# vassal; a skill lookup and two relation checks are noise beside it.
+leo_oae_mbge_stage_governor_effect = {
+	save_temporary_scope_value_as = {
+		name = leo_oae_mbge_eff
+		value = governor_efficiency_presented
+	}
+	save_temporary_scope_value_as = {
+		name = leo_oae_mbge_befriend
+		value = leo_oae_mbge_would_befriend_value
+	}
+}
+
 # Current scope: the player. Fills every bucket in one pass over the pool.
 #
 # The iterator is top_liege's vassals, not the player's own, because vanilla's
 # is_shown asks for recipient.top_liege = actor.top_liege
-# (06_ep3_interactions.txt:5669). A player who is themselves a governor may
+# (06_ep3_interactions.txt:5695). A player who is themselves a governor may
 # bolster their peers, and looping over root's vassals would quietly take that
 # away.
 #
@@ -167,6 +200,7 @@ leo_oae_mbge_recount_effect = {
 	leo_oae_mbge_zero_bucket_effect = { B = t_20 }
 	leo_oae_mbge_zero_bucket_effect = { B = t_30 }
 	leo_oae_mbge_zero_bucket_effect = { B = t_bud }
+	leo_oae_mbge_zero_bucket_effect = { B = t_nf }
 
 	clear_variable_list = leo_oae_mbge_pool
 
@@ -292,12 +326,11 @@ leo_oae_mbge_build_targets_effect = {
 			check_range_bounds = no
 
 			# Staged the same way the counting pass stages it, and asked on the
-			# player because the threshold is what the player holds.
-			save_temporary_scope_value_as = {
-				name = leo_oae_mbge_eff
-				value = governor_efficiency_presented
-			}
+			# player because the threshold is what the player holds. The
+			# governor goes into a scope first because the opinion figures are
+			# written in terms of that name.
 			save_temporary_scope_as = leo_oae_mbge_cand
+			leo_oae_mbge_stage_governor_effect = yes
 
 			scope:leo_oae_mbge_actor = {
 				if = {
@@ -372,10 +405,14 @@ leo_oae_mbge_fallback_effect = {
 }
 
 # Current scope: a governor. Requires scope:leo_oae_mbge_actor.
-# One step of the budget walk: take this governor if what has been committed so
-# far plus their price still fits, and otherwise pass them over. Passing over
-# rather than stopping matters under Grease Palms, where a governor too rich to
-# afford should not block the cheaper ones behind them.
+# One step of a budget walk: take this governor if what has been committed to
+# this row so far plus their price still fits, and otherwise pass them over.
+# Passing over rather than stopping matters under Grease Palms, where a governor
+# too rich to afford should not block the cheaper ones behind them.
+#
+# Each budget row keeps its own running influence total, because the two are
+# walked one after the other and a shared accumulator would have the second
+# start out of pocket by whatever the first committed.
 leo_oae_mbge_budget_try_effect = {
 	save_temporary_scope_value_as = {
 		name = leo_oae_mbge_gold_cost
@@ -385,63 +422,97 @@ leo_oae_mbge_budget_try_effect = {
 	scope:leo_oae_mbge_actor = {
 		if = {
 			limit = {
-				influence >= leo_oae_mbge_next_influence_value
+				influence >= leo_oae_mbge_next_influence_$B$_value
 				trigger_if = {
 					limit = { var:leo_oae_mbge_opt = 2 }
-					gold >= leo_oae_mbge_next_gold_value
+					gold >= leo_oae_mbge_next_gold_$B$_value
 				}
 			}
-			change_variable = { name = leo_oae_mbge_count_t_bud add = 1 }
-			change_variable = { name = leo_oae_mbge_gold_t_bud add = scope:leo_oae_mbge_gold_cost }
-			change_variable = { name = leo_oae_mbge_bud_infl add = leo_oae_mbge_unit_influence_value }
+			change_variable = { name = leo_oae_mbge_count_$B$ add = 1 }
+			change_variable = { name = leo_oae_mbge_gold_$B$ add = scope:leo_oae_mbge_gold_cost }
+			change_variable = { name = leo_oae_mbge_bud_infl_$B$ add = leo_oae_mbge_unit_influence_value }
 		}
 	}
 }
 
-# Current scope: the player. Prices the "as many as I can afford" row by walking
-# the pool in spending order and committing until the money runs out.
+### One step of each budget row, named for the row it belongs to.
+#
+# The walk itself is identical for both, so it is written once and calls
+# leo_oae_mbge_budget_step_$B$_effect. What differs is which governors a row is
+# willing to spend on, and that cannot be handed in as an argument: a trigger
+# cannot be chosen at runtime. A macro-built effect *name* can be, though,
+# because macros are expanded when the file is parsed, so the filter lives in
+# the named step rather than in the walk.
+
+# Current scope: a governor. Requires scope:leo_oae_mbge_actor.
+leo_oae_mbge_budget_step_t_bud_effect = {
+	leo_oae_mbge_budget_try_effect = { B = t_bud }
+}
+
+# Current scope: a governor. Requires scope:leo_oae_mbge_actor. The same row,
+# minus the governors a bolster would turn into the player's friend.
+leo_oae_mbge_budget_step_t_nf_effect = {
+	save_temporary_scope_as = leo_oae_mbge_cand
+	leo_oae_mbge_stage_governor_effect = yes
+
+	if = {
+		limit = { scope:leo_oae_mbge_befriend = 0 }
+		leo_oae_mbge_budget_try_effect = { B = t_nf }
+	}
+}
+
+# Current scope: the player. Prices one budget row by walking the pool in
+# spending order and committing until the money runs out.
 #
 # The ordering only ever changes the answer under Grease Palms, since every
 # other option charges the same for every governor. That is why the panel shows
 # the Order dropdown for that option alone.
 #
-# Both walks read leo_oae_mbge_pool, which the recount that calls this filled a
+# Every walk reads leo_oae_mbge_pool, which the recount that calls this filled a
 # moment earlier, so vanilla's eligibility question is asked once per governor
 # per recount rather than once per pass. The pool holds everyone vanilla allows,
 # so the exclusion the pool does not carry is applied here in the limit.
+leo_oae_mbge_budget_walk_effect = {
+	if = {
+		limit = {
+			var:leo_oae_mbge_opt = 2
+			var:leo_oae_mbge_order = 2
+		}
+		ordered_in_list = {
+			variable = leo_oae_mbge_pool
+			order_by = leo_oae_mbge_cheapest_first_value
+			max = leo_oae_mbge_everyone_value
+			check_range_bounds = no
+			limit = { NOT = { var:leo_oae_mbge_excl = 1 } }
+			leo_oae_mbge_budget_step_$B$_effect = yes
+		}
+	}
+	else = {
+		ordered_in_list = {
+			variable = leo_oae_mbge_pool
+			order_by = leo_oae_mbge_worst_first_value
+			max = leo_oae_mbge_everyone_value
+			check_range_bounds = no
+			limit = { NOT = { var:leo_oae_mbge_excl = 1 } }
+			leo_oae_mbge_budget_step_$B$_effect = yes
+		}
+	}
+}
+
+# Current scope: the player. Prices both rows that spend to the treasury's edge
+# rather than demanding to be paid for in full.
 leo_oae_mbge_budget_pass_effect = {
 	save_scope_as = leo_oae_mbge_actor
-	set_variable = { name = leo_oae_mbge_bud_infl value = 0 }
+	set_variable = { name = leo_oae_mbge_bud_infl_t_bud value = 0 }
+	set_variable = { name = leo_oae_mbge_bud_infl_t_nf value = 0 }
 
 	# Nothing to walk if the realm turned up nobody. See the list build for why
 	# the pool's existence has to be asked rather than assumed.
 	if = {
 		limit = { has_variable_list = leo_oae_mbge_pool }
 
-		if = {
-			limit = {
-				var:leo_oae_mbge_opt = 2
-				var:leo_oae_mbge_order = 2
-			}
-			ordered_in_list = {
-				variable = leo_oae_mbge_pool
-				order_by = leo_oae_mbge_cheapest_first_value
-				max = leo_oae_mbge_everyone_value
-				check_range_bounds = no
-				limit = { NOT = { var:leo_oae_mbge_excl = 1 } }
-				leo_oae_mbge_budget_try_effect = yes
-			}
-		}
-		else = {
-			ordered_in_list = {
-				variable = leo_oae_mbge_pool
-				order_by = leo_oae_mbge_worst_first_value
-				max = leo_oae_mbge_everyone_value
-				check_range_bounds = no
-				limit = { NOT = { var:leo_oae_mbge_excl = 1 } }
-				leo_oae_mbge_budget_try_effect = yes
-			}
-		}
+		leo_oae_mbge_budget_walk_effect = { B = t_bud }
+		leo_oae_mbge_budget_walk_effect = { B = t_nf }
 	}
 }
 
@@ -469,8 +540,8 @@ leo_oae_mbge_afford_bucket_effect = {
 	}
 }
 
-# Current scope: the player. The budget row is affordable by construction, so
-# it only asks whether it found anyone at all.
+# Current scope: the player. Both budget rows are affordable by construction, so
+# they only ask whether they found anyone at all.
 leo_oae_mbge_afford_pass_effect = {
 	leo_oae_mbge_afford_bucket_effect = { B = t_m40 }
 	leo_oae_mbge_afford_bucket_effect = { B = t_m30 }
@@ -481,12 +552,18 @@ leo_oae_mbge_afford_pass_effect = {
 	leo_oae_mbge_afford_bucket_effect = { B = t_20 }
 	leo_oae_mbge_afford_bucket_effect = { B = t_30 }
 
+	leo_oae_mbge_afford_budget_row_effect = { B = t_bud }
+	leo_oae_mbge_afford_budget_row_effect = { B = t_nf }
+}
+
+# Current scope: the player.
+leo_oae_mbge_afford_budget_row_effect = {
 	if = {
-		limit = { var:leo_oae_mbge_count_t_bud > 0 }
-		set_variable = { name = leo_oae_mbge_afford_t_bud value = 1 }
+		limit = { var:leo_oae_mbge_count_$B$ > 0 }
+		set_variable = { name = leo_oae_mbge_afford_$B$ value = 1 }
 	}
 	else = {
-		set_variable = { name = leo_oae_mbge_afford_t_bud value = 0 }
+		set_variable = { name = leo_oae_mbge_afford_$B$ value = 0 }
 	}
 }
 
@@ -530,8 +607,9 @@ leo_oae_mbge_select_bucket_effect = {
 	else_if = { limit = { var:leo_oae_mbge_thresh = 6 }  leo_oae_mbge_pick_bucket_effect = { B = t_10 } }
 	else_if = { limit = { var:leo_oae_mbge_thresh = 7 }  leo_oae_mbge_pick_bucket_effect = { B = t_20 } }
 	else_if = { limit = { var:leo_oae_mbge_thresh = 8 }  leo_oae_mbge_pick_bucket_effect = { B = t_30 } }
+	else_if = { limit = { var:leo_oae_mbge_thresh = 11 } leo_oae_mbge_pick_bucket_effect = { B = t_nf } }
 	# 10 is the whole pool, as far down it as the money reaches, and is where
-	# everything that is not a graduated level lands: the retired code 9 and the
+	# everything that is not a level of its own lands: the retired code 9 and the
 	# 0 an unset variable reads along with it.
 	else =    {                                          leo_oae_mbge_pick_bucket_effect = { B = t_bud } }
 }
@@ -551,7 +629,7 @@ leo_oae_mbge_bolster_one_effect = {
 		value = medium_gold_value
 	}
 
-	# cost (06_ep3_interactions.txt:5733-5757)
+	# cost (06_ep3_interactions.txt:5759-5783)
 	scope:leo_oae_mbge_actor = {
 		change_influence = { value = leo_oae_mbge_unit_influence_loss_value }
 		if = {
@@ -560,14 +638,14 @@ leo_oae_mbge_bolster_one_effect = {
 		}
 	}
 
-	# on_send (:5783-5791)
+	# on_send (:5809-5817)
 	add_to_variable_list = {
 		name = efficiency_boosters
 		target = scope:leo_oae_mbge_actor
 		years = 2
 	}
 
-	# on_accept (:5795-5809). The three skill options roll vanilla's duel, which
+	# on_accept (:5821-5835). The three skill options roll vanilla's duel, which
 	# can fail and still charges; the other two always land.
 	if = {
 		limit = { scope:leo_oae_mbge_actor = { var:leo_oae_mbge_opt = 3 } }
@@ -606,10 +684,17 @@ leo_oae_mbge_try_bolster_effect = {
 
 # Current scope: the player. What the Bolster button runs.
 #
-# The budget row walks the pool in spending order and takes whoever still fits;
-# every other row takes everyone under the chosen threshold. Both go through the
-# same per-governor affordability guard, so they differ only in who they visit
-# and in what order.
+# One walk of the realm for every row, differing only in the order it visits in.
+# Which governors a row wants is decided per governor by
+# leo_oae_mbge_try_bolster_in_bucket_effect, and every path goes through the same
+# affordability guard, so a row that spends to the treasury's edge and one that
+# is payable in full are the same loop with different answers.
+#
+# The order picker is honored only by the two rows that stop when the money runs
+# out. A row that has to be payable in full reaches everyone in it whatever
+# order it goes in, and worst first is then the better order to run short in,
+# since a run cut off by a live cost change spends what is left on the governors
+# who needed it most.
 #
 # This is the one walk that deliberately does not read leo_oae_mbge_pool. The
 # pool is a snapshot from the last recount, and nothing but the iterator's limit
@@ -622,34 +707,25 @@ leo_oae_mbge_apply_effect = {
 	save_scope_as = actor
 
 	if = {
-		limit = { var:leo_oae_mbge_thresh = 10 }
-		if = {
-			limit = { var:leo_oae_mbge_opt = 2  var:leo_oae_mbge_order = 2 }
-			top_liege = {
-				ordered_vassal = {
-					order_by = leo_oae_mbge_cheapest_first_value
-					max = leo_oae_mbge_everyone_value
-					check_range_bounds = no
-					limit = { leo_oae_mbge_included_trigger = yes }
-					leo_oae_mbge_try_bolster_effect = yes
-				}
+		limit = {
+			var:leo_oae_mbge_opt = 2
+			var:leo_oae_mbge_order = 2
+			OR = {
+				var:leo_oae_mbge_thresh = 10
+				var:leo_oae_mbge_thresh = 11
 			}
 		}
-		else = {
-			top_liege = {
-				ordered_vassal = {
-					order_by = leo_oae_mbge_worst_first_value
-					max = leo_oae_mbge_everyone_value
-					check_range_bounds = no
-					limit = { leo_oae_mbge_included_trigger = yes }
-					leo_oae_mbge_try_bolster_effect = yes
-				}
+		top_liege = {
+			ordered_vassal = {
+				order_by = leo_oae_mbge_cheapest_first_value
+				max = leo_oae_mbge_everyone_value
+				check_range_bounds = no
+				limit = { leo_oae_mbge_included_trigger = yes }
+				leo_oae_mbge_try_bolster_in_bucket_effect = yes
 			}
 		}
 	}
 	else = {
-		# Worst first here too, so a budget that runs short mid-run spends what
-		# is left on the governors who needed it most.
 		top_liege = {
 			ordered_vassal = {
 				order_by = leo_oae_mbge_worst_first_value
@@ -667,14 +743,12 @@ leo_oae_mbge_apply_effect = {
 # Current scope: a governor. Requires scope:leo_oae_mbge_actor.
 #
 # The threshold is applied here rather than in the iterator's limit, because
-# staging the governor's efficiency is an effect and a limit takes only
-# triggers. Same shape as the list build, so the run and the list can never
-# disagree about who is in.
+# staging the governor's figures is an effect and a limit takes only triggers.
+# Same shape as the list build, so the run and the list can never disagree about
+# who is in.
 leo_oae_mbge_try_bolster_in_bucket_effect = {
-	save_temporary_scope_value_as = {
-		name = leo_oae_mbge_eff
-		value = governor_efficiency_presented
-	}
+	save_temporary_scope_as = leo_oae_mbge_cand
+	leo_oae_mbge_stage_governor_effect = yes
 
 	if = {
 		limit = {
