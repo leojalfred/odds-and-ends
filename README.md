@@ -1,6 +1,6 @@
 # Leo VI's Odds and Ends
 
-A collection of small quality-of-life fixes for **Crusader Kings III (1.19.x)**. Each one is independent: they share nothing, and any of them would be worth having on its own.
+A collection of small quality-of-life fixes for **Crusader Kings III (1.20.x)**. Each one is independent: they share nothing, and any of them would be worth having on its own.
 
 Nothing here changes what your character is allowed to do. Every feature is a shortcut to something the game already lets you reach, gated by the game's own rules about who may reach it.
 

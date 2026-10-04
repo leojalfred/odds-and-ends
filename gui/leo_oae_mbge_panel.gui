@@ -9,7 +9,7 @@
 ### not work. A decision's custom widget is only shown at all if the decision
 ### declares decision_to_second_step_button, and declaring that makes the
 ### window draw its next-step button instead of its confirm button
-### (window_decisions_detail.gui:249-270, the two are mutually exclusive).
+### (window_decisions_detail.gui:253-268, the two are mutually exclusive).
 ### Stepping to the confirm button fires ToggleCustomWidgetState, which switches
 ### the panel off and vanilla's raw effect tooltip on. So the game's own confirm
 ### button can never sit on the same page as the panel, and the primary action

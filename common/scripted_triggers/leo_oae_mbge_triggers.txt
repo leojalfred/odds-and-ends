@@ -13,7 +13,7 @@
 # the governor has to be staged into a scope first.
 #
 # The two conditions after it are the interaction's own can_send block
-# (06_ep3_interactions.txt:5711-5731), repeated because it is not certain the
+# (06_ep3_interactions.txt:5737-5757), repeated because it is not certain the
 # engine trigger covers can_send as well as is_shown and is_valid. They are
 # cheap, and repeating a condition can only ever narrow the pool. Re-diff them
 # against vanilla after a game patch.
@@ -143,13 +143,19 @@ leo_oae_mbge_has_targets_trigger = {
 }
 
 # Current scope: the player. The feature's own gate, mirroring the actor half
-# of the interaction's is_shown (06_ep3_interactions.txt:5663-5671) plus the
+# of the interaction's is_shown (06_ep3_interactions.txt:5689-5697) plus the
 # adulthood its is_valid requires. Administrative government carries its own
 # DLC, so this gates on ownership without naming a DLC.
+#
+# Administrative is a government mechanic_type, not a government rule, so it is
+# asked with government_has_mechanic exactly as the interaction asks it.
+# government_allows names rules only, and no government lists administrative
+# among its rules, so asking it that way would hide the feature from the very
+# realms it is for.
 leo_oae_mbge_available_trigger = {
 	is_ruler = yes
 	is_adult = yes
-	government_allows = administrative
+	government_has_mechanic = administrative
 }
 
 # Never true, and never called for its answer. The panel's dropdowns and its

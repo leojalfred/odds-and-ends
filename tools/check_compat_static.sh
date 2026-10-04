@@ -50,6 +50,26 @@ file() { # <label> <path under GAME>              strong, FAIL if missing
 	if [ -f "$GAME/$2" ]; then printf '  ok    %s\n' "$1"; P=$((P+1))
 	else printf '  FAIL  %s\n' "$1"; F=$((F+1)); FAILS="$FAILS\n  - $1"; fi
 }
+idef() { # <label> <regex>                        strong, FAIL on miss
+	# The same as def, but only inside boost_efficiency_interaction. A plain def
+	# over the whole interactions folder passes as long as *any* interaction
+	# still says the thing, which is not what is being asserted.
+	#
+	# The block is cut out once and held, rather than piped straight into grep -q:
+	# grep -q quits at its first match, the pipe's writer dies of SIGPIPE, and
+	# pipefail then reports a found match as a miss.
+	if [ -z "${IBLOCK+x}" ]; then
+		IBLOCK=$(sed '1s/^\xef\xbb\xbf//' "$GAME"/common/character_interactions/*.txt 2>/dev/null \
+			| awk '/^boost_efficiency_interaction = \{/{p=1} p{print} p&&/^\}/{exit}')
+	fi
+	if grep -qE -- "$2" <<< "$IBLOCK"; then printf '  ok    %s\n' "$1"; P=$((P+1))
+	else printf '  FAIL  %s\n' "$1"; F=$((F+1)); FAILS="$FAILS\n  - $1"; fi
+}
+mnot() { # <label> <regex>                        FAIL if the MOD itself matches
+	if grep -rqsE -- "$2" "$ROOT/common" "$ROOT/gui" 2>/dev/null; then
+		printf '  FAIL  %s\n' "$1"; F=$((F+1)); FAILS="$FAILS\n  - $1"
+	else printf '  ok    %s\n' "$1"; P=$((P+1)); fi
+}
 num()  { # <label> <path under GAME> <sed -nE program> <expected>
 	# For the handful of vanilla numbers the mod copies because script cannot
 	# read them: a define, a relation's opinion, an opinion modifier's value. A
@@ -87,6 +107,8 @@ def  "japan_feudal_government"               "common/governments" "^japan_feudal
 # regates it, re-derive the button's condition from hud.gui.
 def  "administration tab gated the same way"  "gui/hud.gui" \
      "Character.GetGovernment.HasRule\( *'noble_families' *\)"
+def  "administration tab also admits the administrative mechanic" "gui/hud.gui" \
+     "Or\( *Character.GetGovernment.HasMechanic\( *'administrative' *\), *Character.GetGovernment.HasRule\( *'noble_families' *\) *\)"
 
 echo
 echo "What the shortcut is built from"
@@ -143,8 +165,8 @@ def  "boost_governor_efficiency_duel_effect" \
      "common/scripted_effects" "^boost_governor_efficiency_duel_effect = [{]"
 # The duel effect takes the skill by macro. All three we pass must still be
 # accepted, and the interaction must still route them the same way.
-def  "on_accept still routes the three skill options" \
-     "common/character_interactions" "boost_governor_efficiency_duel_effect = [{] SKILL = stewardship [}]"
+idef "on_accept still routes the three skill options" \
+     "boost_governor_efficiency_duel_effect = [{] SKILL = stewardship [}]"
 # The panel quotes the odds on the three skill methods, which means it repeats
 # vanilla's duel arithmetic rather than reading it. Each of these three numbers
 # is one the mod hardcodes a mirror of, so a rebalance that changes any of them
@@ -155,8 +177,11 @@ def  "duel weight floor"         "common/scripted_effects" "min = -49"
 # The cooldown is a variable list on the recipient, not a cooldown field, so the
 # mass action has to write it by hand. Both names are read when deciding who is
 # still eligible.
-def  "efficiency_boosters cooldown list"  "common/character_interactions" "name = efficiency_boosters"
-def  "efficiency_damagers cooldown list"  "common/character_interactions" "name = efficiency_damagers"
+idef "efficiency_boosters cooldown list"  "name = efficiency_boosters"
+idef "efficiency_damagers cooldown list"  "name = efficiency_damagers"
+# The cooldown the mass action writes by hand. If the duration moves, ours has
+# to move with it or the governor comes back early or late.
+idef "on_send cooldown is still two years" "^[[:space:]]*years = 2[[:space:]]*$"
 
 echo
 echo "Mass Bolster Governance - what it counts and what it charges"
@@ -172,8 +197,14 @@ def  "medium_influence_value"             "common/script_values" "^medium_influe
 def  "medium_gold_value"                  "common/script_values" "^medium_gold_value = [{]"
 # The cost block itself, so a patch that changes which currencies are charged,
 # or drops the per-recipient gold, is caught rather than silently mispriced.
-def  "cost is still minor influence plus medium gold" \
-     "common/character_interactions" "value = scope:recipient\.medium_gold_value"
+idef "cost is still minor influence plus medium gold" \
+     "value = scope:recipient\.medium_gold_value"
+# The influence half is read on the recipient too. The mod reads it on the
+# player, which is the same number only while these stay flat constants rather
+# than values that look at whoever they are asked on.
+idef "influence cost is still minor plus medium" "value = scope:recipient\.medium_influence_value"
+def  "minor_influence_value is still a flat constant"  "common/script_values" "^minor_influence_value = [0-9]+"
+def  "medium_influence_value is still a flat constant" "common/script_values" "^medium_influence_value = [0-9]+"
 
 echo
 echo "Mass Bolster Governance - the friendship a bolster can make"
@@ -214,14 +245,25 @@ echo "Mass Bolster Governance - script built-ins it leans on"
 suse "is_character_interaction_valid"     "is_character_interaction_valid = [{]"
 suse "is_governor"                        "is_governor = yes"
 suse "ordered_vassal with order_by"       "ordered_vassal = [{]"
-suse "government_allows = administrative" "government_allows = administrative"
+suse "government_has_mechanic = administrative" "government_has_mechanic = administrative"
+# The feature's gate copies the actor half of the interaction's is_shown. If
+# vanilla stops asking it this way, re-derive leo_oae_mbge_available_trigger
+# and the shortcut's enabled from what it asks instead.
+idef "is_shown still gates the actor on the administrative mechanic" \
+     "scope:actor = [{] government_has_mechanic = administrative [}]"
+def  "administrative is still a mechanic_type" \
+     "common/governments" "mechanic_type = administrative"
+# Administrative is a mechanic, not a rule. Asking it as a rule is quietly
+# false for every government, so the feature would vanish without an error.
+mnot "the mod never asks administrative as a rule" \
+     "^[^#]*(government_allows = administrative|HasRule\( *'administrative' *\))"
 suse "change_influence"                   "change_influence = [{]"
 suse "remove_short_term_gold"             "remove_short_term_gold = "
 # The pool is top_liege's vassals, not the player's, because that is what the
 # interaction's own is_shown asks for. If this clause goes, re-derive the
 # iterator rather than leaving it as it is.
-def  "recipient shares the actor's top liege" \
-     "common/character_interactions" "top_liege = scope:actor\.top_liege"
+idef "recipient shares the actor's top liege" \
+     "top_liege \??= scope:actor\.top_liege"
 
 echo
 echo "Mass Bolster Governance - the panel and the way in"
@@ -286,7 +328,7 @@ suse "remove_list_variable"  "remove_list_variable = [{]"
 # keep saying what leo_oae_mbge_available_trigger says.
 use  "GetPlayer.IsRuler"                 "GetPlayer\.IsRuler"
 use  "GetPlayer.IsAdult"                 "GetPlayer\.IsAdult"
-use  "HasRule( 'administrative' )"       "HasRule\( *'administrative' *\)"
+use  "HasMechanic( 'administrative' )"   "HasMechanic\( *'administrative' *\)"
 def  "on_game_start_after_lobby" "common/on_action" "^on_game_start_after_lobby = [{]"
 # The settings live on the player's character, so an heir starts without them.
 # There is no on_action for the player's character changing, and gaining a title

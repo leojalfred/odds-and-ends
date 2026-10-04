@@ -1,7 +1,7 @@
 ﻿### Leo VI's Odds and Ends - Mass Bolster Governance, costs and orderings.
 ###
 ### Every price here is read out of the same vanilla constants the interaction's
-### own cost block uses (06_ep3_interactions.txt:5733-5757), so a patch that
+### own cost block uses (06_ep3_interactions.txt:5759-5783), so a patch that
 ### rebalances Bolster Governance rebalances this with it. Nothing is hardcoded
 ### to a number vanilla could move.
 
@@ -74,7 +74,7 @@ leo_oae_mbge_next_gold_t_nf_value = {
 # An ordered_* iterator visits exactly one item unless it is given a range, so
 # every walk in this feature has to say "all of them" out loud. Vanilla writes
 # the same thing as a big literal next to check_range_bounds = no
-# (00_fp1_wars.txt: "max = 100 # Basically, all of them."). This is set well
+# (01_fp1_wars.txt:1054, "max = 100 # Basically, all of them."). This is set well
 # past any plausible number of governors under one top liege; without the
 # companion check_range_bounds = no it would complain whenever there are fewer.
 leo_oae_mbge_everyone_value = 500
@@ -104,7 +104,7 @@ leo_oae_mbge_gold_cost_value = {
 # recipient is not part of it.
 #
 # The arithmetic mirrors boost_governor_efficiency_duel_effect
-# (07_dlc_ep3_scripted_effects.txt:10709). Each outcome starts at weight 10 and
+# (07_dlc_ep3_scripted_effects.txt:10635). Each outcome starts at weight 10 and
 # is moved by 1.5 per point of skill above or below the target rating, with the
 # modifier floored at -49 and the resulting weight floored at 2. Re-diff these
 # against that effect after a game patch: a rebalance there silently makes every
@@ -205,7 +205,7 @@ leo_oae_mbge_cheapest_first_value = {
 # A successful bolster does one of three things to the recipient's opinion, and
 # which one depends on where that opinion already stands
 # (boost_governor_efficiency_success_effect,
-# 07_dlc_ep3_scripted_effects.txt:10623):
+# 07_dlc_ep3_scripted_effects.txt:10549):
 #
 #   at or above 15    progress_towards_friend_effect, which either upgrades a
 #                     standing potential friendship into a friendship or hands

@@ -165,7 +165,7 @@ leo_oae_mbge_stage_governor_effect = {
 #
 # The iterator is top_liege's vassals, not the player's own, because vanilla's
 # is_shown asks for recipient.top_liege = actor.top_liege
-# (06_ep3_interactions.txt:5669). A player who is themselves a governor may
+# (06_ep3_interactions.txt:5695). A player who is themselves a governor may
 # bolster their peers, and looping over root's vassals would quietly take that
 # away.
 #
@@ -629,7 +629,7 @@ leo_oae_mbge_bolster_one_effect = {
 		value = medium_gold_value
 	}
 
-	# cost (06_ep3_interactions.txt:5733-5757)
+	# cost (06_ep3_interactions.txt:5759-5783)
 	scope:leo_oae_mbge_actor = {
 		change_influence = { value = leo_oae_mbge_unit_influence_loss_value }
 		if = {
@@ -638,14 +638,14 @@ leo_oae_mbge_bolster_one_effect = {
 		}
 	}
 
-	# on_send (:5783-5791)
+	# on_send (:5809-5817)
 	add_to_variable_list = {
 		name = efficiency_boosters
 		target = scope:leo_oae_mbge_actor
 		years = 2
 	}
 
-	# on_accept (:5795-5809). The three skill options roll vanilla's duel, which
+	# on_accept (:5821-5835). The three skill options roll vanilla's duel, which
 	# can fail and still charges; the other two always land.
 	if = {
 		limit = { scope:leo_oae_mbge_actor = { var:leo_oae_mbge_opt = 3 } }
