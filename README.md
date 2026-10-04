@@ -2,7 +2,7 @@
 
 A collection of small quality-of-life fixes for **Crusader Kings III (1.20.x)**. Each one is independent: they share nothing, and any of them would be worth having on its own.
 
-Nothing here changes what your character is allowed to do. Every feature is a shortcut to something the game already lets you reach, gated by the game's own rules about who may reach it.
+Nothing here changes what your character is allowed to do. Every feature is either a shortcut to something the game already lets you reach or a repair to something the game meant you to have, gated in both cases by the game's own rules about who may reach it.
 
 It requires **no DLC**. Features that only make sense alongside one check for it themselves and stay out of the way otherwise.
 
@@ -82,6 +82,31 @@ The shortest run that exercises every gate and the happy path once. Start an adm
 
 **The test that actually matters** is that a mass bolster is indistinguishable from a hand-sent one. Record your influence, your gold, a governor's efficiency, their modifier, their efficiency stack and their cooldown. Bolster that governor by hand with Divert Resources and record every delta. Reload, then mass-bolster that same governor alone with the same method. Every delta must match exactly. Repeat for Grease Palms, whose gold price is worked out per governor and is the likeliest place for a mismatch to hide.
 
+### Roman Restoration
+
+Keeps the Restoring Rome story, and the invasion casus belli that comes with it, across a succession.
+
+Reconquer one of the long-lost Roman cities as the Byzantine emperor and the game starts a story for you: the Roman Restoration. Restore the Empire on top of that and you get the **Pax Romana** casus belli, the one that takes an entire empire at once, which asks for that story by name before it will let you declare. The game means the story to pass to your heir when you die, and it checks whether that heir is the player before handing it over. During a succession the answer is no, so the story is destroyed instead, and the casus belli is gone for good on the very first inheritance.
+
+This puts it back. When the Roman title passes to you, the story comes with it, and the casus belli is there the next day. It costs nothing and asks for nothing: the story is the game's own, granted only to a player who holds one of the three titles the game itself would have passed it to, and only in a game where a restoration actually began.
+
+**It repairs a game already in progress.** If the story was lost several rulers ago, add the mod, load the save and let it run: the next quarter puts the story back where it belongs. Nothing else is touched, and no earlier decision is undone.
+
+The one thing it cannot recover is the difficulty you chose, if you lost the story before adding the mod. Whether the Roman Restoration is run on the hard path lives on the story object and dies with it, and a save that has already lost it has nothing left to read. From then on the choice is carried across successions along with everything else, including the decision to end the trials.
+
+It needs **Roads to Power**, since the story and the casus belli are both from it. Without it nothing here ever runs.
+
+#### Checking it still works
+
+The shortest run that exercises the gate and the happy path once. It needs a restored Rome, so the quickest way in is a Byzantine emperor with the counties already in hand.
+
+1. As the **Byzantine emperor**, reconquer one of the lost cities and confirm the Roman Restoration story begins. Restore the Roman Empire, then confirm **Pax Romana** is offered against a neighboring empire.
+2. Die and inherit. The casus belli must be there again the day after your heir takes the throne. If it only returns at the next quarter, the repair is running on the pulse rather than on the succession, which still works but is worth knowing.
+3. Confirm the succession is otherwise unchanged, and in particular that no event window opens inviting you to restore an already-restored Rome.
+4. In the same save, as a ruler who is **not** a Roman or Byzantine emperor, confirm nothing happens at all.
+5. In a game where no Roman city has ever been reconquered, hold one of the Roman titles and confirm no story appears and no casus belli is offered. The repair returns what was lost, never what was never there.
+6. Choose the hard path, then die and inherit, and confirm the trials go on. Then take the decision that ends them, die and inherit again, and confirm they stay ended.
+
 ## Installing
 
 Subscribe on the Workshop, or drop the folder into `Documents/Paradox Interactive/Crusader Kings III/mod` and enable it in the launcher.
@@ -94,4 +119,6 @@ That is why the Governors view is reached by a keyboard shortcut instead of a bu
 
 Mass Bolster Governance changes nothing about the Bolster Governance interaction itself, so a mod that rebalances what a bolster costs, or who may receive one, is followed rather than fought.
 
-Both features are safe to add to a game in progress, and neither costs you achievements: Crusader Kings III stopped disabling those for modded games in 1.9. Removing Mass Bolster Governance from a save leaves behind the handful of settings the panel remembered, which the game discards harmlessly. Nothing it did to a governor is undone, because everything it did was the game's own doing in the first place.
+Roman Restoration leaves the game's own story cycle alone as well. Other fixes for this bug ship an edited copy of the story file, which means whichever of them loads last wins and any other change to that file is lost. This one adds a rule of its own beside it instead, so it can sit alongside them without either being displaced.
+
+All three features are safe to add to a game in progress, and none of them costs you achievements: Crusader Kings III stopped disabling those for modded games in 1.9. Removing Mass Bolster Governance from a save leaves behind the handful of settings the panel remembered, which the game discards harmlessly. Nothing it did to a governor is undone, because everything it did was the game's own doing in the first place. Removing Roman Restoration leaves your current story where it is and stops carrying it across the next succession.
